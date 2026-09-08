@@ -847,8 +847,8 @@ header .header-ornament { color: var(--gold) !important; animation: codice-pulso
 
 
 /* ===== AJUSTES DE CONTRASTE E LEGIBILIDADE ===== */
-html { font-size: 18.5px; }                      /* base maior para todo o site */
-body { font-size: 1.02rem !important; }
+html { font-size: 17px; }                      /* base maior para todo o site */
+body { font-size: 1rem !important; }
 
 .chat-window, .chat-header, .chat-input-area {
   background: #1c1610 !important;
@@ -866,9 +866,34 @@ body { font-size: 1.02rem !important; }
   border-right: 3px solid #d9a940 !important;
   box-shadow: 0 2px 10px rgba(0,0,0,.4);
 }
-.msg-bubble { font-size: 1.04rem !important; line-height: 1.7 !important; }
+.msg-bubble { font-size: 1rem !important; line-height: 1.7 !important; }
 .msg-label { opacity: 1 !important; }
 .chat-input-area input::placeholder, .api-bar input::placeholder, .auth-box input::placeholder { color: #9d8a6d !important; }
+
+
+/* ===== FOGO BRANDO NO FUNDO ===== */
+#fogo-fundo {
+  position: fixed; left: 0; right: 0; bottom: 0; height: 42vh;
+  pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 100% at 30% 115%, rgba(214,120,40,.16), transparent 60%),
+    radial-gradient(ellipse 80% 90% at 55% 120%, rgba(220,150,60,.12), transparent 62%),
+    radial-gradient(ellipse 70% 80% at 75% 118%, rgba(190,90,35,.10), transparent 60%),
+    radial-gradient(ellipse 60% 70% at 45% 125%, rgba(255,190,110,.08), transparent 65%);
+  animation: fogo-respira 7s ease-in-out infinite;
+  filter: blur(2px);
+}
+#fogo-fundo::after {
+  content:""; position:absolute; inset:0;
+  background: radial-gradient(ellipse 50% 60% at 40% 130%, rgba(255,210,130,.07), transparent 70%);
+  animation: fogo-respira 4.5s ease-in-out infinite reverse;
+}
+@keyframes fogo-respira {
+  0%, 100% { opacity: .65; transform: scaleY(1)   translateY(0); }
+  35%      { opacity: 1;   transform: scaleY(1.06) translateY(-6px); }
+  70%      { opacity: .8;  transform: scaleY(.97)  translateY(3px); }
+}
+@media (prefers-reduced-motion: reduce) { #fogo-fundo { animation: none; } }
 
 </style>
 <!-- Supabase removido: migrado para Cloudflare Workers --></script>
@@ -1658,6 +1683,7 @@ function answerQuiz(index) {
 </script>
 
 <canvas id="brasas-codice"></canvas>
+<div id="fogo-fundo"></div>
 <script>
 (function(){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
