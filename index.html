@@ -845,6 +845,31 @@ header .header-ornament { color: var(--gold) !important; animation: codice-pulso
   * { animation-duration: .01s !important; transition-duration: .01s !important; }
 }
 
+
+/* ===== AJUSTES DE CONTRASTE E LEGIBILIDADE ===== */
+html { font-size: 18.5px; }                      /* base maior para todo o site */
+body { font-size: 1.02rem !important; }
+
+.chat-window, .chat-header, .chat-input-area {
+  background: #1c1610 !important;
+}
+.chat-header { border-bottom: 1px solid rgba(217,169,64,.35) !important; }
+.msg.agent .msg-bubble {
+  background: rgba(35, 52, 96, .55) !important;   /* azul mais profundo */
+  color: #f6efe0 !important;
+  border-left: 3px solid #6d8fd6 !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+.msg.user .msg-bubble {
+  background: rgba(96, 64, 26, .75) !important;   /* âmbar escuro */
+  color: #fdf3dd !important;
+  border-right: 3px solid #d9a940 !important;
+  box-shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+.msg-bubble { font-size: 1.04rem !important; line-height: 1.7 !important; }
+.msg-label { opacity: 1 !important; }
+.chat-input-area input::placeholder, .api-bar input::placeholder, .auth-box input::placeholder { color: #9d8a6d !important; }
+
 </style>
 <!-- Supabase removido: migrado para Cloudflare Workers --></script>
 <link rel="manifest" href="manifest.json">
