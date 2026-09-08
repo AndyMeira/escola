@@ -724,7 +724,7 @@
   .icon-seal.correct { color: var(--sage); }
   .icon-seal.wrong { color: var(--terracotta); }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Supabase removido: migrado para Cloudflare Workers --></script>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#3d2b1f">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -922,9 +922,27 @@
 const GEMINI_MODEL = "gemini-3.6-flash";
 const PROXY_URL = "https://escola-intercessao-api.vercel.app/api/gemini";
 
-const SUPABASE_URL = "https://xmlspowbfzbptldtferl.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_TCe91nYvgglwoFCeCyDm4Q_a05Lxa0R";
-const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// ===== API Cloudflare Workers (migração) =====
+const API_BASE = "https://escola-intercessao-api.andymeira.workers.dev";
+function getToken() { return localStorage.getItem('ei_token'); }
+function setToken(t) { t ? localStorage.setItem('ei_token', t) : localStorage.removeItem('ei_token'); }
+async function api(path, opts = {}) {
+  const r = await fetch(API_BASE + path, {
+    ...opts,
+    headers: {
+      'Content-Type': 'application/json',
+      ...(getToken() ? { 'Authorization': 'Bearer ' + getToken() } : {}),
+      ...(opts.headers || {})
+    }
+  });
+  const data = await r.json().catch(() => ({}));
+  if (!r.ok) {
+    const err = new Error((data.error && data.error.message) || data.error || 'Erro inesperado');
+    err.status = r.status;
+    throw err;
+  }
+  return data;
+}
 
 const DAILY_MESSAGE_LIMIT = 75;
 
@@ -1125,20 +1143,18 @@ async function submitAuth() {
 
   try {
     if (isSignupMode) {
-      const { data, error } = await sb.auth.signUp({
-        email, password,
-        options: { data: { display_name: name } }
+      const data = await api('/auth/signup', {
+        method: 'POST',
+        body: JSON.stringify({ email, password, display_name: name })
       });
-      if (error) throw error;
-      if (data.user && !data.session) {
-        showAuthError('Conta criada! Verifique seu e-mail para confirmar antes de entrar.');
-        btn.disabled = false;
-        return;
-      }
+      setToken(data.access_token);
       await onLoginSuccess(data.user);
     } else {
-      const { data, error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) throw error;
+      const data = await api('/auth/login', {
+        method: 'POST',
+        body: JSON.stringify({ email, password })
+      });
+      setToken(data.access_token);
       await onLoginSuccess(data.user);
     }
   } catch (e) {
@@ -1148,9 +1164,12 @@ async function submitAuth() {
 }
 
 async function checkSession() {
-  const { data } = await sb.auth.getSession();
-  if (data.session && data.session.user) {
-    await onLoginSuccess(data.session.user);
+  if (!getToken()) return;
+  try {
+    const data = await api('/auth/session');
+    await onLoginSuccess(data.user);
+  } catch (e) {
+    setToken(null);
   }
 }
 
@@ -1159,15 +1178,18 @@ async function onLoginSuccess(user) {
   document.getElementById('authOverlay').style.display = 'none';
   document.getElementById('userBar').style.display = 'flex';
 
-  const { data: profile } = await sb.from('profiles').select('display_name').eq('id', user.id).single();
-  const name = profile?.display_name || user.email;
+  let name = user.display_name || user.email;
+  try {
+    const profile = await api('/db/profile');
+    if (profile.display_name) name = profile.display_name;
+  } catch (e) {}
   document.getElementById('userNameLabel').textContent = `Olá, ${name} 🙏`;
 
   await loadChatHistory();
 }
 
 async function signOut() {
-  await sb.auth.signOut();
+  setToken(null);
   currentUser = null;
   geminiHistory = [];
   document.getElementById('messages').innerHTML = '';
@@ -1178,14 +1200,12 @@ async function signOut() {
 }
 
 async function loadChatHistory() {
-  const { data, error } = await sb
-    .from('chat_messages')
-    .select('role, content')
-    .eq('user_id', currentUser.id)
-    .order('created_at', { ascending: true })
-    .limit(50);
+  let data;
+  try {
+    data = (await api('/db/chat_messages')).messages;
+  } catch (e) { return; }
 
-  if (error || !data || data.length === 0) return;
+  if (!data || data.length === 0) return;
 
   geminiHistory = data.map(m => ({ role: m.role, parts: [{ text: m.content }] }));
   data.forEach(m => addMessage(m.content, m.role === 'model' ? 'agent' : 'user'));
@@ -1193,21 +1213,21 @@ async function loadChatHistory() {
 
 async function saveChatMessage(role, content) {
   if (!currentUser) return;
-  await sb.from('chat_messages').insert({ user_id: currentUser.id, role, content });
+  try {
+    await api('/db/chat_messages', { method: 'POST', body: JSON.stringify({ role, content }) });
+  } catch (e) {}
 }
 
 async function checkDailyLimit() {
   if (!currentUser) return true;
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
-  const { count } = await sb
-    .from('chat_messages')
-    .select('id', { count: 'exact', head: true })
-    .eq('user_id', currentUser.id)
-    .eq('role', 'user')
-    .gte('created_at', startOfDay.toISOString());
-
-  return (count || 0) < DAILY_MESSAGE_LIMIT;
+  try {
+    const { count } = await api('/db/usage');
+    return count < DAILY_MESSAGE_LIMIT;
+  } catch (e) {
+    return true;
+  }
 }
 
 function setTheme(el, theme) {
@@ -1268,8 +1288,7 @@ function quickAsk(text) {
 }
 
 async function getAccessToken() {
-  const { data } = await sb.auth.getSession();
-  return data.session ? data.session.access_token : null;
+  return getToken();
 }
 
 function escapeHtml(text) {
@@ -1464,12 +1483,14 @@ function answerQuiz(index) {
   });
 
   if (currentUser) {
-    sb.from('quiz_attempts').insert({
-      user_id: currentUser.id,
-      topic: selectedTopic,
-      question: currentQuiz.pergunta,
-      correct: index === correct
-    });
+    api('/db/quiz_attempts', {
+      method: 'POST',
+      body: JSON.stringify({
+        topic: selectedTopic,
+        question: currentQuiz.pergunta,
+        correct: index === correct
+      })
+    }).catch(() => {});
   }
 
   const fb = document.getElementById('quiz-feedback');
