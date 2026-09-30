@@ -1,10 +1,10 @@
-const CACHE_NAME = 'escola-intercessao-v2';
+const CACHE_NAME = 'escola-intercessao-v3';
 const APP_SHELL = [
-  '/Escola-Intercessao/',
-  '/Escola-Intercessao/index.html',
-  '/Escola-Intercessao/manifest.json',
-  '/Escola-Intercessao/icon-192.png',
-  '/Escola-Intercessao/icon-512.png'
+  '/escola/',
+  '/escola/index.html',
+  '/escola/manifest.json',
+  '/escola/icon-192.png',
+  '/escola/icon-512.png'
 ];
 
 // Ao instalar, guarda uma cópia das páginas/ícones do próprio site (não do chat/quiz)
