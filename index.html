@@ -896,7 +896,7 @@ body { font-size: 1rem !important; }
 @media (prefers-reduced-motion: reduce) { #fogo-fundo { animation: none; } }
 
 </style>
-<!-- Supabase removido: migrado para Cloudflare Workers --></script>
+<!-- Supabase removido: migrado para Cloudflare Workers -->
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#3d2b1f">
 <link rel="apple-touch-icon" href="icon-192.png">
@@ -1119,6 +1119,13 @@ async function api(path, opts = {}) {
 }
 
 const DAILY_MESSAGE_LIMIT = 75;
+// Teto do contexto enviado à IA (~20 intercâmbios): economiza tokens e evita lentidão
+const MAX_HISTORY = 40;
+function trimHistory() {
+  if (geminiHistory.length > MAX_HISTORY) {
+    geminiHistory = geminiHistory.slice(-MAX_HISTORY);
+  }
+}
 
 let currentUser = null;
 let isSignupMode = false;
@@ -1344,6 +1351,9 @@ async function checkSession() {
     await onLoginSuccess(data.user);
   } catch (e) {
     setToken(null);
+    currentUser = null;
+    document.getElementById('userBar').style.display = 'none';
+    document.getElementById('authOverlay').style.display = 'flex';
   }
 }
 
@@ -1382,7 +1392,8 @@ async function loadChatHistory() {
   if (!data || data.length === 0) return;
 
   geminiHistory = data.map(m => ({ role: m.role, parts: [{ text: m.content }] }));
-  data.forEach(m => addMessage(m.content, m.role === 'model' ? 'agent' : 'user'));
+  trimHistory();
+  data.slice(-MAX_HISTORY).forEach(m => addMessage(m.content, m.role === 'model' ? 'agent' : 'user'));
 }
 
 async function saveChatMessage(role, content) {
@@ -1530,6 +1541,7 @@ async function sendMessage() {
 
   geminiHistory.push({ role: 'user', parts: [{ text: text }] });
   saveChatMessage('user', text);
+  trimHistory();
 
   try {
     const token = await getAccessToken();
@@ -1558,6 +1570,7 @@ async function sendMessage() {
       const reply = data.candidates[0].content.parts[0].text;
       addMessage(reply, 'agent');
       geminiHistory.push({ role: 'model', parts: [{ text: reply }] });
+      trimHistory();
       saveChatMessage('model', reply);
     } else {
       addMessage('A resposta foi bloqueada pelos filtros de segurança.', 'agent');
@@ -1573,6 +1586,12 @@ async function generateQuiz() {
   const area = document.getElementById('quizArea');
   const btn = document.getElementById('generateBtn');
   btn.disabled = true;
+  const withinLimit = await checkDailyLimit();
+  if (!withinLimit) {
+    btn.disabled = false;
+    area.innerHTML = `<div class="loading-text">Você atingiu o limite de ${DAILY_MESSAGE_LIMIT} mensagens hoje. Volte amanhã para continuar aprendendo! 🙏</div>`;
+    return;
+  }
   area.innerHTML = `<div class="loading-text"><svg class="icon"><use href="#i-spark"/></svg> Preparando pergunta sobre: <em>${selectedTopic}</em>...</div>`;
   quizAnswered = false;
 
@@ -1602,6 +1621,7 @@ async function generateQuiz() {
       let raw = data.candidates[0].content.parts[0].text;
       raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
       currentQuiz = JSON.parse(raw);
+      if (!isValidQuiz(currentQuiz)) throw new Error('Quiz em formato inválido.');
       currentQuiz = shuffleQuizOptions(currentQuiz);
       renderQuiz(currentQuiz);
     } else {
@@ -1613,20 +1633,28 @@ async function generateQuiz() {
   btn.disabled = false;
 }
 
+function isValidQuiz(q) {
+  return q && typeof q.pergunta === 'string' && q.pergunta.trim() !== '' &&
+    Array.isArray(q.opcoes) && q.opcoes.length >= 2 &&
+    q.opcoes.every(o => typeof o === 'string' && o.trim() !== '') &&
+    Number.isInteger(q.correta) && q.correta >= 0 && q.correta < q.opcoes.length &&
+    typeof q.explicacao === 'string';
+}
+
 function shuffleQuizOptions(quiz) {
-  // Tira o "A) " / "B) " original, porque a ordem vai mudar
-  const textosLimpos = quiz.opcoes.map(op => op.replace(/^[A-D]\)\s*/, ''));
-  const correctText = textosLimpos[quiz.correta];
+  // Trabalha com referências (não texto) para não errar se duas opções forem iguais
+  const itens = quiz.opcoes.map(op => ({ texto: String(op).replace(/^[A-Z]\)\s*/, '') }));
+  const correctItem = itens[quiz.correta];
 
   // Embaralha (Fisher-Yates)
-  for (let i = textosLimpos.length - 1; i > 0; i--) {
+  for (let i = itens.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [textosLimpos[i], textosLimpos[j]] = [textosLimpos[j], textosLimpos[i]];
+    [itens[i], itens[j]] = [itens[j], itens[i]];
   }
 
-  const letras = ['A', 'B', 'C', 'D'];
-  quiz.opcoes = textosLimpos.map((texto, i) => `${letras[i]}) ${texto}`);
-  quiz.correta = textosLimpos.indexOf(correctText);
+  const letras = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  quiz.opcoes = itens.map((it, i) => `${letras[i]}) ${it.texto}`);
+  quiz.correta = itens.indexOf(correctItem);
   return quiz;
 }
 
