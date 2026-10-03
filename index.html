@@ -1107,6 +1107,28 @@ body.light .next-btn:hover { background: var(--gold) !important; color: white !i
 body.light .user-bar { background: transparent !important; backdrop-filter: none !important; }
 body.light .user-bar button { color: var(--brown) !important; }
 
+/* ===== LEGIBILIDADE GERAL (textos secundários apagados) ===== */
+.masters-label { font-size: 11px !important; color: #c9b896 !important; }
+.tab-btn { color: #c9b896 !important; }
+.master-chip { font-size: 13px !important; }
+.topic-card .t-name { font-size: 13.5px !important; color: #fff7e6 !important; }
+.topic-card .t-sub { font-size: 12px !important; color: #d3c096 !important; opacity: 1 !important; }
+.quiz-ref { color: #d3c096 !important; }
+.quiz-feedback { color: var(--cream) !important; }
+.quiz-feedback .verse { color: #d3c096 !important; opacity: 1 !important; }
+.msg-label { font-size: 10px !important; opacity: 1 !important; }
+.user-bar { color: #c9b896 !important; }
+.master-card .books { color: #9db48c !important; opacity: 1 !important; }
+.prog-meta {
+  display: flex; justify-content: space-between;
+  font-size: 12.5px; color: #d3c096; margin-bottom: 4px;
+}
+body.light .prog-meta { color: #6b5b40; }
+body.light .topic-card .t-name { color: var(--brown) !important; }
+body.light .topic-card .t-sub { color: var(--muted) !important; }
+body.light .tab-btn { color: var(--muted) !important; }
+body.light .masters-label { color: var(--muted) !important; }
+
 /* ===== MOBILE (iPhone 14 = 390px e menores) ===== */
 @media (max-width: 640px) {
   .container { padding: 0 12px 60px; }
@@ -2225,7 +2247,7 @@ async function loadProgress() {
     stats.byTopic.forEach(t => {
       const p = t.total ? Math.round((t.correct / t.total) * 100) : 0;
       html += `<div>
-        <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:4px;">
+        <div class="prog-meta">
           <span>${escapeHtml(t.topic || 'Geral')}</span><span>${t.correct}/${t.total} · ${p}%</span>
         </div>
         <div style="height:8px;border-radius:4px;background:rgba(217,169,64,.15);overflow:hidden;margin-bottom:10px;">
