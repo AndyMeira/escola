@@ -986,6 +986,7 @@ body { font-size: 1rem !important; }
     <button class="tab-btn active" onclick="switchTab('chat')"><svg class="icon"><use href="#i-quill"/></svg> Aprender & Perguntar</button>
     <button class="tab-btn" onclick="switchTab('quiz')"><svg class="icon"><use href="#i-scroll"/></svg> Exercícios & Quiz</button>
     <button class="tab-btn" onclick="switchTab('masters')"><svg class="icon"><use href="#i-book"/></svg> Os Intercessores</button>
+    <button class="tab-btn" onclick="switchTab('progress')"><svg class="icon"><use href="#i-star"/></svg> Meu Progresso</button>
   </div>
 
   <div id="tab-chat" class="tab-panel active">
@@ -1090,6 +1091,15 @@ body { font-size: 1rem !important; }
         <p>Pastor com forte atuação em conferências no Brasil, com ministração voltada à vida no Espírito, cura e discernimento profético. Seu testemunho ilustra a busca perseverante pela presença de Deus descrita em Atos 2 e 2 Reis 2.</p>
         <div class="books">📚 Andando no Poder (seminários) · Mensagens em áudio/vídeo</div>
       </div>
+    </div>
+  </div>
+
+  <div id="tab-progress" class="tab-panel">
+    <div class="quiz-section">
+      <div class="quiz-box" id="progressBox">
+        <div class="loading-text">Carregando seu progresso...</div>
+      </div>
+      <button class="generate-btn" onclick="loadProgress()"><svg class="icon"><use href="#i-star"/></svg> Atualizar</button>
     </div>
   </div>
 
@@ -1572,10 +1582,11 @@ REGRAS OBRIGATÓRIAS DE ESTRUTURA:
 
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', ['chat','quiz','masters'][i] === tab);
+    b.classList.toggle('active', ['chat','quiz','masters','progress'][i] === tab);
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'progress') loadProgress();
 }
 
 function selectTopic(el) {
@@ -1789,6 +1800,42 @@ function renderQuiz(quiz) {
     <button class="next-btn" id="nextBtn" style="display:none" onclick="generateQuiz()">Próxima Pergunta →</button>
   </div>`;
   area.innerHTML = html;
+}
+
+async function loadProgress() {
+  const box = document.getElementById('progressBox');
+  if (!box) return;
+  if (!currentUser) {
+    box.innerHTML = '<div class="loading-text">Entre para ver seu progresso. 🙏</div>';
+    return;
+  }
+  box.innerHTML = '<div class="loading-text">Carregando seu progresso...</div>';
+  try {
+    const stats = await api('/db/quiz_stats');
+    if (!stats.total) {
+      box.innerHTML = '<div class="loading-text">Você ainda não respondeu nenhum quiz. Gere uma pergunta na aba Exercícios! 📜</div>';
+      return;
+    }
+    const pct = Math.round((stats.correct / stats.total) * 100);
+    let html = `<div class="quiz-ref">Seu desempenho</div>
+      <div class="quiz-question">${stats.correct} de ${stats.total} corretas (${pct}%)</div>
+      <div class="quiz-options">`;
+    stats.byTopic.forEach(t => {
+      const p = t.total ? Math.round((t.correct / t.total) * 100) : 0;
+      html += `<div>
+        <div style="display:flex;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:4px;">
+          <span>${escapeHtml(t.topic || 'Geral')}</span><span>${t.correct}/${t.total} · ${p}%</span>
+        </div>
+        <div style="height:8px;border-radius:4px;background:rgba(217,169,64,.15);overflow:hidden;margin-bottom:10px;">
+          <div style="height:100%;width:${p}%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));border-radius:4px;"></div>
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+    box.innerHTML = html;
+  } catch (e) {
+    box.innerHTML = '<div class="loading-text">Não foi possível carregar. Tente novamente.</div>';
+  }
 }
 
 function answerQuiz(index) {

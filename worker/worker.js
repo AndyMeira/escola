@@ -347,6 +347,15 @@ export default {
     if (path === '/db/usage' && req.method === 'GET') {
       return json({ count: await todayCount(env, user.id) });
     }
+    if (path === '/db/quiz_stats' && req.method === 'GET') {
+      const t = await env.DB.prepare(
+        'SELECT COUNT(*) AS total, COALESCE(SUM(correct), 0) AS correct FROM quiz_attempts WHERE user_id = ?'
+      ).bind(user.id).first();
+      const by = await env.DB.prepare(
+        'SELECT topic, COUNT(*) AS total, COALESCE(SUM(correct), 0) AS correct FROM quiz_attempts WHERE user_id = ? GROUP BY topic ORDER BY total DESC'
+      ).bind(user.id).all();
+      return json({ total: t.total || 0, correct: t.correct || 0, byTopic: by.results || [] });
+    }
     if (path === '/api/gemini' && req.method === 'POST') return handleGemini(req, env, user);
 
     return err('Rota não encontrada.', 404);
