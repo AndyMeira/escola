@@ -1003,8 +1003,7 @@ body.light {
   color: var(--ink) !important;
   font-family: 'Lato', sans-serif !important;
 }
-body.light::after { display: none; }
-body.light #fogo-fundo, body.light #brasas-codice { display: none; }
+body.light::after { background: radial-gradient(circle 500px at var(--mx,50%) var(--my,50%), rgba(184,134,11,.10), transparent 65%); }
 body.light header h1 {
   font-family: 'Cinzel Decorative', serif !important;
   background: none !important;
@@ -2281,13 +2280,15 @@ function answerQuiz(index) {
   }
   (function tick(){
     ctx.clearRect(0,0,W,H);
+    // No tema claro as brasas usam laranja queimado (visível no creme)
+    const cor = document.body.classList.contains('light') ? '190,100,15' : '255,205,110';
     for (const p of parts){
       p.fase += 0.02; p.x += p.vx + Math.sin(p.fase)*0.35; p.y += p.vy;
       if (p.y < -10) Object.assign(p, nova(false));
       const a = p.a * (0.6+0.4*Math.sin(p.fase*2));
       const g = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*4);
-      g.addColorStop(0, `rgba(255,205,110,${a})`);
-      g.addColorStop(1, 'rgba(255,205,110,0)');
+      g.addColorStop(0, `rgba(${cor},${a})`);
+      g.addColorStop(1, `rgba(${cor},0)`);
       ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x,p.y,p.r*4,0,7); ctx.fill();
     }
     requestAnimationFrame(tick);
