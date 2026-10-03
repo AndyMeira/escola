@@ -1,0 +1,15 @@
+name = "escola-backup"
+main = "backup.js"
+compatibility_date = "2025-01-01"
+
+[triggers]
+crons = ["0 3 * * SUN"]
+
+[[d1_databases]]
+binding = "DB"
+database_name = "escola-db"
+database_id = "bebda047-048f-4c9e-9711-246a6902e0f4"
+
+[[kv_namespaces]]
+binding = "BACKUPS"
+id = "925fd76df6514bb9a6ac916fd38808b9"
