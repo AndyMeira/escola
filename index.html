@@ -953,6 +953,9 @@ body { font-size: 1rem !important; }
     <div class="auth-toggle" id="authToggleText">
       Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>
     </div>
+    <div class="auth-toggle" id="authForgotLink">
+      <a onclick="showForgot()">Esqueci a senha</a>
+    </div>
   </div>
 </div>
 
@@ -1129,6 +1132,8 @@ function trimHistory() {
 
 let currentUser = null;
 let isSignupMode = false;
+let isForgotMode = false;
+let resetToken = null;
 
 let activeTheme = "Todos";
 let geminiHistory = [];
@@ -1273,6 +1278,13 @@ window.addEventListener('DOMContentLoaded', () => {
       sendMessage();
     }
   });
+  // Link de recuperação do e-mail: .../escola/#reset=TOKEN
+  if (location.hash.startsWith('#reset=')) {
+    const token = location.hash.slice('#reset='.length);
+    location.hash = '';
+    document.getElementById('authOverlay').style.display = 'flex';
+    showReset(token);
+  }
   checkSession();
 });
 
@@ -1284,20 +1296,77 @@ if ('serviceWorker' in navigator) {
 }
 
 function toggleAuthMode() {
-  isSignupMode = !isSignupMode;
-  document.getElementById('authNameField').style.display = isSignupMode ? 'block' : 'none';
-  document.getElementById('authSubmitBtn').textContent = isSignupMode ? 'Cadastrar' : 'Entrar';
-  document.getElementById('authSubtitle').textContent = isSignupMode ? 'Crie sua conta para começar' : 'Entre para continuar seus estudos';
-  document.getElementById('authToggleText').innerHTML = isSignupMode
-    ? 'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>'
-    : 'Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>';
+  if (isSignupMode) showLogin();
+  else showSignup();
+}
+
+function showLogin() {
+  isSignupMode = false; isForgotMode = false; resetToken = null;
+  document.getElementById('authNameField').style.display = 'none';
+  document.getElementById('authPassword').style.display = 'block';
+  document.getElementById('authSubmitBtn').textContent = 'Entrar';
+  document.getElementById('authSubtitle').textContent = 'Entre para continuar seus estudos';
+  document.getElementById('authToggleText').innerHTML =
+    'Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>';
+  document.getElementById('authForgotLink').style.display = 'block';
   hideAuthError();
+}
+
+function showSignup() {
+  isSignupMode = true; isForgotMode = false; resetToken = null;
+  document.getElementById('authNameField').style.display = 'block';
+  document.getElementById('authPassword').style.display = 'block';
+  document.getElementById('authSubmitBtn').textContent = 'Cadastrar';
+  document.getElementById('authSubtitle').textContent = 'Crie sua conta para começar';
+  document.getElementById('authToggleText').innerHTML =
+    'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  document.getElementById('authForgotLink').style.display = 'none';
+  hideAuthError();
+}
+
+function showForgot() {
+  isSignupMode = false; isForgotMode = true; resetToken = null;
+  document.getElementById('authNameField').style.display = 'none';
+  document.getElementById('authPassword').style.display = 'none';
+  document.getElementById('authSubmitBtn').textContent = 'Enviar link';
+  document.getElementById('authSubtitle').textContent = 'Digite seu e-mail para receber o link de recuperação';
+  document.getElementById('authToggleText').innerHTML =
+    'Lembrou a senha? <a onclick="showLogin()">Entrar</a>';
+  document.getElementById('authForgotLink').style.display = 'none';
+  hideAuthError();
+}
+
+function showReset(token) {
+  isSignupMode = false; isForgotMode = false; resetToken = token;
+  document.getElementById('authNameField').style.display = 'none';
+  document.getElementById('authEmail').style.display = 'none';
+  document.getElementById('authPassword').style.display = 'block';
+  document.getElementById('authPassword').value = '';
+  document.getElementById('authPassword').placeholder = 'Nova senha (mín. 6 caracteres)';
+  document.getElementById('authSubmitBtn').textContent = 'Definir nova senha';
+  document.getElementById('authSubtitle').textContent = 'Escolha sua nova senha';
+  document.getElementById('authToggleText').innerHTML =
+    'Lembrou a senha? <a onclick="showLogin()">Entrar</a>';
+  document.getElementById('authForgotLink').style.display = 'none';
+  hideAuthError();
+}
+
+function showAuthInfo(msg) {
+  const el = document.getElementById('authError');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.style.borderLeftColor = 'var(--sage)';
+  el.style.color = 'var(--sage)';
+  el.style.background = 'rgba(74,103,65,0.08)';
 }
 
 function showAuthError(msg) {
   const el = document.getElementById('authError');
   el.textContent = msg;
   el.style.display = 'block';
+  el.style.borderLeftColor = '';
+  el.style.color = '';
+  el.style.background = '';
 }
 
 function hideAuthError() {
@@ -1309,6 +1378,54 @@ async function submitAuth() {
   const email = document.getElementById('authEmail').value.trim();
   const password = document.getElementById('authPassword').value;
   const name = document.getElementById('authNameField').value.trim();
+
+  // Fluxo de definição de nova senha (link do e-mail)
+  if (resetToken) {
+    const password = document.getElementById('authPassword').value;
+    if (!password || password.length < 6) {
+      showAuthError('A nova senha deve ter ao menos 6 caracteres.');
+      return;
+    }
+    const btn = document.getElementById('authSubmitBtn');
+    btn.disabled = true;
+    try {
+      await api('/auth/reset', {
+        method: 'POST',
+        body: JSON.stringify({ token: resetToken, password })
+      });
+      document.getElementById('authEmail').style.display = 'block';
+      document.getElementById('authPassword').placeholder = 'Senha';
+      showLogin();
+      showAuthInfo('Senha atualizada! Entre com sua nova senha. 🙏');
+    } catch (e) {
+      showAuthError(e.message || 'Link inválido ou expirado.');
+      btn.disabled = false;
+    }
+    return;
+  }
+
+  // Fluxo de pedido de recuperação
+  if (isForgotMode) {
+    const email = document.getElementById('authEmail').value.trim();
+    if (!email) {
+      showAuthError('Digite seu e-mail.');
+      return;
+    }
+    const btn = document.getElementById('authSubmitBtn');
+    btn.disabled = true;
+    try {
+      await api('/auth/forgot', {
+        method: 'POST',
+        body: JSON.stringify({ email })
+      });
+      showLogin();
+      showAuthInfo('Se o e-mail estiver cadastrado, você receberá o link de recuperação. 🙏');
+    } catch (e) {
+      showAuthError(e.message || 'Erro ao enviar. Tente novamente.');
+      btn.disabled = false;
+    }
+    return;
+  }
 
   if (!email || !password) {
     showAuthError('Preencha e-mail e senha.');
