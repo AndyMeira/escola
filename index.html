@@ -1315,6 +1315,7 @@ function showLogin() {
   document.getElementById('authNameField').style.display = 'none';
   document.getElementById('authPassword').style.display = 'block';
   document.getElementById('authSubmitBtn').textContent = 'Entrar';
+  document.getElementById('authSubmitBtn').disabled = false;
   document.getElementById('authSubtitle').textContent = 'Entre para continuar seus estudos';
   document.getElementById('authToggleText').innerHTML =
     'Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>';
@@ -1327,6 +1328,7 @@ function showSignup() {
   document.getElementById('authNameField').style.display = 'block';
   document.getElementById('authPassword').style.display = 'block';
   document.getElementById('authSubmitBtn').textContent = 'Cadastrar';
+  document.getElementById('authSubmitBtn').disabled = false;
   document.getElementById('authSubtitle').textContent = 'Crie sua conta para começar';
   document.getElementById('authToggleText').innerHTML =
     'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
@@ -1339,6 +1341,7 @@ function showForgot() {
   document.getElementById('authNameField').style.display = 'none';
   document.getElementById('authPassword').style.display = 'none';
   document.getElementById('authSubmitBtn').textContent = 'Enviar link';
+  document.getElementById('authSubmitBtn').disabled = false;
   document.getElementById('authSubtitle').textContent = 'Digite seu e-mail para receber o link de recuperação';
   document.getElementById('authToggleText').innerHTML =
     'Lembrou a senha? <a onclick="showLogin()">Entrar</a>';
@@ -1354,6 +1357,7 @@ function showReset(token) {
   document.getElementById('authPassword').value = '';
   document.getElementById('authPassword').placeholder = 'Nova senha (mín. 6 caracteres)';
   document.getElementById('authSubmitBtn').textContent = 'Definir nova senha';
+  document.getElementById('authSubmitBtn').disabled = false;
   document.getElementById('authSubtitle').textContent = 'Escolha sua nova senha';
   document.getElementById('authToggleText').innerHTML =
     'Lembrou a senha? <a onclick="showLogin()">Entrar</a>';
