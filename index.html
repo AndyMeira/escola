@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Escola de Intercessão</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel+Decorative:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
     --cream: #fdf8ef;
@@ -1059,7 +1059,7 @@ body.light .auth-box, body.light .quiz-box {
   box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
 }
 body.light .auth-box:hover, body.light .quiz-box:hover { transform: none !important; }
-body.light .auth-box h2 { font-family: 'Cinzel Decorative', serif !important; color: var(--brown) !important; }
+body.light .auth-box h2 { color: var(--brown) !important; }
 body.light .auth-box button.primary {
   background: var(--brown) !important;
   color: var(--gold-bright) !important;
@@ -1081,7 +1081,7 @@ body.light .option-btn {
 body.light .option-btn:hover:not(:disabled) { transform: none !important; box-shadow: none !important; }
 body.light .option-btn.correct { border-color: var(--sage) !important; background: rgba(74,103,65,0.08) !important; color: var(--sage) !important; }
 body.light .option-btn.wrong { border-color: var(--terracotta) !important; background: rgba(139,58,42,0.08) !important; color: var(--terracotta) !important; }
-body.light .quiz-question { color: var(--brown) !important; font-family: 'Playfair Display', serif !important; }
+body.light .quiz-question { color:var(--brown) !important; }
 body.light .quiz-ref { font-style: normal !important; }
 body.light .quiz-feedback { background: #fffbf0 !important; color: var(--brown) !important; }
 body.light .master-chip { background: white !important; color: var(--brown) !important; }
@@ -1092,7 +1092,7 @@ body.light .topic-card .t-name { color: var(--brown) !important; }
 body.light .quick-btn { background: white !important; color: var(--brown) !important; }
 body.light .quick-btn:hover { background: var(--parchment) !important; color: var(--gold) !important; }
 body.light .master-card { background: white !important; }
-body.light .master-card h3 { font-family: 'Playfair Display', serif !important; color: var(--brown) !important; }
+body.light .master-card h3 { color:var(--brown) !important; }
 body.light .master-card p { color: var(--muted) !important; }
 body.light .tab-btn { color: var(--muted) !important; }
 body.light .tab-btn.active { color: var(--gold) !important; }
@@ -1140,6 +1140,20 @@ body.light .masters-label { color: var(--muted) !important; }
   z-index: 999;
   pointer-events: none;
 }
+
+/* ===== DIRETRIZ DE FONTES — marca da Escola (claro e escuro) =====
+   Display  : 'Almendra'     → títulos, botões principais, chamadas
+   Leitura  : 'EB Garamond'  → textos longos (bolhas, feedback, versos)
+   Interface: 'Lato'         → todo o resto (abas, chips, cards, inputs) */
+body header h1, body .auth-box h2, body .generate-btn, body .auth-box button.primary,
+body .quiz-question, body .master-card h3, body .msg-label { font-family: 'Almendra', serif !important; }
+body header p, body .auth-box p.sub, body .msg-bubble, body .quiz-feedback,
+body .quiz-feedback .verse, body .master-card p, body .loading-text { font-family: 'EB Garamond', serif !important; }
+body .masters-section .masters-label, body .master-chip, body .tab-btn, body .chat-header-text,
+body .active-master-badge, body .chat-input-area textarea, body .auth-box input, body .quick-btn,
+body .topic-card .t-name, body .topic-card .t-sub, body .quiz-ref, body .option-btn, body .next-btn,
+body .master-card .origin, body .master-card .books, body .auth-toggle, body .auth-error,
+body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { font-family: 'Lato', sans-serif !important; }
 
 /* ===== MOBILE (iPhone 14 = 390px e menores) ===== */
 @media (max-width: 640px) {
