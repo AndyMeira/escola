@@ -1,0 +1,13 @@
+name = "escola-intercessao-api"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "escola-db"
+database_id = "bebda047-048f-4c9e-9711-246a6902e0f4"
+
+# Secrets (NÃO commitar valores!): configurar via dashboard ou:
+#   wrangler secret put GEMINI_API_KEY
+#   wrangler secret put JWT_SECRET
+# Opcional (texto): GEMINI_MODEL (padrão: gemini-3.6-flash)
