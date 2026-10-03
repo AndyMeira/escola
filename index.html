@@ -968,6 +968,133 @@ textarea::placeholder { color: #9d8a6d !important; opacity: 1 !important; }
 }
 .msg.agent .msg-bubble { font-size: 1.02rem !important; letter-spacing: .01em; }
 
+/* ===== BOTÃO DE TEMA ===== */
+#themeToggle {
+  position: fixed;
+  top: 12px; right: 12px;
+  z-index: 1001;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(28,22,16,.85);
+  font-size: 18px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(6px);
+}
+body.light #themeToggle { background: rgba(255,255,255,.9); }
+
+/* ===== TEMA CLARO (o escuro é o padrão) ===== */
+body.light {
+  --cream: #fdf8ef;
+  --parchment: #f2e8d5;
+  --brown: #3d2b1f;
+  --gold: #b8860b;
+  --gold-light: #d4a935;
+  --gold-bright: #f0c040;
+  --terracotta: #8b3a2a;
+  --sage: #4a6741;
+  --ink: #2c1810;
+  --muted: #7a6a5a;
+  --border: rgba(184,134,11,0.25);
+  background: var(--cream) !important;
+  background-image:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(184,134,11,0.08) 0%, transparent 70%) !important;
+  color: var(--ink) !important;
+  font-family: 'Lato', sans-serif !important;
+}
+body.light::after { display: none; }
+body.light #fogo-fundo, body.light #brasas-codice { display: none; }
+body.light header h1 {
+  font-family: 'Cinzel Decorative', serif !important;
+  background: none !important;
+  color: var(--brown) !important;
+  animation: none !important;
+  filter: none !important;
+}
+body.light header h1 span { color: var(--gold) !important; }
+body.light header p, body.light .auth-box p.sub { color: var(--muted) !important; }
+body.light .chat-window, body.light .chat-input-area, body.light .api-bar { background: white !important; }
+body.light .messages { background: #fdfbf7 !important; }
+body.light .auth-overlay { background: var(--cream) !important; }
+body.light .chat-window { box-shadow: 0 4px 24px rgba(0,0,0,0.07) !important; }
+body.light .msg.agent .msg-bubble {
+  background: white !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--border) !important;
+}
+body.light .msg.user .msg-bubble {
+  background: var(--brown) !important;
+  color: var(--cream) !important;
+  border: 1px solid var(--brown) !important;
+}
+body.light .msg-label { color: var(--gold) !important; font-family: 'Lato', sans-serif !important; }
+body.light .api-bar input, body.light .chat-input-area input,
+body.light .auth-box input, body.light textarea {
+  background: var(--cream) !important;
+  color: var(--ink) !important;
+  border: 1px solid var(--border) !important;
+  font-family: 'Lato', sans-serif !important;
+  box-shadow: none !important;
+}
+body.light textarea::placeholder, body.light .api-bar input::placeholder,
+body.light .auth-box input::placeholder, body.light .chat-input-area input::placeholder {
+  color: var(--muted) !important;
+}
+body.light .send-btn { background: var(--gold) !important; color: white !important; }
+body.light .auth-box, body.light .quiz-box {
+  background: white !important;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.1) !important;
+}
+body.light .auth-box:hover, body.light .quiz-box:hover { transform: none !important; }
+body.light .auth-box h2 { font-family: 'Cinzel Decorative', serif !important; color: var(--brown) !important; }
+body.light .auth-box button.primary {
+  background: var(--brown) !important;
+  color: var(--gold-bright) !important;
+  border: none !important;
+  font-family: 'Cinzel Decorative', serif !important;
+}
+body.light .auth-box button.primary::before { display: none; }
+body.light .auth-box button.primary:hover { background: var(--gold) !important; color: white !important; box-shadow: none !important; }
+body.light .auth-error {
+  background: rgba(139,58,42,0.08) !important;
+  border-left-color: var(--terracotta) !important;
+  color: var(--terracotta) !important;
+}
+body.light .option-btn {
+  background: var(--cream) !important;
+  color: var(--ink) !important;
+  font-family: 'Lato', sans-serif !important;
+}
+body.light .option-btn:hover:not(:disabled) { transform: none !important; box-shadow: none !important; }
+body.light .option-btn.correct { border-color: var(--sage) !important; background: rgba(74,103,65,0.08) !important; color: var(--sage) !important; }
+body.light .option-btn.wrong { border-color: var(--terracotta) !important; background: rgba(139,58,42,0.08) !important; color: var(--terracotta) !important; }
+body.light .quiz-question { color: var(--brown) !important; font-family: 'Playfair Display', serif !important; }
+body.light .quiz-ref { font-style: normal !important; }
+body.light .quiz-feedback { background: #fffbf0 !important; color: var(--brown) !important; }
+body.light .master-chip { background: white !important; color: var(--brown) !important; }
+body.light .master-chip.active, body.light .master-chip:hover { background: var(--gold) !important; color: white !important; }
+body.light .topic-card { background: white !important; }
+body.light .topic-card:hover, body.light .topic-card.selected { background: #fffbf0 !important; }
+body.light .topic-card .t-name { color: var(--brown) !important; }
+body.light .quick-btn { background: white !important; color: var(--brown) !important; }
+body.light .quick-btn:hover { background: var(--parchment) !important; color: var(--gold) !important; }
+body.light .master-card { background: white !important; }
+body.light .master-card h3 { font-family: 'Playfair Display', serif !important; color: var(--brown) !important; }
+body.light .master-card p { color: var(--muted) !important; }
+body.light .tab-btn { color: var(--muted) !important; }
+body.light .tab-btn.active { color: var(--gold) !important; }
+body.light .generate-btn {
+  background: var(--brown) !important;
+  color: var(--gold-bright) !important;
+  border: none !important;
+  font-family: 'Cinzel Decorative', serif !important;
+}
+body.light .next-btn { color: var(--gold) !important; }
+body.light .next-btn:hover { background: var(--gold) !important; color: white !important; }
+body.light .user-bar { background: transparent !important; backdrop-filter: none !important; }
+body.light .user-bar button { color: var(--brown) !important; }
+
 /* ===== MOBILE (iPhone 14 = 390px e menores) ===== */
 @media (max-width: 640px) {
   .container { padding: 0 12px 60px; }
@@ -1018,6 +1145,8 @@ textarea::placeholder { color: #9d8a6d !important; opacity: 1 !important; }
 <link href="https://fonts.googleapis.com/css2?family=Almendra:ital,wght@0,400;0,700;1,400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 </head>
 <body>
+
+<button id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
 
 <svg style="display:none" aria-hidden="true">
   <defs>
@@ -1390,6 +1519,7 @@ Exemplo de estrutura:
 }`;
 
 window.addEventListener('DOMContentLoaded', () => {
+  initTheme();
   renderThemeChips();
   renderTopicGrid();
   const textarea = document.getElementById('userInput');
@@ -1820,6 +1950,27 @@ async function receiveStream(res) {
     addMessage('Erro de conexão com a API. Verifique sua chave ou conexão.', 'agent');
   }
   btn.disabled = false;
+}
+
+// ===== TEMA CLARO/ESCURO =====
+function applyTheme(t) {
+  document.body.classList.toggle('light', t === 'light');
+  const btn = document.getElementById('themeToggle');
+  if (btn) btn.textContent = t === 'light' ? '☀️' : '🌙';
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', t === 'light' ? '#fdf8ef' : '#14100a');
+  try { localStorage.setItem('ei_theme', t); } catch (e) {}
+}
+function toggleTheme() {
+  applyTheme(document.body.classList.contains('light') ? 'dark' : 'light');
+}
+function initTheme() {
+  let t = null;
+  try { t = localStorage.getItem('ei_theme'); } catch (e) {}
+  if (t !== 'light' && t !== 'dark') {
+    t = (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+  }
+  applyTheme(t);
 }
 
 function friendlyError(msg) {
