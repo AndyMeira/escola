@@ -187,6 +187,18 @@ async function handleGemini(req, env, user) {
   const model = payload.model || env.GEMINI_MODEL || DEFAULT_MODEL;
   if (!env.GEMINI_API_KEY) return err('GEMINI_API_KEY não configurada no Worker.', 500);
   try {
+    // Streaming (SSE): repassa o fluxo do Gemini direto ao navegador, sem buffer
+    if (payload.stream) {
+      const r = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${env.GEMINI_API_KEY}&alt=sse`,
+        { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload.body || {}) }
+      );
+      if (!r.ok) return json(await r.json(), r.status);
+      return new Response(r.body, {
+        status: 200,
+        headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-cache', ...CORS },
+      });
+    }
     const r = await fetch(
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload.body || {}) }
