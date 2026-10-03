@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Escola de Intercessão</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Cinzel+Decorative:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
@@ -894,6 +894,103 @@ body { font-size: 1rem !important; }
   70%      { opacity: .8;  transform: scaleY(.97)  translateY(3px); }
 }
 @media (prefers-reduced-motion: reduce) { #fogo-fundo { animation: none; } }
+/* ===== CONTRASTE: componentes que ficaram claros no tema escuro ===== */
+.master-chip {
+  background: #241c13 !important;
+  border-color: var(--border) !important;
+  color: var(--gold-light) !important;
+}
+.master-chip.active, .master-chip:hover {
+  background: var(--gold) !important;
+  color: #1c1610 !important;
+  border-color: var(--gold) !important;
+}
+.topic-card {
+  background: var(--card-bg) !important;
+  border-color: var(--border) !important;
+}
+.topic-card:hover, .topic-card.selected {
+  background: #2e2418 !important;
+  border-color: var(--gold) !important;
+}
+.topic-card .t-name { color: var(--cream) !important; }
+.topic-card .t-sub { color: var(--muted) !important; opacity: 1 !important; }
+.quick-btn {
+  background: transparent !important;
+  border-color: var(--border) !important;
+  color: var(--gold-light) !important;
+}
+.quick-btn:hover {
+  background: rgba(217,169,64,.12) !important;
+  color: var(--gold-bright) !important;
+  border-color: var(--gold) !important;
+}
+.master-card {
+  background: linear-gradient(160deg, #261e14, #1b150d) !important;
+  border-color: var(--border) !important;
+}
+.master-card h3 { color: var(--gold-light) !important; }
+.master-card p { color: #e8dcc4 !important; }
+.master-card .origin { color: var(--gold) !important; }
+.tab-btn { color: var(--muted) !important; opacity: 1 !important; }
+.tab-btn.active { color: var(--gold-bright) !important; }
+.generate-btn {
+  background: linear-gradient(180deg, #4a3517, #33240f) !important;
+  border: 1px solid var(--gold) !important;
+  color: var(--gold-bright) !important;
+}
+.generate-btn:hover { color: #fff8e6 !important; }
+.next-btn { border-color: var(--gold) !important; color: var(--gold-light) !important; }
+.next-btn:hover { background: var(--gold) !important; color: #1c1610 !important; }
+.loading-text { color: var(--muted) !important; opacity: 1 !important; }
+textarea {
+  background: #191309 !important;
+  color: var(--cream) !important;
+  border-color: rgba(217,169,64,.4) !important;
+}
+textarea::placeholder { color: #9d8a6d !important; opacity: 1 !important; }
+.send-btn { background: var(--gold) !important; color: #1c1610 !important; }
+.auth-box input { color: var(--cream) !important; }
+.auth-box input::placeholder { color: #9d8a6d !important; opacity: 1 !important; }
+.user-bar { color: var(--muted) !important; }
+
+/* ===== MOBILE (iPhone 14 = 390px e menores) ===== */
+@media (max-width: 640px) {
+  .container { padding: 0 12px 60px; }
+  header { padding: 26px 0 18px; margin-bottom: 18px; }
+  .masters-section { margin-bottom: 18px; }
+  .masters-grid { gap: 6px; }
+  .master-chip { font-size: 11.5px; padding: 5px 10px; }
+  .tabs { margin-bottom: 20px; }
+  .tab-btn { font-size: 10px; letter-spacing: .4px; padding: 10px 2px; }
+  .tab-btn .icon { display: none; }
+  .chat-window { height: 72dvh; min-height: 430px; }
+  .chat-header { padding: 12px 14px; }
+  .chat-header-text { font-size: 12.5px; }
+  .active-master-badge { font-size: 10px; padding: 3px 8px; }
+  .messages { padding: 16px 12px; gap: 14px; }
+  .msg { max-width: 94%; }
+  .msg-bubble { padding: 12px 14px; }
+  .chat-input-area {
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  /* iOS dá zoom automático em inputs com fonte < 16px — evita o zoom */
+  textarea, .auth-box input { font-size: 16px !important; }
+  .quick-prompts { gap: 6px; }
+  .quick-btn { font-size: 11px; padding: 6px 10px; }
+  .topic-grid { grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .topic-card { padding: 12px 10px; }
+  .quiz-box { padding: 20px 16px; }
+  .quiz-question { font-size: 17px; }
+  .auth-box { padding: 26px 20px; }
+  .masters-info { grid-template-columns: 1fr; }
+  .user-bar { font-size: 11.5px; }
+}
+@media (max-width: 360px) {
+  .topic-grid { grid-template-columns: 1fr; }
+  .tab-btn { font-size: 9px; }
+}
 
 </style>
 <!-- Supabase removido: migrado para Cloudflare Workers -->
