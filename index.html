@@ -360,11 +360,21 @@
 
   .quiz-section { display: flex; flex-direction: column; gap: 20px; }
 
+  .section-hint {
+    color: var(--gold-light);
+    font-family: 'Lato', sans-serif;
+    font-size: 13.5px;
+    letter-spacing: .02em;
+    margin-bottom: 14px;
+  }
+  body.light .section-hint { color: #8a6508; }
+
   .topic-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
     gap: 10px;
     margin-bottom: 8px;
+    align-items: stretch;
   }
 
   .topic-card {
@@ -376,6 +386,8 @@
     transition: all 0.2s;
     text-align: left;
     box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
   }
 
   .topic-card:hover, .topic-card.selected {
@@ -1014,6 +1026,7 @@ body.light header h1 {
 body.light header h1 span { color: var(--gold) !important; }
 body.light header p, body.light .auth-box p.sub { color: var(--muted) !important; }
 body.light .chat-window, body.light .chat-input-area, body.light .api-bar { background: white !important; }
+body.light .quiz-section { background: transparent !important; border-color: transparent !important; }
 body.light .messages { background: #fdfbf7 !important; }
 body.light .auth-overlay { background: var(--cream) !important; }
 body.light .chat-window { box-shadow: 0 4px 24px rgba(0,0,0,0.07) !important; }
@@ -1269,7 +1282,7 @@ body.light .user-bar button { color: var(--brown) !important; }
   <div id="tab-quiz" class="tab-panel">
     <div class="quiz-section">
       <div>
-        <p style="color:var(--muted);font-size:13px;margin-bottom:14px;">Escolha um tema e teste seus conhecimentos:</p>
+        <p class="section-hint">Escolha um tema e teste seus conhecimentos:</p>
         <div class="topic-grid" id="topicGrid">
           <!-- Gerado automaticamente por renderTopicGrid(), a partir de THEMES + EXTRA_QUIZ_TOPICS -->
         </div>
@@ -1280,7 +1293,7 @@ body.light .user-bar button { color: var(--brown) !important; }
   </div>
 
   <div id="tab-masters" class="tab-panel">
-    <p style="color:var(--muted);font-size:13px;margin-bottom:20px;font-style:italic;">Conheça grandes testemunhos de intercessão — a Bíblia segue como fundamento:</p>
+    <p class="section-hint">Conheça grandes testemunhos de intercessão — a Bíblia segue como fundamento:</p>
     <div class="masters-info">
       <div class="master-card">
         <h3>Randy Clark</h3>
