@@ -1822,6 +1822,27 @@ async function receiveStream(res) {
   btn.disabled = false;
 }
 
+function friendlyError(msg) {
+  const m = String(msg || '');
+  if (/high demand|overloaded|UNAVAILABLE|503|try again later/i.test(m)) {
+    return 'O serviço de IA está sobrecarregado agora. Aguarde alguns minutos e tente de novo. 🙏';
+  }
+  if (/NOT_FOUND|not found|404/i.test(m)) {
+    return 'Modelo de IA indisponível no momento. Tente de novo em instantes. 🙏';
+  }
+  return m || 'Erro desconhecido.';
+}
+
+// Busca com retentativa automática em sobrecarga (503): 3s, 6s, 9s
+async function fetchGemini(url, options, tentativa = 1) {
+  const res = await fetch(url, options);
+  if (res.status === 503 && tentativa <= 3) {
+    await new Promise(r => setTimeout(r, tentativa * 3000));
+    return fetchGemini(url, options, tentativa + 1);
+  }
+  return res;
+}
+
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const btn = document.getElementById('sendBtn');
@@ -1845,7 +1866,7 @@ async function sendMessage() {
 
   try {
     const token = await getAccessToken();
-    const res = await fetch(PROXY_URL, {
+    const res = await fetchGemini(PROXY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1872,7 +1893,7 @@ async function sendMessage() {
     
     if (data.error) {
       const errMsg = typeof data.error === 'string' ? data.error : (data.error.message || 'Erro desconhecido.');
-      addMessage(`Erro ao buscar resposta: ${errMsg}`, 'agent');
+      addMessage(friendlyError(errMsg), 'agent');
     } else if (data.candidates && data.candidates[0].content) {
       const reply = data.candidates[0].content.parts[0].text;
       addMessage(reply, 'agent');
@@ -1904,7 +1925,7 @@ async function generateQuiz() {
 
   try {
     const token = await getAccessToken();
-    const res = await fetch(PROXY_URL, {
+    const res = await fetchGemini(PROXY_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1923,7 +1944,7 @@ async function generateQuiz() {
     const data = await res.json();
     if (data.error) {
       const errMsg = typeof data.error === 'string' ? data.error : (data.error.message || 'Erro desconhecido.');
-      area.innerHTML = `<div class="loading-text">Erro: ${escapeHtml(errMsg)}</div>`;
+      area.innerHTML = `<div class="loading-text">${escapeHtml(friendlyError(errMsg))}</div>`;
     } else if (data.candidates && data.candidates[0].content) {
       let raw = data.candidates[0].content.parts[0].text;
       raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
