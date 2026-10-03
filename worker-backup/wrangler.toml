@@ -3,7 +3,7 @@ main = "backup.js"
 compatibility_date = "2025-01-01"
 
 [triggers]
-crons = ["0 3 * * SUN"]
+crons = ["0 3 * * SUN", "0 21 * * *"]
 
 [[d1_databases]]
 binding = "DB"

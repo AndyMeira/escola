@@ -178,6 +178,12 @@ async function handleGemini(req, env, user) {
   if (await todayCount(env, user.id) >= DAILY_LIMIT) {
     return err(`Você atingiu o limite de ${DAILY_LIMIT} mensagens hoje. Volte amanhã para continuar aprendendo! 🙏`, 429);
   }
+  // Contador global do dia (monitor de cota) — nunca bloqueia a requisição
+  try {
+    await env.DB.prepare(
+      "INSERT INTO usage_daily (day, calls) VALUES (date('now'), 1) ON CONFLICT(day) DO UPDATE SET calls = calls + 1"
+    ).run();
+  } catch (e) {}
   let payload;
   try {
     payload = await req.json();
