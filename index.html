@@ -1129,6 +1129,17 @@ body.light .topic-card .t-sub { color: var(--muted) !important; }
 body.light .tab-btn { color: var(--muted) !important; }
 body.light .masters-label { color: var(--muted) !important; }
 
+.build-stamp {
+  position: fixed;
+  bottom: 6px; right: 10px;
+  font-size: 10px;
+  font-family: monospace;
+  color: var(--muted);
+  opacity: .7;
+  z-index: 999;
+  pointer-events: none;
+}
+
 /* ===== MOBILE (iPhone 14 = 390px e menores) ===== */
 @media (max-width: 640px) {
   .container { padding: 0 12px 60px; }
@@ -2300,6 +2311,7 @@ function answerQuiz(index) {
 
 <canvas id="brasas-codice"></canvas>
 <div id="fogo-fundo"></div>
+<div class="build-stamp" id="buildStamp">v20241003-a</div>
 <script>
 (function(){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
