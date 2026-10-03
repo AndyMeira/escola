@@ -959,6 +959,15 @@ textarea::placeholder { color: #9d8a6d !important; opacity: 1 !important; }
 .auth-overlay { background: #14100a !important; }
 .chat-window { box-shadow: 0 4px 30px rgba(0,0,0,.6) !important; }
 
+/* ===== LEITURA LONGA: linhas mais curtas e respiro no texto ===== */
+.msg { max-width: min(88%, 68ch); }
+.msg-bubble {
+  line-height: 1.8 !important;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+.msg.agent .msg-bubble { font-size: 1.02rem !important; letter-spacing: .01em; }
+
 /* ===== MOBILE (iPhone 14 = 390px e menores) ===== */
 @media (max-width: 640px) {
   .container { padding: 0 12px 60px; }
