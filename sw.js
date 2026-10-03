@@ -1,4 +1,4 @@
-const CACHE_NAME = 'escola-intercessao-v3';
+const CACHE_NAME = 'escola-intercessao-v4';
 const APP_SHELL = [
   '/escola/',
   '/escola/index.html',
@@ -30,6 +30,22 @@ self.addEventListener('activate', (event) => {
 // pra garantir que o chat e o login sempre usem dados atuais.
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
+
+  // Fontes do Google: cache primeiro (raramente mudam; funciona offline)
+  if (url.hostname.includes('fonts.g')) {
+    event.respondWith(
+      caches.match(event.request).then((cached) => {
+        const busca = fetch(event.request).then((response) => {
+          const copia = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copia));
+          return response;
+        }).catch(() => cached);
+        return cached || busca;
+      })
+    );
+    return;
+  }
+
   if (url.origin !== self.location.origin) return;
 
   const ehPagina = event.request.mode === 'navigate' || url.pathname.endsWith('.html');

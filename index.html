@@ -1153,6 +1153,22 @@ body.light .master-card .origin { color: #8a6508 !important; }
   pointer-events: none;
 }
 
+/* ===== BARRA OFFLINE ===== */
+#offlineBar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 1001;
+  text-align: center;
+  font-family: 'Lato', sans-serif;
+  font-size: 12.5px;
+  padding: 10px 14px;
+  padding-bottom: max(10px, env(safe-area-inset-bottom));
+  background: rgba(28,22,16,.95);
+  color: var(--gold-light);
+  border-top: 1px solid var(--border);
+}
+body.light #offlineBar { background: rgba(253,248,239,.96); color: #8a6508; }
+
 /* ===== DIRETRIZ DE FONTES — marca da Escola (claro e escuro) =====
    Display  : 'Almendra'     → títulos, botões principais, chamadas
    Leitura  : 'EB Garamond'  → textos longos (bolhas, feedback, versos)
@@ -1219,6 +1235,7 @@ body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { fon
 <body>
 
 <button id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
+<div id="offlineBar" style="display:none;">📡 Você está offline — dá para reler suas conversas salvas, mas o chat e o quiz precisam de internet.</div>
 
 <svg style="display:none" aria-hidden="true">
   <defs>
@@ -1425,6 +1442,16 @@ const PROXY_URL = "https://escola-intercessao-api.andymeira.workers.dev/api/gemi
 const API_BASE = "https://escola-intercessao-api.andymeira.workers.dev";
 function getToken() { return localStorage.getItem('ei_token'); }
 function setToken(t) { t ? localStorage.setItem('ei_token', t) : localStorage.removeItem('ei_token'); }
+
+// ===== MODO OFFLINE =====
+function isOffline() { return typeof navigator !== 'undefined' && navigator.onLine === false; }
+function updateOfflineBar() {
+  const bar = document.getElementById('offlineBar');
+  if (bar) bar.style.display = isOffline() ? 'block' : 'none';
+}
+function historyKey() { return 'ei_history_' + (currentUser ? currentUser.id : 'anon'); }
+window.addEventListener('online', updateOfflineBar);
+window.addEventListener('offline', updateOfflineBar);
 async function api(path, opts = {}) {
   const r = await fetch(API_BASE + path, {
     ...opts,
@@ -1592,6 +1619,7 @@ Exemplo de estrutura:
 
 window.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  updateOfflineBar();
   renderThemeChips();
   renderTopicGrid();
   const textarea = document.getElementById('userInput');
@@ -1831,13 +1859,24 @@ async function loadChatHistory() {
   let data;
   try {
     data = (await api('/db/chat_messages')).messages;
-  } catch (e) { return; }
+  } catch (e) { loadOfflineHistory(); return; }
 
   if (!data || data.length === 0) return;
 
+  try { localStorage.setItem(historyKey(), JSON.stringify(data.slice(-MAX_HISTORY))); } catch (e) {}
   geminiHistory = data.map(m => ({ role: m.role, parts: [{ text: m.content }] }));
   trimHistory();
   data.slice(-MAX_HISTORY).forEach(m => addMessage(m.content, m.role === 'model' ? 'agent' : 'user'));
+}
+
+function loadOfflineHistory() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(historyKey()) || 'null'); } catch (e) {}
+  if (!saved || !saved.length) return;
+  geminiHistory = saved.map(m => ({ role: m.role, parts: [{ text: m.content }] }));
+  trimHistory();
+  saved.forEach(m => addMessage(m.content, m.role === 'model' ? 'agent' : 'user'));
+  addMessage('Você está offline — mostrando as últimas conversas salvas neste aparelho. 📡', 'agent');
 }
 
 async function saveChatMessage(role, content) {
@@ -2128,7 +2167,9 @@ async function sendMessage() {
     }
   } catch(e) {
     removeTyping();
-    addMessage('Erro de conexão com a API. Verifique sua chave ou conexão.', 'agent');
+    addMessage(isOffline()
+      ? 'Você está offline. Reconecte-se à internet para continuar a conversa. 📡'
+      : 'Erro de conexão com a API. Verifique sua chave ou conexão.', 'agent');
   }
   btn.disabled = false;
 }
@@ -2216,8 +2257,10 @@ async function generateQuiz() {
     }
   } catch (e) {
     // IA fora do ar? Tenta uma pergunta guardada na reserva
-    if (await tryReserve()) return;
-    area.innerHTML = '<div class="loading-text">Não foi possível gerar a pergunta agora. Tente novamente em instantes. 🙏</div>';
+    if (!isOffline() && await tryReserve()) return;
+    area.innerHTML = `<div class="loading-text">${isOffline()
+      ? 'Você está offline. O quiz precisa de internet para gerar perguntas. 📡'
+      : 'Não foi possível gerar a pergunta agora. Tente novamente em instantes. 🙏'}</div>`;
   } finally {
     btn.disabled = false;
   }
