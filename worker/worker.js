@@ -368,6 +368,42 @@ export default {
       ).bind(user.id).all();
       return json({ total: t.total || 0, correct: t.correct || 0, byTopic: by.results || [] });
     }
+    if (path === '/db/quiz_cache' && req.method === 'POST') {
+      let b;
+      try {
+        b = await req.json();
+      } catch {
+        return err('Body JSON inválido.');
+      }
+      if (!b || typeof b.pergunta !== 'string' || !Array.isArray(b.opcoes) || b.opcoes.length < 2 ||
+          !Number.isInteger(b.correta) || b.correta < 0 || b.correta >= b.opcoes.length ||
+          typeof b.topic !== 'string' || !b.topic) {
+        return err('Quiz em formato inválido.');
+      }
+      await env.DB.prepare(
+        'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+      ).bind(crypto.randomUUID(), b.topic, b.pergunta, JSON.stringify(b.opcoes), b.correta,
+        b.explicacao || '', b.versiculo || '', new Date().toISOString()).run();
+      return json({ ok: true });
+    }
+    if (path === '/db/quiz_cache' && req.method === 'GET') {
+      const topic = url.searchParams.get('topic') || '';
+      const row = await env.DB.prepare(
+        'SELECT pergunta, opcoes, correta, explicacao, versiculo FROM quiz_cache WHERE topic = ? ORDER BY RANDOM() LIMIT 1'
+      ).bind(topic).first();
+      if (!row) return err('Sem perguntas guardadas para este tema.', 404);
+      let opcoes;
+      try {
+        opcoes = JSON.parse(row.opcoes);
+      } catch {
+        return err('Reserva corrompida.', 500);
+      }
+      return json({
+        pergunta: row.pergunta, opcoes,
+        correta: row.correta, explicacao: row.explicacao || '', versiculo: row.versiculo || '',
+        daReserva: true,
+      });
+    }
     if (path === '/api/gemini' && req.method === 'POST') return handleGemini(req, env, user);
 
     return err('Rota não encontrada.', 404);

@@ -1910,6 +1910,27 @@ async function sendMessage() {
   btn.disabled = false;
 }
 
+async function tryReserve() {
+  // Busca pergunta guardada para quando a IA está fora do ar
+  try {
+    const reserva = await api('/db/quiz_cache?topic=' + encodeURIComponent(selectedTopic));
+    if (reserva && reserva.pergunta && Array.isArray(reserva.opcoes)) {
+      currentQuiz = shuffleQuizOptions({
+        pergunta: reserva.pergunta,
+        opcoes: reserva.opcoes,
+        correta: reserva.correta,
+        explicacao: reserva.explicacao || '',
+        versiculo: reserva.versiculo || '',
+        daReserva: true
+      });
+      quizAnswered = false;
+      renderQuiz(currentQuiz);
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
 async function generateQuiz() {
   const area = document.getElementById('quizArea');
   const btn = document.getElementById('generateBtn');
@@ -1943,6 +1964,7 @@ async function generateQuiz() {
 
     const data = await res.json();
     if (data.error) {
+      if (await tryReserve()) return;
       const errMsg = typeof data.error === 'string' ? data.error : (data.error.message || 'Erro desconhecido.');
       area.innerHTML = `<div class="loading-text">${escapeHtml(friendlyError(errMsg))}</div>`;
     } else if (data.candidates && data.candidates[0].content) {
@@ -1952,13 +1974,30 @@ async function generateQuiz() {
       if (!isValidQuiz(currentQuiz)) throw new Error('Quiz em formato inválido.');
       currentQuiz = shuffleQuizOptions(currentQuiz);
       renderQuiz(currentQuiz);
+      // Guarda na reserva para usar quando a IA estiver fora do ar
+      if (currentUser) {
+        api('/db/quiz_cache', {
+          method: 'POST',
+          body: JSON.stringify({
+            topic: selectedTopic,
+            pergunta: currentQuiz.pergunta,
+            opcoes: currentQuiz.opcoes,
+            correta: currentQuiz.correta,
+            explicacao: currentQuiz.explicacao || '',
+            versiculo: currentQuiz.versiculo || ''
+          })
+        }).catch(() => {});
+      }
     } else {
       area.innerHTML = `<div class="loading-text">A pergunta foi bloqueada. Tente outro tema.</div>`;
     }
-  } catch(e) {
-    area.innerHTML = '<div class="loading-text">Erro ao processar o formato do Quiz. Tente novamente.</div>';
+  } catch (e) {
+    // IA fora do ar? Tenta uma pergunta guardada na reserva
+    if (await tryReserve()) return;
+    area.innerHTML = '<div class="loading-text">Não foi possível gerar a pergunta agora. Tente novamente em instantes. 🙏</div>';
+  } finally {
+    btn.disabled = false;
   }
-  btn.disabled = false;
 }
 
 function isValidQuiz(q) {
@@ -1989,7 +2028,7 @@ function shuffleQuizOptions(quiz) {
 function renderQuiz(quiz) {
   const area = document.getElementById('quizArea');
   let html = `<div class="quiz-box">
-    <div class="quiz-ref">Tema · ${escapeHtml(selectedTopic)}</div>
+    <div class="quiz-ref">Tema · ${escapeHtml(selectedTopic)}${quiz.daReserva ? ' · pergunta guardada 📦' : ''}</div>
     <div class="quiz-question">${escapeHtml(quiz.pergunta)}</div>
     <div class="quiz-options">`;
   quiz.opcoes.forEach((op, i) => {
