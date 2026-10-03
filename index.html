@@ -1650,6 +1650,63 @@ function removeTyping() {
   if (t) t.remove();
 }
 
+function addAgentStreaming() {
+  const msgs = document.getElementById('messages');
+  const div = document.createElement('div');
+  div.className = 'msg agent';
+  div.innerHTML = '<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="msg-bubble"></div>';
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div.querySelector('.msg-bubble');
+}
+
+async function receiveStream(res) {
+  const btn = document.getElementById('sendBtn');
+  const msgs = document.getElementById('messages');
+  const bubble = addAgentStreaming();
+  let fullText = '';
+  try {
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    for (;;) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const events = buf.split(/\r?\n\r?\n/);
+      buf = events.pop();
+      for (const ev of events) {
+        const line = ev.split(/\r?\n/).find(l => l.startsWith('data:'));
+        if (!line) continue;
+        try {
+          const d = JSON.parse(line.slice(5).trim());
+          const parts = (d.candidates && d.candidates[0].content && d.candidates[0].content.parts) || [];
+          const t = parts.map(p => p.text || '').join('');
+          if (t) {
+            fullText += t;
+            bubble.innerHTML = parseMarkdown(fullText);
+            msgs.scrollTop = msgs.scrollHeight;
+          }
+        } catch (e) {}
+      }
+    }
+    removeTyping();
+    if (fullText) {
+      geminiHistory.push({ role: 'model', parts: [{ text: fullText }] });
+      trimHistory();
+      saveChatMessage('model', fullText);
+    } else {
+      bubble.closest('.msg').remove();
+      addMessage('A resposta veio vazia. Tente novamente.', 'agent');
+    }
+  } catch (e) {
+    removeTyping();
+    bubble.closest('.msg').remove();
+    addMessage('Erro de conexão com a API. Verifique sua chave ou conexão.', 'agent');
+  }
+  btn.disabled = false;
+}
+
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const btn = document.getElementById('sendBtn');
@@ -1681,12 +1738,19 @@ async function sendMessage() {
       },
       body: JSON.stringify({
         model: GEMINI_MODEL,
+        stream: true,
         body: {
           system_instruction: { parts: [{ text: getSystemPrompt() }] },
           contents: geminiHistory
         }
       })
     });
+
+    const contentType = res.headers.get('content-type') || '';
+    if (contentType.includes('text/event-stream') && res.body) {
+      await receiveStream(res);
+      return;
+    }
 
     const data = await res.json();
     removeTyping();
