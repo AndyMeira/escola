@@ -108,6 +108,36 @@ async function verifyPassword(password, stored) {
   }
 }
 
+// ---------- SHA-256 hex (tokens de reset) ----------
+async function sha256hex(s) {
+  const bits = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return hex(new Uint8Array(bits));
+}
+
+// ---------- E-mail de reset (Resend; opcional) ----------
+// Configure: wrangler secret put RESEND_API_KEY  (+ var RESEND_FROM com domínio verificado)
+// Sem a chave, /auth/forgot responde ok mas não envia (sem vazar se o e-mail existe).
+async function sendResetEmail(env, toEmail, name, link) {
+  if (!env.RESEND_API_KEY) return false;
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + env.RESEND_API_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        from: env.RESEND_FROM || 'Escola de Intercessão <nao-responda@localhost>',
+        to: [toEmail],
+        subject: 'Recuperação de senha — Escola de Intercessão',
+        html: `<p>Olá, ${escapeHtmlLite(name)}!</p><p>Para criar uma nova senha, abra o link abaixo (válido por 1 hora):</p><p><a href="${link}">${link}</a></p><p>Se não foi você, ignore este e-mail. 🙏</p>`,
+      }),
+    });
+    return r.ok;
+  } catch {
+    return false;
+  }
+}
+function escapeHtmlLite(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
 // ---------- Rate limiting (por IP, aproximado) ----------
 const hits = new Map();
 function rateOk(key) {
@@ -191,6 +221,57 @@ async function handleSignup(req, env) {
   return json({ user, access_token: await newToken(user, env.JWT_SECRET) });
 }
 
+async function handleForgot(req, env) {
+  const ip = req.headers.get('CF-Connecting-IP') || 'anon';
+  if (!rateOk('forgot:' + ip)) return err('Muitas tentativas. Aguarde 1 minuto.', 429);
+  let b;
+  try {
+    b = await req.json();
+  } catch {
+    return err('Body JSON inválido.');
+  }
+  const email = (b.email || '').trim();
+  // Resposta sempre igual (não revela se o e-mail existe)
+  if (email) {
+    const u = await findUser(env, email);
+    if (u) {
+      const raw = hex(crypto.getRandomValues(new Uint8Array(32)));
+      const now = new Date();
+      const exp = new Date(now.getTime() + 60 * 60 * 1000).toISOString();
+      await env.DB.prepare(
+        'INSERT INTO password_resets (id, user_id, token_hash, expires_at, used, created_at) VALUES (?, ?, ?, ?, 0, ?)'
+      ).bind(crypto.randomUUID(), u.id, await sha256hex(raw), exp, now.toISOString()).run();
+      const link = 'https://andymeira.github.io/escola/#reset=' + raw;
+      await sendResetEmail(env, u.email, u.display_name || u.email, link);
+    }
+  }
+  return json({ ok: true });
+}
+
+async function handleReset(req, env) {
+  let b;
+  try {
+    b = await req.json();
+  } catch {
+    return err('Body JSON inválido.');
+  }
+  const token = b.token || '';
+  const password = b.password || '';
+  if (!token || !password) return err('Token e nova senha são obrigatórios.');
+  if (password.length < 6) return err('A nova senha deve ter ao menos 6 caracteres.');
+
+  const row = await env.DB.prepare(
+    'SELECT * FROM password_resets WHERE token_hash = ? AND used = 0'
+  ).bind(await sha256hex(token)).first();
+  if (!row || row.expires_at < new Date().toISOString()) {
+    return err('Link inválido ou expirado. Peça um novo link de recuperação.', 400);
+  }
+  await env.DB.prepare('UPDATE users SET password_hash = ? WHERE id = ?')
+    .bind(await hashPassword(password), row.user_id).run();
+  await env.DB.prepare('UPDATE password_resets SET used = 1 WHERE id = ?').bind(row.id).run();
+  return json({ ok: true });
+}
+
 async function handleLogin(req, env) {
   let b;
   try {
@@ -219,6 +300,8 @@ export default {
 
     if (path === '/auth/signup' && req.method === 'POST') return handleSignup(req, env);
     if (path === '/auth/login' && req.method === 'POST') return handleLogin(req, env);
+    if (path === '/auth/forgot' && req.method === 'POST') return handleForgot(req, env);
+    if (path === '/auth/reset' && req.method === 'POST') return handleReset(req, env);
 
     const auth = req.headers.get('Authorization') || '';
     const token = auth.startsWith('Bearer ') ? auth.slice(7) : null;
