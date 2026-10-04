@@ -410,6 +410,42 @@ export default {
         daReserva: true,
       });
     }
+    if (path === '/db/trail' && req.method === 'GET') {
+      const lp = await env.DB.prepare(
+        'SELECT level, lesson, MAX(created_at) AS done_at FROM lesson_progress WHERE user_id = ? GROUP BY level, lesson'
+      ).bind(user.id).all();
+      const la = await env.DB.prepare(
+        'SELECT level, MAX(score) AS best, MAX(passed) AS passed FROM level_attempts WHERE user_id = ? GROUP BY level'
+      ).bind(user.id).all();
+      return json({ lessons: (lp.results || []).map(r => ({ level: r.level, lesson: r.lesson, done_at: r.done_at })), levels: la.results || [] });
+    }
+    if (path === '/db/lesson_progress' && req.method === 'POST') {
+      let b;
+      try {
+        b = await req.json();
+      } catch {
+        return err('Body JSON inválido.');
+      }
+      if (!b.level || !b.lesson) return err('level e lesson são obrigatórios.');
+      await env.DB.prepare(
+        'INSERT INTO lesson_progress (id, user_id, level, lesson, created_at) VALUES (?, ?, ?, ?, ?) ON CONFLICT(user_id, level, lesson) DO NOTHING'
+      ).bind(crypto.randomUUID(), user.id, String(b.level), String(b.lesson), new Date().toISOString()).run();
+      return json({ ok: true });
+    }
+    if (path === '/db/level_attempts' && req.method === 'POST') {
+      let b;
+      try {
+        b = await req.json();
+      } catch {
+        return err('Body JSON inválido.');
+      }
+      const score = Number(b.score) | 0, total = Number(b.total) | 0;
+      if (!b.level || !total) return err('level, score e total são obrigatórios.');
+      await env.DB.prepare(
+        'INSERT INTO level_attempts (id, user_id, level, score, total, passed, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+      ).bind(crypto.randomUUID(), user.id, String(b.level), score, total, (b.passed ? 1 : 0), new Date().toISOString()).run();
+      return json({ ok: true });
+    }
     if (path === '/api/gemini' && req.method === 'POST') return handleGemini(req, env, user);
 
     return err('Rota não encontrada.', 404);

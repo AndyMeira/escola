@@ -22,6 +22,8 @@ são citados só como testemunho. Dono: Anderson (GitHub: AndyMeira).
 - `quiz_attempts(id, user_id, topic, question, correct INTEGER 0/1, created_at)`.
 - `password_resets(id, user_id, token_hash=sha256(token), expires_at, used, created_at)` — token 1h.
 - `quiz_cache(id, topic, pergunta, opcoes JSON, correta, explicacao, versiculo, created_at)` — reserva offline da IA.
+- `lesson_progress(id, user_id, level, lesson, created_at)` — lições concluídas da trilha (UNIQUE user_id/level/lesson).
+- `level_attempts(id, user_id, level, score, total, passed, created_at)` — tentativas de avaliação da trilha.
 - `usage_daily(day, calls)` — contador global p/ monitor de cota.
 
 ## 4. Auth/JWT
@@ -29,7 +31,8 @@ JWT próprio HS256 (`JWT_SECRET`), payload `{sub, email, iat, exp}`, expiração
 Rotas: `POST /api/gemini` (auth; `stream:true` → SSE; limite 75/dia/usuário + 30 req/min/IP),
 `POST /auth/signup|/auth/login|/auth/forgot|/auth/reset`, `GET /auth/session`,
 `GET /db/profile`, `GET|POST /db/chat_messages`, `POST /db/quiz_attempts`,
-`GET /db/quiz_stats`, `GET|POST /db/quiz_cache`, `GET /db/usage`.
+`GET /db/quiz_stats`, `GET|POST /db/quiz_cache`, `GET /db/usage`,
+`GET /db/trail` (lições + melhor por nível), `POST /db/lesson_progress`, `POST /db/level_attempts`.
 
 ## 5. Modelo IA e blindagens
 - Modelo: `gemini-3.6-flash` (1.5/2.x foram aposentados pelo Google; 3.8 dá 503 frequente).
@@ -56,6 +59,7 @@ Rotas: `POST /api/gemini` (auth; `stream:true` → SSE; limite 75/dia/usuário +
 2. **Resend produção** — verificar domínio próprio (hoje: modo teste).
 3. **Supabase** — desligar ou documentar como desativado.
 4. Streaming já ok; ranking já ok (aba Progresso).
+5. **Trilha de estudos — FEITO (04/10/2026)** — aba Trilha com 5 níveis (L1 Fundamentos, L2 Quebrantamento, L3 Autoridade, L4 Jejum/Espírito, L5 Nações/Avivamento-Atalaia), 18 lições curtas PT ancoradas nas referências do projeto + testemunhos ministeriais, avaliação 5Q com 80% (4/5) para desbloquear o próximo, selos no Progresso. Chat e quiz avulso mantidos. Custo 0 (lições estáticas; avaliação reusa Gemini + quiz_cache).
 
 ## 9. Comandos úteis
 ```powershell

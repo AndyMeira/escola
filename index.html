@@ -1024,6 +1024,49 @@ body:not(.light) #langSwitch button { color: #c9b896; }
 body.light #langSwitch button { color: var(--brown); }
 #langSwitch button.active { opacity: 1; background: var(--gold); color: #1c1610 !important; }
 
+/* ===== TRILHA DE ESTUDOS ===== */
+.trail-level {
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 16px 18px;
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+body:not(.light) .trail-level { background: rgba(30,23,16,.92); }
+.trail-level.locked { opacity: .55; cursor: not-allowed; }
+.trail-level h3 { font-family: 'Almendra', serif !important; font-size: 17px; margin-bottom: 4px; }
+body:not(.light) .trail-level h3 { color: #fff7e6 !important; }
+body.light .trail-level h3 { color: var(--brown) !important; }
+.trail-level .t-sub { font-size: 12.5px; margin-bottom: 8px; }
+body:not(.light) .trail-level .t-sub { color: #d3c096 !important; }
+body.light .trail-level .t-sub { color: #6f6250 !important; }
+.trail-progress { height: 8px; border-radius: 4px; background: rgba(217,169,64,.15); overflow: hidden; margin-top: 8px; }
+.trail-progress > div { height: 100%; background: linear-gradient(90deg,var(--gold),var(--gold-bright)); border-radius: 4px; }
+.trail-lesson {
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+body:not(.light) .trail-lesson { background: rgba(30,23,16,.92); color: var(--cream); }
+.trail-lesson.done { border-color: var(--sage); }
+.trail-lesson h4 { font-family: 'Almendra', serif !important; font-size: 15.5px; margin-bottom: 4px; }
+.trail-body { line-height: 1.8 !important; font-family: 'EB Garamond', serif !important; }
+.trail-body .verse, .trail-practice {
+  border-left: 3px solid var(--gold);
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-style: italic;
+}
+body:not(.light) .trail-body .verse, body:not(.light) .trail-practice { background: rgba(217,169,64,.08); color: #d3c096; }
+body.light .trail-body .verse, body.light .trail-practice { background: #fffbf0; color: var(--brown); }
+.trail-testimony { font-size: 13.5px; margin: 12px 0; }
+body:not(.light) .trail-testimony { color: #9db48c; }
+body.light .trail-testimony { color: var(--sage); }
+
 /* ===== TEMA CLARO (o escuro é o padrão) ===== */
 body.light {
   --cream: #fdf8ef;
@@ -1340,6 +1383,7 @@ body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { fon
 
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('chat')"><svg class="icon"><use href="#i-quill"/></svg> Aprender & Perguntar</button>
+    <button class="tab-btn" onclick="switchTab('trail')"><svg class="icon"><use href="#i-fire"/></svg> Trilha de Estudos</button>
     <button class="tab-btn" onclick="switchTab('quiz')"><svg class="icon"><use href="#i-scroll"/></svg> Exercícios & Quiz</button>
     <button class="tab-btn" onclick="switchTab('masters')"><svg class="icon"><use href="#i-book"/></svg> Os Intercessores</button>
     <button class="tab-btn" onclick="switchTab('progress')"><svg class="icon"><use href="#i-star"/></svg> Meu Progresso</button>
@@ -1380,6 +1424,13 @@ body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { fon
       <button class="quick-btn" onclick="quickAsk('Qual a diferença entre oração e intercessão segundo as Escrituras?')">Oração x Intercessão</button>
       <button class="quick-btn" onclick="quickAsk('Como praticar a intercessão profética?')">Intercessão profética</button>
       <button class="quick-btn" onclick="quickAsk('O que a Bíblia ensina sobre jejum ligado à intercessão?')">Jejum & intercessão</button>
+    </div>
+  </div>
+
+  <div id="tab-trail" class="tab-panel">
+    <div class="quiz-section">
+      <p class="section-hint" id="trailHint">Estude as lições curtas e avance de nível mediante avaliação:</p>
+      <div id="trailContent"><div class="loading-text">Carregando trilha...</div></div>
     </div>
   </div>
 
@@ -1579,6 +1630,17 @@ pt: {
   okPass: "Senha atualizada! Entre com sua nova senha. 🙏",
   okForgot: "Se o e-mail estiver cadastrado, você receberá o link de recuperação. 🙏",
   signOut: "Sair",
+  tabTrail: "Trilha de Estudos",
+  trailHint: "Estude as lições curtas e avance de nível mediante avaliação:",
+  trailLessons: "lições", trailEval: "Avaliação do nível",
+  startEval: "Iniciar avaliação (5 questões)", needLessons: "Conclua todas as lições deste nível para liberar a avaliação.",
+  lockedLevel: "Conclua o nível anterior (4/5 na avaliação) para desbloquear.",
+  markDone: "Marcar lição como concluída", lessonDone: "Lição concluída ✓",
+  backTrail: "← Voltar para a trilha", evalPass: "Aprovado! Nível concluído. 🏆",
+  evalFail: "Não foi desta vez. Revise as lições e tente de novo — precisa de 4/5. 🙏",
+  evalScore: (s, n) => `Você acertou ${s} de ${n}.`,
+  qOf: (i, n) => `Questão ${i} de ${n}`, sealsTitle: "Selos da trilha",
+  needLoginTrail: "Entre para salvar seu progresso da trilha. Dá para estudar sem login, mas o avanço só é guardado neste aparelho. 🙏",
   quick: ["O que é intercessão?", "Intercessão militante", "Batalha espiritual", "Armas espirituais", "Intercessor quebrantado", "Conquista de cidades", "Impartição & o Espírito", "Oração x Intercessão", "Intercessão profética", "Jejum & intercessão"],
   quickFull: ["O que é intercessão e qual é o seu fundamento bíblico?", "O que a Bíblia ensina sobre intercessão militante e tomar as portas do inimigo em oração?", "O que a Bíblia ensina sobre batalha espiritual e discernimento na intercessão?", "Como o intercessor deve usar as armas de guerra espiritual segundo as Escrituras?", "O que a Bíblia ensina sobre o intercessor quebrantado e liberto?", "O que a Bíblia ensina sobre oração de autoridade e conquista de cidades e nações?", "Como a Bíblia conecta a impartição do Espírito Santo com a intercessão?", "Qual a diferença entre oração e intercessão segundo as Escrituras?", "Como praticar a intercessão profética?", "O que a Bíblia ensina sobre jejum ligado à intercessão?"]
 },
@@ -1627,6 +1689,17 @@ es: {
   okPass: "¡Contraseña actualizada! Entra con tu nueva contraseña. 🙏",
   okForgot: "Si el correo está registrado, recibirás el enlace de recuperación. 🙏",
   signOut: "Salir",
+  tabTrail: "Ruta de Estudios",
+  trailHint: "Estudia las lecciones cortas y avanza de nivel mediante evaluación:",
+  trailLessons: "lecciones", trailEval: "Evaluación del nivel",
+  startEval: "Iniciar evaluación (5 preguntas)", needLessons: "Completa todas las lecciones de este nivel para liberar la evaluación.",
+  lockedLevel: "Completa el nivel anterior (4/5 en la evaluación) para desbloquear.",
+  markDone: "Marcar lección como completada", lessonDone: "Lección completada ✓",
+  backTrail: "← Volver a la ruta", evalPass: "¡Aprobado! Nivel completado. 🏆",
+  evalFail: "Esta vez no. Repasa las lecciones e inténtalo de nuevo — necesitas 4/5. 🙏",
+  evalScore: (s, n) => `Acertaste ${s} de ${n}.`,
+  qOf: (i, n) => `Pregunta ${i} de ${n}`, sealsTitle: "Sellos de la ruta",
+  needLoginTrail: "Inicia sesión para guardar tu progreso de la ruta. Puedes estudiar sin login, pero el avance solo se guarda en este dispositivo. 🙏",
   quick: ["¿Qué es la intercesión?", "Intercesión militante", "Batalla espiritual", "Armas espirituales", "Intercesor quebrantado", "Conquista de ciudades", "Impartición y el Espíritu", "Oración vs Intercesión", "Intercesión profética", "Ayuno e intercesión"],
   quickFull: ["¿Qué es la intercesión y cuál es su fundamento bíblico?", "¿Qué enseña la Biblia sobre la intercesión militante y tomar las puertas del enemigo en oración?", "¿Qué enseña la Biblia sobre la batalla espiritual y el discernimiento en la intercesión?", "¿Cómo debe usar el intercesor las armas de guerra espiritual según las Escrituras?", "¿Qué enseña la Biblia sobre el intercesor quebrantado y liberado?", "¿Qué enseña la Biblia sobre la oración de autoridad y la conquista de ciudades y naciones?", "¿Cómo conecta la Biblia la impartición del Espíritu Santo con la intercesión?", "¿Cuál es la diferencia entre oración e intercesión según las Escrituras?", "¿Cómo practicar la intercesión profética?", "¿Qué enseña la Biblia sobre el ayuno ligado a la intercesión?"]
 },
@@ -1675,6 +1748,17 @@ en: {
   okPass: "Password updated! Sign in with your new password. 🙏",
   okForgot: "If the email is registered, you will receive the recovery link. 🙏",
   signOut: "Sign out",
+  tabTrail: "Study Track",
+  trailHint: "Study the short lessons and advance levels through evaluation:",
+  trailLessons: "lessons", trailEval: "Level evaluation",
+  startEval: "Start evaluation (5 questions)", needLessons: "Complete all lessons in this level to unlock the evaluation.",
+  lockedLevel: "Complete the previous level (4/5 on the evaluation) to unlock.",
+  markDone: "Mark lesson as complete", lessonDone: "Lesson complete ✓",
+  backTrail: "← Back to the track", evalPass: "Passed! Level complete. 🏆",
+  evalFail: "Not this time. Review the lessons and try again — you need 4/5. 🙏",
+  evalScore: (s, n) => `You got ${s} of ${n} right.`,
+  qOf: (i, n) => `Question ${i} of ${n}`, sealsTitle: "Track seals",
+  needLoginTrail: "Sign in to save your track progress. You can study without login, but progress is only kept on this device. 🙏",
   quick: ["What is intercession?", "Militant intercession", "Spiritual battle", "Spiritual weapons", "Broken intercessor", "City conquest", "Impartation & the Spirit", "Prayer vs Intercession", "Prophetic intercession", "Fasting & intercession"],
   quickFull: ["What is intercession and what is its biblical foundation?", "What does the Bible teach about militant intercession and taking the enemy's gates in prayer?", "What does the Bible teach about spiritual battle and discernment in intercession?", "How should the intercessor use the weapons of spiritual warfare according to Scripture?", "What does the Bible teach about the broken and set-free intercessor?", "What does the Bible teach about authoritative prayer and conquering cities and nations?", "How does the Bible connect the impartation of the Holy Spirit with intercession?", "What is the difference between prayer and intercession according to Scripture?", "How to practice prophetic intercession?", "What does the Bible teach about fasting linked to intercession?"]
 }
@@ -1710,8 +1794,8 @@ function applyLang() {
   if (headerP) headerP.textContent = t('headerSub');
   document.querySelectorAll('.masters-label')[0] && (document.querySelectorAll('.masters-label')[0].textContent = t('themeLabel'));
   const tabs = document.querySelectorAll('.tab-btn');
-  const tabKeys = ['tabChat', 'tabQuiz', 'tabMasters', 'tabProgress'];
-  const icons = ['i-quill', 'i-scroll', 'i-book', 'i-star'];
+  const tabKeys = ['tabChat', 'tabTrail', 'tabQuiz', 'tabMasters', 'tabProgress'];
+  const icons = ['i-quill', 'i-fire', 'i-scroll', 'i-book', 'i-star'];
   tabs.forEach((b, i) => { if (tabKeys[i]) b.innerHTML = `<svg class="icon"><use href="#${icons[i]}"/></svg> ${t(tabKeys[i])}`; });
   const ch = document.querySelector('.chat-header-text');
   if (ch) ch.textContent = t('chatHeader');
@@ -1721,6 +1805,9 @@ function applyLang() {
   if (qh) qh.textContent = t('quizHint');
   const mh = document.querySelector('#tab-masters .section-hint');
   if (mh) mh.textContent = t('mastersHint');
+  const th = document.getElementById('trailHint');
+  if (th) th.textContent = t('trailHint');
+  if (document.getElementById('tab-trail').classList.contains('active') && trailView.name !== 'eval' && !evalState) renderTrail();
   const gb = document.getElementById('generateBtn');
   if (gb) gb.innerHTML = `<svg class="icon"><use href="#i-star"/></svg> ${t('generate')}`;
   const ub = document.querySelector('#tab-progress .generate-btn');
@@ -1941,6 +2028,7 @@ window.addEventListener('DOMContentLoaded', () => {
   renderTopicGrid();
   renderQuickPrompts();
   applyLang();
+  loadTrailLocal();
   const textarea = document.getElementById('userInput');
   textarea.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -2158,12 +2246,14 @@ async function onLoginSuccess(user) {
   document.getElementById('userNameLabel').textContent = t('greeting')(name);
 
   await loadChatHistory();
+  await syncTrail();
 }
 
 async function signOut() {
   setToken(null);
   currentUser = null;
   geminiHistory = [];
+  loadTrailLocal();
   document.getElementById('messages').innerHTML = '';
   document.getElementById('userBar').style.display = 'none';
   document.getElementById('authOverlay').style.display = 'flex';
@@ -2291,13 +2381,376 @@ REGRAS OBRIGATÓRIAS DE ESTRUTURA:
 6. Mantenha respostas práticas e inspiradoras, entre 200-400 palavras.`;
 }
 
+// ===== TRILHA DE ESTUDOS (conteúdo curado v1 — PT; ES/EN no mesmo padrão STR depois) =====
+// Cada nível: lições curtas ancoradas nas referências bíblicas do projeto + 1 testemunho ministerial.
+// topics: temas do quiz usados na avaliação (chaves PT estáveis do D1/quiz_cache).
+const CURRICULUM = [
+{ id: "L1", title: "Fundamentos — o chamado à brecha", sub: "O que é intercessão e por que Deus procura intercessores",
+  topics: ["Fundamentos bíblicos da intercessão"],
+  lessons: [
+  { id: "L1.1", title: "O que é intercessão", ref: "Gênesis 18:22-33 · 1 Timóteo 2:1-4",
+    verse: "“Antes de tudo, recomendo que se façam súplicas, orações, intercessões e ações de graças em favor de todos os homens.” (1Tm 2:1 — NAA)",
+    text: "Interceder é colocar-se entre Deus e pessoas: pedir em favor de outros com base nas Escrituras. Abraão intercedeu por Sodoma (Gn 18) e Moisés pelo povo — sempre apelando ao caráter de Deus, nunca a méritos próprios. Paulo ordena intercessões “por todos os homens”, incluindo autoridades. A intercessão não é um dom para poucos: é o ministério de todo aquele que foi chamado à brecha. Ela nasce da Palavra, vive da oração perseverante e frutifica em misericórdia.",
+    wit: "David Wilkerson — obedeceu ao chamado de interceder por jovens de gangues em Nova York, sem recursos nem reconhecimento (cf. Ez 22:30).",
+    practice: "Ore hoje por uma pessoa nominalmente, citando 1Tm 2:1-4 em voz alta." },
+  { id: "L1.2", title: "Deus busca quem se ponha na brecha", ref: "Ezequiel 22:30",
+    verse: "“Busquei entre eles um homem que tapasse o muro e se colocasse na brecha diante de mim a favor desta terra... mas não encontrei ninguém.” (Ez 22:30 — NAA)",
+    text: "A brecha é o ponto quebrado do muro por onde o inimigo entra. Deus não buscou um exército, mas um homem posicionado. Quando ninguém se posiciona, a terra sofre; quando um intercessor se levanta, o juízo pode ser detido e a misericórdia liberada. Posicionar-se na brecha envolve três atitudes: ver a necessidade (discernimento), assumir a responsabilidade (não transferir a culpa) e permanecer até a resposta. Intercessão é posição antes de ser petição.",
+    wit: "Pr. Marcos Coty (JOCUM) — décadas de fidelidade orando por nações, sem buscar resultados imediatos (cf. Jr 29:7; Ne 1).",
+    practice: "Identifique uma “brecha” na sua família ou cidade e ore 10 minutos por ela." },
+  { id: "L1.3", title: "Braços sustentados até a vitória", ref: "Êxodo 17:8-13",
+    verse: "Enquanto Moisés mantinha as mãos erguidas, Israel prevalecia; quando as abaixava, Amaleque prevalecia (cf. Êx 17:11 — NAA).",
+    text: "A primeira batalha de Israel depois do Mar Vermelho foi vencida no monte, não no vale: Moisés intercedia de mãos erguidas enquanto Josué lutava. Quando os braços cansaram, Arão e Hur os sustentaram até o pôr do sol. Três princípios: (1) batalhas espirituais se decidem em oração antes do campo; (2) ninguém sustenta os braços sozinho — intercessão pede comunidade; (3) perseverança até o fim (“até o pôr do sol”). Cansaço não é sinal para parar, é sinal para chamar Arão e Hur.",
+    wit: "Pastora Ezenete Rodrigues — formou 60 mil+ alunos perseverando diante do trono (cf. Sl 51; Is 6).",
+    practice: "Chame alguém para orar com você esta semana por uma causa comum." },
+  { id: "L1.4", title: "Oração e intercessão: qual a diferença", ref: "1 Timóteo 2:1 · Filipenses 4:6",
+    verse: "“súplicas, orações, intercessões e ações de graças” (1Tm 2:1 — NAA: quatro expressões distintas).",
+    text: "Toda intercessão é oração, mas nem toda oração é intercessão. Na oração apresentamos nossas necessidades (Fp 4:6); na intercessão apresentamos as necessidades de outros, como advogado diante do Juiz justo. Oração busca comunhão; intercessão soma à comunhão a mediação — sofrer com quem sofre e clamar até ver a resposta. O intercessor maduro não abandona a oração pessoal: é dela que tira autoridade para interceder. Primeiro o trono (comunhão), depois a brecha (mediação).",
+    wit: "Neuza Itioka — discernimento fundamentado nas Escrituras sustenta a batalha equilibrada (cf. Ef 6).",
+    practice: "Separe seu caderno de oração em duas colunas: “minhas causas” e “causas de outros”." }
+  ] },
+{ id: "L2", title: "Quebrantamento e consagração", sub: "O caráter do intercessor diante do trono",
+  topics: ["O intercessor quebrantado, liberto e a sala do trono"],
+  lessons: [
+  { id: "L2.1", title: "O sacrifício que Deus não despreza", ref: "Salmos 51:17",
+    verse: "“Sacrifícios agradáveis a Deus são o espírito quebrantado; coração quebrantado e contrito, não o desprezarás, ó Deus.” (Sl 51:17 — NAA)",
+    text: "Davi escreveu isso depois de confrontado pelo pecado: Deus não se impressiona com performance, mas com coração quebrantado. Quebrantamento não é auto-piedade — é honestidade radical diante de Deus, sem máscaras e sem desculpas. O intercessor quebrantado não ora de cima para baixo (como juiz dos outros), mas de joelhos, sabendo que também precisa de misericórdia. É dessa posição que nasce autoridade: quem foi perdoado muito, intercede com compaixão verdadeira.",
+    wit: "Pastora Ezenete Rodrigues — ensina que o quebrantamento diante do trono precede e sustenta a intercessão genuína (cf. Sl 51; Is 6).",
+    practice: "Ore o Salmo 51 em voz alta, confessando nominalmente o que precisa mudar." },
+  { id: "L2.2", title: "Ai de mim — a visão do trono", ref: "Isaías 6:1-8",
+    verse: "“Eis-me aqui, envia-me a mim.” (Is 6:8 — NAA)",
+    text: "Isaías viu o Senhor assentado no trono, ouviu “santo, santo, santo” e sua primeira reação foi: “ai de mim”. Ver Deus de verdade sempre revela quem somos — e só depois de purificado pela brasa o profeta ouviu o chamado e respondeu “envia-me”. A ordem é inegociável: trono antes do campo, purificação antes do envio, quebrantamento antes da autoridade. Intercessão sem sala do trono vira ativismo; com sala do trono, vira envio com poder.",
+    wit: "Dave Roberson — a busca perseverante pela presença produz vida no Espírito e discernimento (cf. At 2; 2Rs 2).",
+    practice: "Passe 15 minutos em silêncio diante de Deus antes de apresentar qualquer pedido." },
+  { id: "L2.3", title: "Sacrifício vivo", ref: "Romanos 12:1",
+    verse: "“Apresenteis o vosso corpo por sacrifício vivo, santo e agradável a Deus, que é o vosso culto racional.” (Rm 12:1 — NAA)",
+    text: "Paulo liga consagração a culto: o intercessor se oferece por inteiro — corpo, tempo, agenda. Sacrifício vivo significa morrer diariamente para a pressa, o conforto e a vaidade, permanecendo no altar. Consagração não é evento (um retiro, uma campanha), é estilo de vida: sono regulado para orar, jejum programado, língua guardada, contas ajustadas. Deus não unge atalhos; unge altares onde há sacrifício contínuo.",
+    wit: "Pr. Oswaldo Lôbo Jr — ensina que intercessão como arma exige ousadia e profundo embasamento bíblico (cf. 2Co 10:3-5).",
+    practice: "Escolha uma renúncia concreta desta semana (jejum parcial, redes, sono) e ofereça como culto." }
+  ] },
+{ id: "L3", title: "Autoridade e guerra espiritual", sub: "Revestir-se, discernir e exercer autoridade em oração",
+  topics: ["Intercessão militante — tomar as portas do inimigo em oração", "Batalha espiritual e intercessão estratégica"],
+  lessons: [
+  { id: "L3.1", title: "A armadura de Deus", ref: "Efésios 6:10-18",
+    verse: "“Revesti-vos de toda a armadura de Deus, para poderdes ficar firmes contra as ciladas do diabo.” (Ef 6:11 — NAA)",
+    text: "Paulo descreve a luta: “não é contra carne e sangue”. Por isso a armadura é espiritual — verdade, justiça, evangelho, fé, salvação, Palavra — e a ordem é revestir-se de TODA ela, sem peça faltando. Note: a armadura protege quem está posicionado; soldado fora de formação, mesmo armado, cai. O verso 18 coroa tudo com oração e súplica “em todo tempo no Espírito”: a armadura sem oração é museu; com oração, é guerra vencida.",
+    wit: "Neuza Itioka — pioneira da batalha espiritual equilibrada e bíblica no Brasil (cf. Ef 6).",
+    practice: "Ore Ef 6:13-18 peça por peça, vestindo cada uma em voz alta." },
+  { id: "L3.2", title: "Armas não carnais", ref: "2 Coríntios 10:3-5",
+    verse: "“As armas da nossa milícia não são carnais, mas poderosas em Deus, para destruir fortalezas.” (2Co 10:4 — NAA)",
+    text: "Fortalezas são padrões de pensamento e estruturas espirituais que resistem a Deus numa mente, família ou cidade. Grito, manipulação e força humana não as derrubam — só armas espirituais: Palavra proclamada, oração perseverante, jejum, louvor, obediência. A estratégia tem alvo: “levando cativo todo pensamento à obediência de Cristo”. Guerra espiritual sem alvo vira barulho; com alvo e Escritura, demole fortalezas.",
+    wit: "Pr. Oswaldo Lôbo Jr (Instituto Exodus) — intercessão como guerra: ousadia com embasamento bíblico.",
+    practice: "Identifique uma fortaleza (medo, vício, divisão) e proclame 2Co 10:4-5 sobre ela por 7 dias." },
+  { id: "L3.3", title: "Autoridade delegada", ref: "Lucas 10:19",
+    verse: "“Eis que vos dei autoridade para pisar serpentes e escorpiões e sobre todo o poder do inimigo.” (Lc 10:19 — NAA)",
+    text: "Autoridade não é poder próprio: é delegação. Jesus deu, os discípulos exerceram, e os demônios se sujeitaram “em nome de Jesus”. Autoridade se exerce em três direções: resistir (Tg 4:7), ordenar (Mc 16:17) e proteger (Sl 91). Mas atenção ao verso seguinte: a alegria maior não é que os espíritos se submetam, e sim que o nome está escrito nos céus. Autoridade sem santidade vira presunção; com santidade, vira governo espiritual.",
+    wit: "Cindy Jacobs — intercessão perseverante com autoridade traz transformação sobre cidades (cf. Lc 10:19; Mt 16:19).",
+    practice: "Em oração, resista nominalmente a uma opressão citando Lc 10:19 e Tg 4:7." },
+  { id: "L3.4", title: "Ligar e desligar", ref: "Mateus 16:19",
+    verse: "“O que ligares na terra terá sido ligado nos céus, e o que desligares na terra terá sido desligado nos céus.” (Mt 16:19 — NAA)",
+    text: "As chaves do Reino operam por declaração alinhada ao céu: ligar é proibir a ação do inimigo; desligar é liberar a vontade de Deus. O intercessor militante “toma as portas do inimigo em oração”: declara fechadas as portas do pecado e abertas as do avivamento sobre famílias, igrejas e cidades. Chaves exigem discernimento — ligar o que Deus não ligou é religiosidade; discernir no Espírito e declarar com fé é governo.",
+    wit: "Cindy Jacobs (Generals International) — autoridade em oração sobre cidades e nações.",
+    practice: "Faça duas declarações hoje: uma ligando (proibindo) e uma desligando (liberando) segundo a Palavra." }
+  ] },
+{ id: "L4", title: "Jejum, fervor e Espírito", sub: "Inflamar a intercessão com jejum e perseverança",
+  topics: ["Intercessão em chamas e autoridade espiritual"],
+  lessons: [
+  { id: "L4.1", title: "O jejum que Deus escolheu", ref: "Isaías 58:6-9",
+    verse: "“Porventura não é este o jejum que escolhi: que soltes as ligaduras da impiedade...?” (Is 58:6 — NAA)",
+    text: "Deus rejeitou o jejum exibicionista e definiu o verdadeiro: soltar opressões, repartir o pão, acolher o necessitado. Jejum sem justiça é dieta religiosa; com justiça, “a tua luz romperá como a aurora” e “o Senhor te responderá”. O jejum potencializa a intercessão porque humilha a carne, aguça o espírito e move à compaixão prática. Antes de jejuar por avivamento, acerte as contas com o próximo.",
+    wit: "David Wilkerson — obediência prática aos pobres e perdidos como confirmação de Ez 22:30.",
+    practice: "Una seu próximo jejum a um ato concreto de misericórdia (cesta, visita, perdão)." },
+  { id: "L4.2", title: "Como jejuar", ref: "Mateus 6:16-18 · Ester 4:16 · Daniel 9:3",
+    verse: "“Tu, porém, quando jejuares, unge a cabeça e lava o rosto, para não parecer aos outros que jejuas.” (Mt 6:17-18 — NAA)",
+    text: "Jesus pressupôs o jejum (“quando”, não “se”) e exigiu discrição: sem performance, com o Pai que vê em secreto. Ester convocou jejum coletivo antes de arriscar a vida pelo povo; Daniel buscou a Deus “em jejum, pano de saco e cinza” confessando pecados da nação. Princípios: jejum tem propósito definido, tem prazo, pode ser coletivo, e sempre termina em ação obediente. Comece simples (uma refeição, meio período) e cresça com constância.",
+    wit: "Pr. Marcos Coty — fidelidade de décadas: jejum e oração como estilo de vida, não evento.",
+    practice: "Marque um jejum com propósito e prazo nesta semana e convide alguém." },
+  { id: "L4.3", title: "Fervor que não apaga", ref: "Atos 2:1-4 · Romanos 12:11",
+    verse: "“Sede fervorosos de espírito, servindo ao Senhor.” (Rm 12:11 — NAA)",
+    text: "“Intercessão em chamas” é perseverança aquecida pelo Espírito: os discípulos perseveraram em oração até o Pentecostes, e dali saiu poder. Fervor não é emocionalismo — é constância com fogo: mesma hora, mesmo lugar, mesmo clamor, até o céu responder. Quem ora só quando sente, apaga; quem ora por disciplina, incendeia. Peça ao Espírito Santo o dom do fervor e estabeleça um altar inegociável de oração diária.",
+    wit: "Dave Roberson — busca perseverante pela presença e poder de Deus (cf. At 2; 2Rs 2).",
+    practice: "Defina horário e lugar fixos de oração pelos próximos 21 dias." }
+  ] },
+{ id: "L5", title: "Nações e avivamento — Atalaia", sub: "Interceder por cidades e cooperar com o derramar do Espírito",
+  topics: ["Conquista de cidades e intercessão por nações", "Impartição do Espírito Santo e avivamento ligado à intercessão"],
+  lessons: [
+  { id: "L5.1", title: "A paz da cidade", ref: "Jeremias 29:7",
+    verse: "“Procurai a paz da cidade para onde vos desterrei e orai por ela ao Senhor, porque na sua paz vós tereis paz.” (Jr 29:7 — NAA)",
+    text: "Israel estava exilado na Babilônia — e Deus mandou orar PELA cidade opressora, não contra ela. O intercessor atalaia abençoa sua cidade: ora por autoridades, segurança, escolas, igrejas, economia. Intercessão por nações começa no bairro: mapear necessidades, caminhar orando, abençoar em vez de murmurar. Quem ora pela cidade colhe a paz que plantou.",
+    wit: "Pr. Marcos Coty — oração por nações como obra de décadas de fidelidade (cf. Jr 29:7; Ne 1).",
+    practice: "Caminhe 20 minutos orando pelo seu bairro, rua por rua." },
+  { id: "L5.2", title: "Neemias: choro que vira projeto", ref: "Neemias 1:4-11",
+    verse: "Neemias chorou, jejuou e orou dias antes de pedir qualquer autorização ao rei (cf. Ne 1:4 — NAA).",
+    text: "Ao ouvir sobre os muros derrubados, Neemias não fez campanha primeiro: assentou-se, chorou, jejuou e orou, confessando os pecados da nação como seus. Só depois apresentou o projeto ao rei — com datas, recursos e cartas. Intercessão estratégica gera ação estratégica: choro sem projeto é lamento; projeto sem choro é ativismo. O atalaia transforma carga espiritual em plano concreto de reconstrução.",
+    wit: "Randy Clark (Global Awakening) — impartição buscada em oração produz avivamento (cf. 2Tm 1:6; At 2).",
+    practice: "Escreva uma causa da sua cidade e um passo prático que sua oração vai gerar." },
+  { id: "L5.3", title: "Humilhação e cura da terra", ref: "2 Crônicas 7:14",
+    verse: "“Se o meu povo, que se chama pelo meu nome, se humilhar, e orar, e me buscar, e se converter dos seus maus caminhos, então eu ouvirei dos céus, perdoarei os seus pecados e sararei a sua terra.” (2Cr 7:14 — NAA)",
+    text: "A promessa tem quatro condições para o povo de Deus (não para o mundo): humilhar-se, orar, buscar a face, converter-se. A cura da terra começa na igreja, não no palácio. Avivamento não é agenda de eventos — é povo humilhado em oração contínua até Deus ouvir dos céus. Cada condição é verificável: humilhação (orgulho tratado), oração (altar constante), busca (face, não só mãos), conversão (frutos).",
+    wit: "Cindy Jacobs — transformação de cidades pela intercessão perseverante com autoridade.",
+    practice: "Reúna 2-3 pessoas para orar semanalmente pela sua cidade com base em 2Cr 7:14." },
+  { id: "L5.4", title: "Impartição e avivamento", ref: "Atos 2:1-4 · 2 Reis 2:9-15 · 2 Timóteo 1:6",
+    verse: "“Te exorto a reavivar o dom de Deus que está em ti.” (2Tm 1:6 — NAA)",
+    text: "Eliseu pediu porção dobrada e a recebeu porque ficou até o fim; Timóteo precisou reavivar o dom recebido por imposição de mãos. Impartição é transferência espiritual: Deus usa vasos cheios para encher vasos vazios — por oração, imposição de mãos e convivência. O atalaia não guarda o fogo: transmite. Busque com fome, receba com humildade, reparta com generosidade. Avivamento é impartição multiplicada: um altar acende outro.",
+    wit: "Randy Clark — testemunho de que a impartição do Espírito, buscada em oração, produz avivamento.",
+    practice: "Ore por alguém pedindo impartição específica (ousadia, discernimento, compaixão)." }
+  ] }
+];
+
+// ===== ESTADO E LÓGICA DA TRILHA =====
+const EVAL_SIZE = 5, EVAL_PASS = 4;
+let trail = { done: {}, best: {} };
+let trailView = { name: "levels" };
+let evalState = null;
+function trailKey() { return 'ei_trail_' + (currentUser ? currentUser.id : 'anon'); }
+function loadTrailLocal() {
+  try {
+    const s = JSON.parse(localStorage.getItem(trailKey()) || 'null');
+    if (s && s.done) trail = { done: s.done || {}, best: s.best || {} };
+    else trail = { done: {}, best: {} };
+  } catch (e) { trail = { done: {}, best: {} }; }
+}
+function saveTrailLocal() {
+  try { localStorage.setItem(trailKey(), JSON.stringify(trail)); } catch (e) {}
+}
+async function syncTrail() {
+  loadTrailLocal();
+  if (!currentUser) { return; }
+  try {
+    const d = await api('/db/trail');
+    (d.lessons || []).forEach(l => { trail.done[l.level + '|' + l.lesson] = true; });
+    (d.levels || []).forEach(l => {
+      const prev = trail.best[l.level];
+      if (!prev || (l.best || 0) > (prev.score || 0)) trail.best[l.level] = { score: l.best || 0, passed: !!l.passed };
+    });
+    saveTrailLocal();
+  } catch (e) {}
+}
+function levelPassed(id) { return !!(trail.best[id] && trail.best[id].passed); }
+function levelOpen(idx) {
+  if (idx === 0) return true;
+  return levelPassed(CURRICULUM[idx - 1].id);
+}
+function levelDoneCount(lv) {
+  return lv.lessons.filter(l => trail.done[lv.id + '|' + l.id]).length;
+}
+function renderTrail() {
+  const box = document.getElementById('trailContent');
+  if (!box) return;
+  if (trailView.name === 'lesson') return renderTrailLesson(box);
+  if (trailView.name === 'eval') return renderEval(box);
+  if (trailView.name === 'level') return renderTrailLevel(box);
+  box.innerHTML = CURRICULUM.map((lv, i) => {
+    const open = levelOpen(i);
+    const n = levelDoneCount(lv);
+    const pct = Math.round((n / lv.lessons.length) * 100);
+    const seal = levelPassed(lv.id) ? ' 🏆' : '';
+    const lock = open ? '' : ' 🔒';
+    return `<div class="trail-level${open ? '' : ' locked'}" onclick="openLevel('${lv.id}')">
+      <h3>Nível ${i + 1} — ${escapeHtml(lv.title)}${seal}${lock}</h3>
+      <div class="t-sub">${escapeHtml(lv.sub)} · ${n}/${lv.lessons.length} ${t('trailLessons')}</div>
+      <div class="trail-progress"><div style="width:${pct}%"></div></div>
+      ${open ? '' : `<div class="t-sub" style="margin-top:6px;">${t('lockedLevel')}</div>`}
+    </div>`;
+  }).join('');
+}
+function openLevel(id) {
+  const idx = CURRICULUM.findIndex(l => l.id === id);
+  if (idx < 0 || !levelOpen(idx)) return;
+  trailView = { name: 'level', level: id };
+  renderTrail();
+}
+function renderTrailLevel(box) {
+  const lv = CURRICULUM.find(l => l.id === trailView.level);
+  const idx = CURRICULUM.indexOf(lv);
+  const n = levelDoneCount(lv);
+  const allDone = n === lv.lessons.length;
+  const passed = levelPassed(lv.id);
+  let html = `<button class="quick-btn" onclick="trailView={name:'levels'};renderTrail()">${t('backTrail')}</button>
+    <div class="quiz-box"><div class="quiz-ref">Nível ${idx + 1}</div>
+    <div class="quiz-question">${escapeHtml(lv.title)}${passed ? ' 🏆' : ''}</div>
+    <div class="t-sub" style="margin-bottom:10px;">${escapeHtml(lv.sub)}</div>`;
+  lv.lessons.forEach(l => {
+    const done = trail.done[lv.id + '|' + l.id];
+    html += `<div class="trail-lesson${done ? ' done' : ''}" onclick="openLesson('${lv.id}','${l.id}')">
+      <h4>${done ? '✓ ' : ''}${escapeHtml(l.id)} — ${escapeHtml(l.title)}</h4>
+      <div class="t-sub">${escapeHtml(l.ref)}</div></div>`;
+  });
+  html += `<div style="margin-top:12px;" class="quiz-ref">${t('trailEval')}: ${EVAL_SIZE} questões · ${t('evalScore')(EVAL_PASS, EVAL_SIZE)}</div>`;
+  if (allDone) html += `<button class="generate-btn" style="margin-top:8px;" onclick="startEval('${lv.id}')">🔥 ${t('startEval')}</button>`;
+  else html += `<div class="loading-text" style="text-align:left;margin-top:8px;">${t('needLessons')} (${n}/${lv.lessons.length})</div>`;
+  html += '</div>';
+  box.innerHTML = html;
+}
+function openLesson(levelId, lessonId) {
+  trailView = { name: 'lesson', level: levelId, lesson: lessonId };
+  renderTrail();
+}
+function renderTrailLesson(box) {
+  const lv = CURRICULUM.find(l => l.id === trailView.level);
+  const l = lv.lessons.find(x => x.id === trailView.lesson);
+  const done = trail.done[lv.id + '|' + l.id];
+  box.innerHTML = `<button class="quick-btn" onclick="trailView={name:'level',level:'${lv.id}'};renderTrail()">${t('backTrail')}</button>
+  <div class="quiz-box"><div class="quiz-ref">${escapeHtml(l.id)} · ${escapeHtml(l.ref)}</div>
+    <div class="quiz-question">${escapeHtml(l.title)}</div>
+    <div class="trail-body"><div class="verse">${escapeHtml(l.verse)}</div>
+    <div>${escapeHtml(l.text)}</div>
+    <div class="trail-testimony">🕊️ <strong>Testemunho:</strong> ${escapeHtml(l.wit)}</div>
+    <div class="trail-practice">🙏 <strong>Prática:</strong> ${escapeHtml(l.practice)}</div></div>
+    ${done ? `<div class="loading-text" style="text-align:left;">${t('lessonDone')}</div>`
+      : `<button class="generate-btn" style="margin-top:10px;" onclick="completeLesson('${lv.id}','${l.id}')">✓ ${t('markDone')}</button>`}
+  </div>`;
+  box.scrollIntoView({ block: 'start' });
+}
+async function completeLesson(levelId, lessonId) {
+  trail.done[levelId + '|' + lessonId] = true;
+  saveTrailLocal();
+  if (currentUser) {
+    try { await api('/db/lesson_progress', { method: 'POST', body: JSON.stringify({ level: levelId, lesson: lessonId }) }); } catch (e) {}
+  }
+  trailView = { name: 'level', level: levelId };
+  renderTrail();
+}
+async function fetchEvalQuestion(topic) {
+  const token = await getAccessToken();
+  const res = await fetchGemini(PROXY_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({
+      model: GEMINI_MODEL,
+      body: {
+        system_instruction: { parts: [{ text: getQuizPrompt() }] },
+        contents: [{ role: 'user', parts: [{ text: `Crie uma pergunta de múltipla escolha sobre: ${topic}.` }] }],
+        generationConfig: { response_mime_type: "application/json" }
+      }
+    })
+  });
+  const data = await res.json();
+  if (data.error) {
+    const msg = typeof data.error === 'string' ? data.error : (data.error.message || '');
+    throw new Error(friendlyError(msg));
+  }
+  let raw = data.candidates[0].content.parts[0].text;
+  raw = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+  const q = JSON.parse(raw);
+  if (!isValidQuiz(q)) throw new Error('Quiz em formato inválido.');
+  q.topic = topic;
+  if (currentUser) {
+    api('/db/quiz_cache', { method: 'POST', body: JSON.stringify({ topic, pergunta: q.pergunta, opcoes: q.opcoes, correta: q.correta, explicacao: q.explicacao || '', versiculo: q.versiculo || '' }) }).catch(() => {});
+  }
+  return shuffleQuizOptions(q);
+}
+async function startEval(levelId) {
+  const lv = CURRICULUM.find(l => l.id === levelId);
+  if (isOffline()) {
+    document.getElementById('trailContent').innerHTML = `<div class="loading-text">${t('offlineNeedNet')}</div>`;
+    return;
+  }
+  const withinLimit = await checkDailyLimit();
+  if (!withinLimit) {
+    document.getElementById('trailContent').innerHTML = `<div class="loading-text">${t('limitMsg')(DAILY_MESSAGE_LIMIT)}</div>`;
+    return;
+  }
+  evalState = { level: levelId, qi: 0, questions: [], correct: 0, locked: false };
+  trailView = { name: 'eval' };
+  renderEval(document.getElementById('trailContent'));
+  await loadNextEvalQ();
+}
+async function loadNextEvalQ() {
+  const box = document.getElementById('trailContent');
+  const lv = CURRICULUM.find(l => l.id === evalState.level);
+  const topic = lv.topics[evalState.qi % lv.topics.length];
+  box.innerHTML = `<div class="quiz-box"><div class="loading-text">${t('qOf')(evalState.qi + 1, EVAL_SIZE)} · ${t('preparing')(topic)}</div></div>`;
+  try {
+    const q = await fetchEvalQuestion(topic);
+    evalState.questions.push(q);
+    evalState.locked = false;
+    renderEval(box);
+  } catch (e) {
+    const okReserve = await tryEvalReserve(lv);
+    if (!okReserve) box.innerHTML = `<div class="quiz-box"><div class="loading-text">${escapeHtml(e.message || t('quizFail'))}</div>
+      <button class="quick-btn" onclick="trailView={name:'level',level:'${lv.id}'};renderTrail()">${t('backTrail')}</button></div>`;
+  }
+}
+async function tryEvalReserve(lv) {
+  for (const topic of lv.topics) {
+    try {
+      const r = await api('/db/quiz_cache?topic=' + encodeURIComponent(topic));
+      if (r && r.pergunta && Array.isArray(r.opcoes)) {
+        evalState.questions.push(shuffleQuizOptions({ pergunta: r.pergunta, opcoes: r.opcoes, correta: r.correta, explicacao: r.explicacao || '', versiculo: r.versiculo || '', topic }));
+        evalState.locked = false;
+        renderEval(document.getElementById('trailContent'));
+        return true;
+      }
+    } catch (e) {}
+  }
+  return false;
+}
+function renderEval(box) {
+  const lv = CURRICULUM.find(l => l.id === evalState.level);
+  const q = evalState.questions[evalState.qi];
+  if (!q) return;
+  let html = `<div class="quiz-box">
+    <div class="quiz-ref">${t('trailEval')} · Nível ${CURRICULUM.indexOf(lv) + 1} · ${t('qOf')(evalState.qi + 1, EVAL_SIZE)}${q.daReserva ? ' · ' + t('savedBadge') : ''}</div>
+    <div class="quiz-question">${escapeHtml(q.pergunta)}</div><div class="quiz-options">`;
+  q.opcoes.forEach((op, i) => { html += `<button class="option-btn" id="evalOpt${i}" onclick="answerEval(${i})">${escapeHtml(op)}</button>`; });
+  html += `</div><div id="eval-feedback" style="display:none" class="quiz-feedback"></div>
+    <button class="next-btn" id="evalNextBtn" style="display:none"></button></div>`;
+  box.innerHTML = html;
+}
+function answerEval(index) {
+  if (evalState.locked) return;
+  evalState.locked = true;
+  const q = evalState.questions[evalState.qi];
+  const isCorrect = index === q.correta;
+  if (isCorrect) evalState.correct++;
+  document.querySelectorAll('#trailContent .option-btn').forEach((btn, i) => {
+    btn.disabled = true;
+    if (i === q.correta) btn.classList.add('correct');
+    else if (i === index) btn.classList.add('wrong');
+  });
+  if (currentUser) {
+    api('/db/quiz_attempts', { method: 'POST', body: JSON.stringify({ topic: q.topic || evalState.level, question: q.pergunta, correct: isCorrect }) }).catch(() => {});
+  }
+  const fb = document.getElementById('eval-feedback');
+  fb.style.display = 'block';
+  fb.innerHTML = `<strong>${isCorrect ? t('correct') : t('wrong')}</strong><div style="margin-top:8px;">${escapeHtml(q.explicacao || '')}</div>` +
+    (q.versiculo ? `<div class="verse">📖 ${escapeHtml(q.versiculo)}</div>` : '');
+  const nb = document.getElementById('evalNextBtn');
+  nb.style.display = 'inline-block';
+  const last = evalState.qi === EVAL_SIZE - 1;
+  nb.textContent = last ? t('evalScore')(evalState.correct, EVAL_SIZE) + ' →' : t('next');
+  nb.onclick = () => {
+    if (last) finishEval();
+    else { evalState.qi++; loadNextEvalQ(); }
+  };
+}
+async function finishEval() {
+  const box = document.getElementById('trailContent');
+  const passed = evalState.correct >= EVAL_PASS;
+  const prev = trail.best[evalState.level];
+  if (!prev || evalState.correct > prev.score) trail.best[evalState.level] = { score: evalState.correct, passed: passed || !!(prev && prev.passed) };
+  saveTrailLocal();
+  if (currentUser) {
+    try { await api('/db/level_attempts', { method: 'POST', body: JSON.stringify({ level: evalState.level, score: evalState.correct, total: EVAL_SIZE, passed }) }); } catch (e) {}
+  }
+  box.innerHTML = `<div class="quiz-box"><div class="quiz-ref">${t('trailEval')}</div>
+    <div class="quiz-question">${t('evalScore')(evalState.correct, EVAL_SIZE)}</div>
+    <div class="loading-text" style="text-align:left;">${passed ? t('evalPass') : t('evalFail')}</div>
+    <button class="quick-btn" onclick="trailView={name:'levels'};evalState=null;renderTrail()">${t('backTrail')}</button>
+    ${passed ? '' : `<button class="generate-btn" style="margin-top:8px;" onclick="startEval('${evalState.level}')">🔥 ${t('startEval')}</button>`}
+  </div>`;
+  evalState = null;
+}
+
 function switchTab(tab) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => {
-    b.classList.toggle('active', ['chat','quiz','masters','progress'][i] === tab);
+    b.classList.toggle('active', ['chat','trail','quiz','masters','progress'][i] === tab);
   });
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
   document.getElementById('tab-' + tab).classList.add('active');
   if (tab === 'progress') loadProgress();
+  if (tab === 'trail') renderTrail();
 }
 
 function selectTopic(el) {
@@ -2692,6 +3145,11 @@ async function loadProgress() {
       </div>`;
     });
     html += '</div>';
+    const seals = CURRICULUM.map((lv, i) => {
+      const b = trail.best[lv.id];
+      return `<span title="${escapeHtml(lv.title)}" style="font-size:15px;${b && b.passed ? '' : 'filter:grayscale(1);opacity:.4;'}">${b && b.passed ? '🏆' : '🔒'} N${i + 1}</span>`;
+    }).join(' ');
+    html += `<div class="quiz-ref" style="margin-top:10px;">${t('sealsTitle')}</div><div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">${seals}</div>`;
     box.innerHTML = html;
   } catch (e) {
     box.innerHTML = `<div class="loading-text">${t('loadFail')}</div>`;
@@ -2736,7 +3194,7 @@ function answerQuiz(index) {
 
 <canvas id="brasas-codice"></canvas>
 <div id="fogo-fundo"></div>
-<div class="build-stamp" id="buildStamp">v20241004-i18n</div>
+<div class="build-stamp" id="buildStamp">v20241004-trilha</div>
 <script>
 (function(){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
