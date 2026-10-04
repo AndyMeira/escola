@@ -1000,6 +1000,30 @@ body:not(.light) .user-bar { color: #c9b896 !important; }
 }
 body.light #themeToggle { background: rgba(255,255,255,.9); }
 
+/* ===== SELETOR DE IDIOMA PT/ES/EN ===== */
+#langSwitch {
+  position: fixed;
+  top: 12px; left: 12px;
+  z-index: 1001;
+  display: flex; gap: 4px;
+  background: rgba(28,22,16,.85);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px;
+  backdrop-filter: blur(6px);
+}
+body.light #langSwitch { background: rgba(255,255,255,.9); }
+#langSwitch button {
+  border: none; background: transparent;
+  color: inherit; opacity: .6;
+  font-family: 'Lato', sans-serif !important;
+  font-size: 11px; font-weight: 700;
+  padding: 5px 9px; border-radius: 14px; cursor: pointer;
+}
+body:not(.light) #langSwitch button { color: #c9b896; }
+body.light #langSwitch button { color: var(--brown); }
+#langSwitch button.active { opacity: 1; background: var(--gold); color: #1c1610 !important; }
+
 /* ===== TEMA CLARO (o escuro é o padrão) ===== */
 body.light {
   --cream: #fdf8ef;
@@ -1235,6 +1259,9 @@ body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { fon
 <body>
 
 <button id="themeToggle" onclick="toggleTheme()" title="Alternar tema claro/escuro">🌙</button>
+<div id="langSwitch" role="group" aria-label="Idioma / Language">
+  <button data-lang="pt" onclick="setLang('pt')" class="active">PT</button><button data-lang="es" onclick="setLang('es')">ES</button><button data-lang="en" onclick="setLang('en')">EN</button>
+</div>
 <div id="offlineBar" style="display:none;">📡 Você está offline — dá para reler suas conversas salvas, mas o chat e o quiz precisam de internet.</div>
 
 <svg style="display:none" aria-hidden="true">
@@ -1490,6 +1517,263 @@ let selectedTopic = "Fundamentos bíblicos da intercessão";
 let quizAnswered = false;
 let currentQuiz = null;
 
+// ===== I18N PT/ES/EN (sem backend novo) =====
+// PT usa NAA · ES usa RVR1960 · EN usa KJV (domínio público/tradicional).
+// Tópicos internos continuam em PT (chaves do D1/stats); só a saída da IA e a UI trocam de idioma.
+const BIBLE_VERSION = {
+  pt: { name: "NAA", full: "Nova Almeida Atualizada" },
+  es: { name: "RVR1960", full: "Reina-Valera 1960" },
+  en: { name: "KJV", full: "King James Version" }
+};
+const SUPPORTED_LANGS = ["pt", "es", "en"];
+let currentLang = "pt";
+function getLang() { return SUPPORTED_LANGS.includes(currentLang) ? currentLang : "pt"; }
+function t(key) {
+  const l = getLang();
+  if (STR[l] && STR[l][key] !== undefined) return STR[l][key];
+  return STR.pt[key] !== undefined ? STR.pt[key] : key;
+}
+const STR = {
+pt: {
+  htmlLang: "pt-BR", title: "Escola de Intercessão",
+  headerSub: "Baseado na Bíblia e nos grandes intercessores",
+  themeLabel: "Tema bíblico:", badgeTheme: "Tema:",
+  tabChat: "Aprender & Perguntar", tabQuiz: "Exercícios & Quiz", tabMasters: "Os Intercessores", tabProgress: "Meu Progresso",
+  chatHeader: "Sala de Ensino — Intercessão",
+  welcome: 'Bem-vindo(a), servo(a) do Senhor! 🙏<br><br>Esta escola é fundamentada, antes de tudo, na <strong>Palavra de Deus</strong>. Cada resposta parte diretamente das Escrituras, na <strong>versão NAA</strong> (Nova Almeida Atualizada).<br><br>De vez em quando, o testemunho de vida de algum intercessor pode ser citado — sempre como <strong>confirmação</strong> de que um princípio bíblico funciona na prática, nunca como fonte da verdade.<br><br>Você pode escolher um tema bíblico acima. O que deseja aprender hoje?',
+  inputPh: "Pergunte sobre intercessão...",
+  quizHint: "Escolha um tema e teste seus conhecimentos:",
+  mastersHint: "Conheça grandes testemunhos de intercessão — a Bíblia segue como fundamento:",
+  generate: "Gerar Pergunta", update: "Atualizar", next: "Próxima Pergunta →",
+  correct: "Correto!", wrong: "Incorreto.", savedBadge: "pergunta guardada 📦",
+  themeWord: "Tema", yourPerf: "Seu desempenho",
+  authSubLogin: "Entre para continuar seus estudos", authSubSignup: "Crie sua conta para começar",
+  authSubForgot: "Digite seu e-mail para receber o link de recuperação", authSubReset: "Escolha sua nova senha",
+  loginBtn: "Entrar", signupBtn: "Cadastrar", sendLinkBtn: "Enviar link", resetBtn: "Definir nova senha",
+  namePh: "Seu nome", emailPh: "E-mail", passPh: "Senha", newPassPh: "Nova senha (mín. 6 caracteres)",
+  noAccount: 'Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>',
+  hasAccount: 'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>',
+  forgotLink: '<a onclick="showForgot()">Esqueci a senha</a>',
+  rememberLink: 'Lembrou a senha? <a onclick="showLogin()">Entrar</a>',
+  offlineBar: "📡 Você está offline — dá para reler suas conversas salvas, mas o chat e o quiz precisam de internet.",
+  offlineHist: "Você está offline — mostrando as últimas conversas salvas neste aparelho. 📡",
+  offlineNeedNet: "Você está offline. O quiz precisa de internet para gerar perguntas. 📡",
+  offlineChat: "Você está offline. Reconecte-se à internet para continuar a conversa. 📡",
+  limitMsg: n => `Você atingiu o limite de ${n} mensagens hoje. Volte amanhã para continuar aprendendo! 🙏`,
+  preparing: s => `Preparando pergunta sobre: <em>${s}</em>...`,
+  overloaded: "O serviço de IA está sobrecarregado agora. Aguarde alguns minutos e tente de novo. 🙏",
+  modelOff: "Modelo de IA indisponível no momento. Tente de novo em instantes. 🙏",
+  unknownErr: "Erro desconhecido.", connErr: "Erro de conexão com a API. Verifique sua chave ou conexão.",
+  emptyReply: "A resposta veio vazia. Tente novamente.",
+  blockedSec: "A resposta foi bloqueada pelos filtros de segurança.",
+  quizBlocked: "A pergunta foi bloqueada. Tente outro tema.",
+  quizFail: "Não foi possível gerar a pergunta agora. Tente novamente em instantes. 🙏",
+  needLoginProg: "Entre para ver seu progresso. 🙏", loadingProg: "Carregando seu progresso...",
+  noQuizYet: "Você ainda não respondeu nenhum quiz. Gere uma pergunta na aba Exercícios! 📜",
+  loadFail: "Não foi possível carregar. Tente novamente.",
+  ofText: t2 => `${t2.correct} de ${t2.total} corretas (${t2.pct}%)`,
+  greeting: n => `Olá, ${n} 🙏`,
+  errFill: "Preencha e-mail e senha.", errName: "Digite seu nome.", errEmail: "Digite seu e-mail.",
+  errPass6: "A nova senha deve ter ao menos 6 caracteres.",
+  errLink: "Link inválido ou expirado.", errSend: "Erro ao enviar. Tente novamente.", errAuth: "Erro ao autenticar. Tente novamente.",
+  okPass: "Senha atualizada! Entre com sua nova senha. 🙏",
+  okForgot: "Se o e-mail estiver cadastrado, você receberá o link de recuperação. 🙏",
+  signOut: "Sair",
+  quick: ["O que é intercessão?", "Intercessão militante", "Batalha espiritual", "Armas espirituais", "Intercessor quebrantado", "Conquista de cidades", "Impartição & o Espírito", "Oração x Intercessão", "Intercessão profética", "Jejum & intercessão"],
+  quickFull: ["O que é intercessão e qual é o seu fundamento bíblico?", "O que a Bíblia ensina sobre intercessão militante e tomar as portas do inimigo em oração?", "O que a Bíblia ensina sobre batalha espiritual e discernimento na intercessão?", "Como o intercessor deve usar as armas de guerra espiritual segundo as Escrituras?", "O que a Bíblia ensina sobre o intercessor quebrantado e liberto?", "O que a Bíblia ensina sobre oração de autoridade e conquista de cidades e nações?", "Como a Bíblia conecta a impartição do Espírito Santo com a intercessão?", "Qual a diferença entre oração e intercessão segundo as Escrituras?", "Como praticar a intercessão profética?", "O que a Bíblia ensina sobre jejum ligado à intercessão?"]
+},
+es: {
+  htmlLang: "es", title: "Escuela de Intercesión",
+  headerSub: "Basada en la Biblia y en grandes intercesores",
+  themeLabel: "Tema bíblico:", badgeTheme: "Tema:",
+  tabChat: "Aprender y Preguntar", tabQuiz: "Ejercicios y Quiz", tabMasters: "Los Intercesores", tabProgress: "Mi Progreso",
+  chatHeader: "Sala de Enseñanza — Intercesión",
+  welcome: '¡Bienvenido(a), siervo(a) del Señor! 🙏<br><br>Esta escuela está fundamentada, ante todo, en la <strong>Palabra de Dios</strong>. Cada respuesta parte directamente de las Escrituras, en la <strong>versión RVR1960</strong> (Reina-Valera 1960).<br><br>De vez en cuando se puede citar el testimonio de vida de algún intercesor — siempre como <strong>confirmación</strong> de que un principio bíblico funciona en la práctica, nunca como fuente de la verdad.<br><br>Puedes elegir un tema bíblico arriba. ¿Qué deseas aprender hoy?',
+  inputPh: "Pregunta sobre intercesión...",
+  quizHint: "Elige un tema y pon a prueba tus conocimientos:",
+  mastersHint: "Conoce grandes testimonios de intercesión — la Biblia sigue siendo el fundamento:",
+  generate: "Generar Pregunta", update: "Actualizar", next: "Siguiente Pregunta →",
+  correct: "¡Correcto!", wrong: "Incorrecto.", savedBadge: "pregunta guardada 📦",
+  themeWord: "Tema", yourPerf: "Tu desempeño",
+  authSubLogin: "Inicia sesión para continuar tus estudios", authSubSignup: "Crea tu cuenta para comenzar",
+  authSubForgot: "Escribe tu correo para recibir el enlace de recuperación", authSubReset: "Elige tu nueva contraseña",
+  loginBtn: "Entrar", signupBtn: "Registrarse", sendLinkBtn: "Enviar enlace", resetBtn: "Definir nueva contraseña",
+  namePh: "Tu nombre", emailPh: "Correo electrónico", passPh: "Contraseña", newPassPh: "Nueva contraseña (mín. 6 caracteres)",
+  noAccount: '¿Aún no tienes cuenta? <a onclick="toggleAuthMode()">Regístrate</a>',
+  hasAccount: '¿Ya tienes cuenta? <a onclick="toggleAuthMode()">Entrar</a>',
+  forgotLink: '<a onclick="showForgot()">Olvidé mi contraseña</a>',
+  rememberLink: '¿Recordaste tu contraseña? <a onclick="showLogin()">Entrar</a>',
+  offlineBar: "📡 Estás sin conexión — puedes releer tus conversaciones guardadas, pero el chat y el quiz necesitan internet.",
+  offlineHist: "Estás sin conexión — mostrando las últimas conversaciones guardadas en este dispositivo. 📡",
+  offlineNeedNet: "Estás sin conexión. El quiz necesita internet para generar preguntas. 📡",
+  offlineChat: "Estás sin conexión. Vuelve a conectarte para continuar la conversación. 📡",
+  limitMsg: n => `Alcanzaste el límite de ${n} mensajes hoy. ¡Vuelve mañana para seguir aprendiendo! 🙏`,
+  preparing: s => `Preparando pregunta sobre: <em>${s}</em>...`,
+  overloaded: "El servicio de IA está sobrecargado ahora. Espera unos minutos e inténtalo de nuevo. 🙏",
+  modelOff: "Modelo de IA no disponible en este momento. Inténtalo de nuevo en un momento. 🙏",
+  unknownErr: "Error desconocido.", connErr: "Error de conexión con la API. Revisa tu conexión.",
+  emptyReply: "La respuesta llegó vacía. Inténtalo de nuevo.",
+  blockedSec: "La respuesta fue bloqueada por los filtros de seguridad.",
+  quizBlocked: "La pregunta fue bloqueada. Prueba otro tema.",
+  quizFail: "No fue posible generar la pregunta ahora. Inténtalo de nuevo en un momento. 🙏",
+  needLoginProg: "Inicia sesión para ver tu progreso. 🙏", loadingProg: "Cargando tu progreso...",
+  noQuizYet: "Aún no respondiste ningún quiz. ¡Genera una pregunta en la pestaña Ejercicios! 📜",
+  loadFail: "No fue posible cargar. Inténtalo de nuevo.",
+  ofText: t2 => `${t2.correct} de ${t2.total} correctas (${t2.pct}%)`,
+  greeting: n => `Hola, ${n} 🙏`,
+  errFill: "Completa correo y contraseña.", errName: "Escribe tu nombre.", errEmail: "Escribe tu correo.",
+  errPass6: "La nueva contraseña debe tener al menos 6 caracteres.",
+  errLink: "Enlace inválido o expirado.", errSend: "Error al enviar. Inténtalo de nuevo.", errAuth: "Error al autenticar. Inténtalo de nuevo.",
+  okPass: "¡Contraseña actualizada! Entra con tu nueva contraseña. 🙏",
+  okForgot: "Si el correo está registrado, recibirás el enlace de recuperación. 🙏",
+  signOut: "Salir",
+  quick: ["¿Qué es la intercesión?", "Intercesión militante", "Batalla espiritual", "Armas espirituales", "Intercesor quebrantado", "Conquista de ciudades", "Impartición y el Espíritu", "Oración vs Intercesión", "Intercesión profética", "Ayuno e intercesión"],
+  quickFull: ["¿Qué es la intercesión y cuál es su fundamento bíblico?", "¿Qué enseña la Biblia sobre la intercesión militante y tomar las puertas del enemigo en oración?", "¿Qué enseña la Biblia sobre la batalla espiritual y el discernimiento en la intercesión?", "¿Cómo debe usar el intercesor las armas de guerra espiritual según las Escrituras?", "¿Qué enseña la Biblia sobre el intercesor quebrantado y liberado?", "¿Qué enseña la Biblia sobre la oración de autoridad y la conquista de ciudades y naciones?", "¿Cómo conecta la Biblia la impartición del Espíritu Santo con la intercesión?", "¿Cuál es la diferencia entre oración e intercesión según las Escrituras?", "¿Cómo practicar la intercesión profética?", "¿Qué enseña la Biblia sobre el ayuno ligado a la intercesión?"]
+},
+en: {
+  htmlLang: "en", title: "School of Intercession",
+  headerSub: "Grounded in the Bible and great intercessors",
+  themeLabel: "Biblical theme:", badgeTheme: "Theme:",
+  tabChat: "Learn & Ask", tabQuiz: "Exercises & Quiz", tabMasters: "The Intercessors", tabProgress: "My Progress",
+  chatHeader: "Teaching Room — Intercession",
+  welcome: 'Welcome, servant of the Lord! 🙏<br><br>This school is grounded, first of all, in the <strong>Word of God</strong>. Every answer flows directly from Scripture, in the <strong>KJV</strong> (King James Version).<br><br>From time to time, the life testimony of an intercessor may be cited — always as <strong>confirmation</strong> that a biblical principle works in practice, never as the source of truth.<br><br>You can choose a biblical theme above. What would you like to learn today?',
+  inputPh: "Ask about intercession...",
+  quizHint: "Choose a theme and test your knowledge:",
+  mastersHint: "Meet great testimonies of intercession — the Bible remains the foundation:",
+  generate: "Generate Question", update: "Refresh", next: "Next Question →",
+  correct: "Correct!", wrong: "Incorrect.", savedBadge: "saved question 📦",
+  themeWord: "Theme", yourPerf: "Your performance",
+  authSubLogin: "Sign in to continue your studies", authSubSignup: "Create your account to begin",
+  authSubForgot: "Enter your email to receive the recovery link", authSubReset: "Choose your new password",
+  loginBtn: "Sign in", signupBtn: "Sign up", sendLinkBtn: "Send link", resetBtn: "Set new password",
+  namePh: "Your name", emailPh: "Email", passPh: "Password", newPassPh: "New password (min. 6 characters)",
+  noAccount: 'No account yet? <a onclick="toggleAuthMode()">Sign up</a>',
+  hasAccount: 'Already have an account? <a onclick="toggleAuthMode()">Sign in</a>',
+  forgotLink: '<a onclick="showForgot()">Forgot password</a>',
+  rememberLink: 'Remembered your password? <a onclick="showLogin()">Sign in</a>',
+  offlineBar: "📡 You are offline — you can re-read saved conversations, but chat and quiz need internet.",
+  offlineHist: "You are offline — showing the last conversations saved on this device. 📡",
+  offlineNeedNet: "You are offline. The quiz needs internet to generate questions. 📡",
+  offlineChat: "You are offline. Reconnect to continue the conversation. 📡",
+  limitMsg: n => `You reached today's limit of ${n} messages. Come back tomorrow to keep learning! 🙏`,
+  preparing: s => `Preparing a question about: <em>${s}</em>...`,
+  overloaded: "The AI service is overloaded right now. Wait a few minutes and try again. 🙏",
+  modelOff: "AI model unavailable at the moment. Try again shortly. 🙏",
+  unknownErr: "Unknown error.", connErr: "API connection error. Check your connection.",
+  emptyReply: "The reply came back empty. Try again.",
+  blockedSec: "The reply was blocked by safety filters.",
+  quizBlocked: "The question was blocked. Try another theme.",
+  quizFail: "Could not generate the question now. Try again shortly. 🙏",
+  needLoginProg: "Sign in to see your progress. 🙏", loadingProg: "Loading your progress...",
+  noQuizYet: "You have not answered any quiz yet. Generate a question in the Exercises tab! 📜",
+  loadFail: "Could not load. Try again.",
+  ofText: t2 => `${t2.correct} of ${t2.total} correct (${t2.pct}%)`,
+  greeting: n => `Hello, ${n} 🙏`,
+  errFill: "Fill in email and password.", errName: "Enter your name.", errEmail: "Enter your email.",
+  errPass6: "The new password must be at least 6 characters.",
+  errLink: "Invalid or expired link.", errSend: "Failed to send. Try again.", errAuth: "Authentication failed. Try again.",
+  okPass: "Password updated! Sign in with your new password. 🙏",
+  okForgot: "If the email is registered, you will receive the recovery link. 🙏",
+  signOut: "Sign out",
+  quick: ["What is intercession?", "Militant intercession", "Spiritual battle", "Spiritual weapons", "Broken intercessor", "City conquest", "Impartation & the Spirit", "Prayer vs Intercession", "Prophetic intercession", "Fasting & intercession"],
+  quickFull: ["What is intercession and what is its biblical foundation?", "What does the Bible teach about militant intercession and taking the enemy's gates in prayer?", "What does the Bible teach about spiritual battle and discernment in intercession?", "How should the intercessor use the weapons of spiritual warfare according to Scripture?", "What does the Bible teach about the broken and set-free intercessor?", "What does the Bible teach about authoritative prayer and conquering cities and nations?", "How does the Bible connect the impartation of the Holy Spirit with intercession?", "What is the difference between prayer and intercession according to Scripture?", "How to practice prophetic intercession?", "What does the Bible teach about fasting linked to intercession?"]
+}
+};
+const THEME_I18N = {
+  pt: { Todos: "Todos os temas", Fundamentos: "Fundamentos da Intercessão", Autoridade: "Autoridade Espiritual", Quebrantamento: "Quebrantamento e Consagração", Jejum: "Jejum e Oração", Nacoes: "Intercessão por Nações", Impartição: "Impartição e Avivamento" },
+  es: { Todos: "Todos los temas", Fundamentos: "Fundamentos de la Intercesión", Autoridade: "Autoridad Espiritual", Quebrantamento: "Quebrantamiento y Consagración", Jejum: "Ayuno y Oración", Nacoes: "Intercesión por las Naciones", Impartição: "Impartición y Avivamiento" },
+  en: { Todos: "All themes", Fundamentos: "Foundations of Intercession", Autoridade: "Spiritual Authority", Quebrantamento: "Brokenness & Consecration", Jejum: "Fasting & Prayer", Nacoes: "Intercession for Nations", Impartição: "Impartation & Revival" }
+};
+function setLang(l) {
+  if (!SUPPORTED_LANGS.includes(l)) return;
+  currentLang = l;
+  try { localStorage.setItem('ei_lang', l); } catch (e) {}
+  document.documentElement.lang = t('htmlLang');
+  document.title = t('title');
+  document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+  applyLang();
+}
+function initLang() {
+  let saved = null;
+  try { saved = localStorage.getItem('ei_lang'); } catch (e) {}
+  if (SUPPORTED_LANGS.includes(saved)) { currentLang = saved; }
+  else {
+    const nav = (navigator.language || 'pt').slice(0, 2).toLowerCase();
+    currentLang = SUPPORTED_LANGS.includes(nav) ? nav : 'pt';
+  }
+  document.documentElement.lang = t('htmlLang');
+  document.title = t('title');
+  document.querySelectorAll('#langSwitch button').forEach(b => b.classList.toggle('active', b.dataset.lang === getLang()));
+}
+function applyLang() {
+  const headerP = document.querySelector('header p');
+  if (headerP) headerP.textContent = t('headerSub');
+  document.querySelectorAll('.masters-label')[0] && (document.querySelectorAll('.masters-label')[0].textContent = t('themeLabel'));
+  const tabs = document.querySelectorAll('.tab-btn');
+  const tabKeys = ['tabChat', 'tabQuiz', 'tabMasters', 'tabProgress'];
+  const icons = ['i-quill', 'i-scroll', 'i-book', 'i-star'];
+  tabs.forEach((b, i) => { if (tabKeys[i]) b.innerHTML = `<svg class="icon"><use href="#${icons[i]}"/></svg> ${t(tabKeys[i])}`; });
+  const ch = document.querySelector('.chat-header-text');
+  if (ch) ch.textContent = t('chatHeader');
+  const inp = document.getElementById('userInput');
+  if (inp) inp.placeholder = t('inputPh');
+  const qh = document.querySelector('#tab-quiz .section-hint');
+  if (qh) qh.textContent = t('quizHint');
+  const mh = document.querySelector('#tab-masters .section-hint');
+  if (mh) mh.textContent = t('mastersHint');
+  const gb = document.getElementById('generateBtn');
+  if (gb) gb.innerHTML = `<svg class="icon"><use href="#i-star"/></svg> ${t('generate')}`;
+  const ub = document.querySelector('#tab-progress .generate-btn');
+  if (ub) ub.innerHTML = `<svg class="icon"><use href="#i-star"/></svg> ${t('update')}`;
+  const bar = document.getElementById('offlineBar');
+  if (bar) bar.textContent = t('offlineBar');
+  const an = document.getElementById('authNameField');
+  if (an) an.placeholder = t('namePh');
+  const ae = document.getElementById('authEmail');
+  if (ae) ae.placeholder = t('emailPh');
+  const ap = document.getElementById('authPassword');
+  if (ap && !resetToken) ap.placeholder = t('passPh');
+  const sb = document.querySelector('#userBar button');
+  if (sb) sb.textContent = t('signOut');
+  renderThemeChips(); renderTopicGrid(); updateBadge(); refreshAuthTexts(); renderQuickPrompts();
+  const msgs = document.getElementById('messages');
+  if (msgs && !msgs.dataset.welcomed && !currentUser) {
+    const b = msgs.querySelector('.msg.agent .msg-bubble');
+    if (b) b.innerHTML = t('welcome');
+  }
+  if (document.getElementById('tab-progress').classList.contains('active') && currentUser) loadProgress();
+}
+function refreshAuthTexts() {
+  if (resetToken) {
+    document.getElementById('authSubtitle').textContent = t('authSubReset');
+    document.getElementById('authSubmitBtn').textContent = t('resetBtn');
+    document.getElementById('authToggleText').innerHTML = t('rememberLink');
+  } else if (isForgotMode) {
+    document.getElementById('authSubtitle').textContent = t('authSubForgot');
+    document.getElementById('authSubmitBtn').textContent = t('sendLinkBtn');
+    document.getElementById('authToggleText').innerHTML = t('rememberLink');
+  } else if (isSignupMode) {
+    document.getElementById('authSubtitle').textContent = t('authSubSignup');
+    document.getElementById('authSubmitBtn').textContent = t('signupBtn');
+    document.getElementById('authToggleText').innerHTML = t('hasAccount');
+  } else {
+    document.getElementById('authSubtitle').textContent = t('authSubLogin');
+    document.getElementById('authSubmitBtn').textContent = t('loginBtn');
+    document.getElementById('authToggleText').innerHTML = t('noAccount');
+  }
+  const fl = document.getElementById('authForgotLink');
+  if (fl && !isSignupMode && !isForgotMode && !resetToken) fl.innerHTML = t('forgotLink');
+}
+function renderQuickPrompts() {
+  const box = document.querySelector('.quick-prompts');
+  if (!box) return;
+  const labels = t('quick'); const fulls = t('quickFull');
+  box.innerHTML = labels.map((lb, i) => {
+    const fq = String(fulls[i] || lb).replace(/'/g, "\\'");
+    return `<button class="quick-btn" onclick="quickAsk('${fq}')">${lb}</button>`;
+  }).join('');
+}
+
 // ===== FONTE ÚNICA DE VERDADE DOS TEMAS =====
 // Cada tema é definido AQUI UMA VEZ SÓ. Os chips do chat e os cards do quiz
 // são gerados automaticamente a partir deste objeto (ver renderThemeChips() e renderTopicGrid()).
@@ -1569,28 +1853,43 @@ const EXTRA_QUIZ_TOPICS = [
 // Gera os chips de tema do chat automaticamente a partir de THEMES
 function renderThemeChips() {
   const container = document.getElementById('themeChips');
+  const names = THEME_I18N[getLang()] || THEME_I18N.pt;
   container.innerHTML = Object.entries(THEMES).map(([key, t]) => {
-    const activeClass = key === 'Todos' ? ' active' : '';
-    return `<button class="master-chip${activeClass}" onclick="setTheme(this, '${key}')" data-theme="${key}"><svg class="icon"><use href="#${t.icon}"/></svg> ${t.label}</button>`;
+    const activeClass = key === activeTheme ? ' active' : (key === 'Todos' && !THEMES[activeTheme] ? ' active' : '');
+    const label = names[key] || t.label;
+    return `<button class="master-chip${activeClass}" onclick="setTheme(this, '${key}')" data-theme="${key}"><svg class="icon"><use href="#${t.icon}"/></svg> ${label}</button>`;
   }).join('');
 }
 
 // Gera os cards de tópico do quiz automaticamente a partir de THEMES + EXTRA_QUIZ_TOPICS
+// quizTopic (PT) é chave estável do D1/stats; t-name/t-sub são só exibição traduzida.
+const TOPIC_I18N = {
+  "Fundamentos bíblicos da intercessão": { es: ["Fundamentos Bíblicos", "Base en las Escrituras"], en: ["Biblical Foundations", "Grounded in Scripture"] },
+  "Intercessão militante — tomar as portas do inimigo em oração": { es: ["Intercesión Militante", "Autoridad en oración"], en: ["Militant Intercession", "Authority in prayer"] },
+  "O intercessor quebrantado, liberto e a sala do trono": { es: ["Sala del Trono", "Quebrantamiento y consagración"], en: ["Throne Room", "Brokenness and consecration"] },
+  "Intercessão em chamas e autoridade espiritual": { es: ["Intercesión en Llamas", "Fervor y autoridad espiritual"], en: ["Intercession on Fire", "Fervor and spiritual authority"] },
+  "Conquista de cidades e intercessão por nações": { es: ["Conquistar Naciones", "Intercesión por ciudades y pueblos"], en: ["Conquer Nations", "Intercession for cities and peoples"] },
+  "Impartição do Espírito Santo e avivamento ligado à intercessão": { es: ["Impartición y Avivamiento", "El poder del Espíritu Santo"], en: ["Impartation & Revival", "The power of the Holy Spirit"] },
+  "Batalha espiritual e intercessão estratégica": { es: ["Batalla Espiritual", "Discernimiento y guerra espiritual"], en: ["Spiritual Battle", "Discernment and spiritual warfare"] },
+  "Intercessores bíblicos: Moisés, Daniel, Paulo, Ester e seus métodos": { es: ["Intercesores Bíblicos", "Moisés, Daniel, Pablo, Ester"], en: ["Biblical Intercessors", "Moses, Daniel, Paul, Esther"] }
+};
 function renderTopicGrid() {
   const grid = document.getElementById('topicGrid');
   const temasComQuiz = Object.values(THEMES).filter(t => t.quizTopic);
   const todosTopicos = [...temasComQuiz, ...EXTRA_QUIZ_TOPICS];
+  const l = getLang();
 
   grid.innerHTML = todosTopicos.map((t, i) => {
-    const selectedClass = i === 0 ? ' selected' : '';
-    return `<div class="topic-card${selectedClass}" data-topic="${t.quizTopic}" onclick="selectTopic(this)">
+    const tr = (TOPIC_I18N[t.quizTopic] && TOPIC_I18N[t.quizTopic][l]) || [t.topicName, t.topicSub];
+    const isSel = t.quizTopic === selectedTopic || (i === 0 && !todosTopicos.some(x => x.quizTopic === selectedTopic));
+    return `<div class="topic-card${isSel ? ' selected' : ''}" data-topic="${t.quizTopic}" onclick="selectTopic(this)">
       <div class="t-icon"><svg class="icon"><use href="#${t.icon}"/></svg></div>
-      <div class="t-name">${t.topicName}</div>
-      <div class="t-sub">${t.topicSub}</div>
+      <div class="t-name">${tr[0]}</div>
+      <div class="t-sub">${tr[1]}</div>
     </div>`;
   }).join('');
 
-  if (todosTopicos.length > 0) selectedTopic = todosTopicos[0].quizTopic;
+  if (!todosTopicos.some(x => x.quizTopic === selectedTopic) && todosTopicos.length > 0) selectedTopic = todosTopicos[0].quizTopic;
 }
 
 const masterKnowledge = {
@@ -1604,7 +1903,20 @@ const masterKnowledge = {
   "Dave Roberson": `Dave Roberson (EUA), do Family Prayer Center, é citado como testemunho de que a busca perseverante pela presença e pelo poder de Deus em oração (Atos 2, 2 Reis 2) produz vida no Espírito e discernimento profético.`
 };
 
-const SYSTEM_QUIZ = `Você é um professor especialista em intercessão cristã gerando uma pergunta de múltipla escolha.
+function getQuizPrompt() {
+  const l = getLang();
+  const bv = BIBLE_VERSION[l] || BIBLE_VERSION.pt;
+  if (l === 'es') return `Eres un profesor experto en intercesión cristiana generando una pregunta de opción múltiple.
+La pregunta debe centrarse en el PRINCIPIO O FUNDAMENTO BÍBLICO del tema — nunca en la biografía de algún pastor/intercesor.
+Las 4 alternativas deben tener longitud y detalle parecidos — ninguna visiblemente más completa o más "correcta" por el tamaño. Las 3 incorrectas deben ser plausibles.
+Responde SOLO en JSON válido, sin markdown ni texto antes/después.
+Ejemplo: { "pergunta": "texto", "opcoes": ["A) ...", "B) ...", "C) ...", "D) ..."], "correta": 0, "explicacao": "explicación en 2-4 frases, anclada en el texto bíblico", "versiculo": "Libro capítulo:versículo — texto en ${bv.name}" }`;
+  if (l === 'en') return `You are an expert teacher of Christian intercession generating a multiple-choice question.
+The question must focus on the BIBLICAL PRINCIPLE or FOUNDATION of the theme — never on a pastor/intercessor biography.
+The 4 options must have similar length and detail — none visibly more complete or more "correct" by wording. The 3 wrong ones must be plausible.
+Reply ONLY with valid JSON, no markdown or extra text.
+Example: { "pergunta": "question text", "opcoes": ["A) ...", "B) ...", "C) ...", "D) ..."], "correta": 0, "explicacao": "2-4 sentence explanation grounded in Scripture", "versiculo": "Book chapter:verse — text in ${bv.name}" }`;
+  return `Você é um professor especialista em intercessão cristã gerando uma pergunta de múltipla escolha.
 A pergunta deve ter como foco principal o PRINCÍPIO OU FUNDAMENTO BÍBLICO do tema — nunca a biografia ou o nome de algum pastor/intercessor.
 As 4 alternativas devem ter comprimento e nível de detalhe parecidos entre si — nenhuma pode ser visivelmente mais completa, mais específica ou mais "certa" só pelo tamanho ou pela redação. As 3 erradas devem ser plausíveis para quem não domina o tema, não apenas absurdas óbvias.
 Responda APENAS em JSON válido, sem qualquer tipo de marcação markdown ou texto antes/depois.
@@ -1614,14 +1926,21 @@ Exemplo de estrutura:
   "opcoes": ["A) opção 1", "B) opção 2", "C) opção 3", "D) opção 4"],
   "correta": 0,
   "explicacao": "explicação em 2-4 frases, ancorada no texto bíblico",
-  "versiculo": "Livro capítulo:versículo — texto do versículo na versão NAA"
+  "versiculo": "Livro capítulo:versículo — texto do versículo na versão ${bv.name}"
 }`;
+}
+const SYSTEM_QUIZ = `Você é um professor especialista em intercessão cristã gerando uma pergunta de múltipla escolha.
+A pergunta deve ter como foco principal o PRINCÍPIO OU FUNDAMENTO BÍBLICO do tema — nunca a biografia ou o nome de algum pastor/intercessor.
+Responda APENAS em JSON válido.`; // legado: use getQuizPrompt()
 
 window.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initLang();
   updateOfflineBar();
   renderThemeChips();
   renderTopicGrid();
+  renderQuickPrompts();
+  applyLang();
   const textarea = document.getElementById('userInput');
   textarea.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -1655,12 +1974,12 @@ function showLogin() {
   isSignupMode = false; isForgotMode = false; resetToken = null;
   document.getElementById('authNameField').style.display = 'none';
   document.getElementById('authPassword').style.display = 'block';
-  document.getElementById('authSubmitBtn').textContent = 'Entrar';
+  document.getElementById('authSubmitBtn').textContent = t('loginBtn');
   document.getElementById('authSubmitBtn').disabled = false;
-  document.getElementById('authSubtitle').textContent = 'Entre para continuar seus estudos';
-  document.getElementById('authToggleText').innerHTML =
-    'Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>';
+  document.getElementById('authSubtitle').textContent = t('authSubLogin');
+  document.getElementById('authToggleText').innerHTML = t('noAccount');
   document.getElementById('authForgotLink').style.display = 'block';
+  document.getElementById('authForgotLink').innerHTML = t('forgotLink');
   hideAuthError();
 }
 
@@ -1668,11 +1987,10 @@ function showSignup() {
   isSignupMode = true; isForgotMode = false; resetToken = null;
   document.getElementById('authNameField').style.display = 'block';
   document.getElementById('authPassword').style.display = 'block';
-  document.getElementById('authSubmitBtn').textContent = 'Cadastrar';
+  document.getElementById('authSubmitBtn').textContent = t('signupBtn');
   document.getElementById('authSubmitBtn').disabled = false;
-  document.getElementById('authSubtitle').textContent = 'Crie sua conta para começar';
-  document.getElementById('authToggleText').innerHTML =
-    'Já tem conta? <a onclick="toggleAuthMode()">Entrar</a>';
+  document.getElementById('authSubtitle').textContent = t('authSubSignup');
+  document.getElementById('authToggleText').innerHTML = t('hasAccount');
   document.getElementById('authForgotLink').style.display = 'none';
   hideAuthError();
 }
@@ -1681,11 +1999,10 @@ function showForgot() {
   isSignupMode = false; isForgotMode = true; resetToken = null;
   document.getElementById('authNameField').style.display = 'none';
   document.getElementById('authPassword').style.display = 'none';
-  document.getElementById('authSubmitBtn').textContent = 'Enviar link';
+  document.getElementById('authSubmitBtn').textContent = t('sendLinkBtn');
   document.getElementById('authSubmitBtn').disabled = false;
-  document.getElementById('authSubtitle').textContent = 'Digite seu e-mail para receber o link de recuperação';
-  document.getElementById('authToggleText').innerHTML =
-    'Lembrou a senha? <a onclick="showLogin()">Entrar</a>';
+  document.getElementById('authSubtitle').textContent = t('authSubForgot');
+  document.getElementById('authToggleText').innerHTML = t('rememberLink');
   document.getElementById('authForgotLink').style.display = 'none';
   hideAuthError();
 }
@@ -1696,12 +2013,11 @@ function showReset(token) {
   document.getElementById('authEmail').style.display = 'none';
   document.getElementById('authPassword').style.display = 'block';
   document.getElementById('authPassword').value = '';
-  document.getElementById('authPassword').placeholder = 'Nova senha (mín. 6 caracteres)';
-  document.getElementById('authSubmitBtn').textContent = 'Definir nova senha';
+  document.getElementById('authPassword').placeholder = t('newPassPh');
+  document.getElementById('authSubmitBtn').textContent = t('resetBtn');
   document.getElementById('authSubmitBtn').disabled = false;
-  document.getElementById('authSubtitle').textContent = 'Escolha sua nova senha';
-  document.getElementById('authToggleText').innerHTML =
-    'Lembrou a senha? <a onclick="showLogin()">Entrar</a>';
+  document.getElementById('authSubtitle').textContent = t('authSubReset');
+  document.getElementById('authToggleText').innerHTML = t('rememberLink');
   document.getElementById('authForgotLink').style.display = 'none';
   hideAuthError();
 }
@@ -1738,7 +2054,7 @@ async function submitAuth() {
   if (resetToken) {
     const password = document.getElementById('authPassword').value;
     if (!password || password.length < 6) {
-      showAuthError('A nova senha deve ter ao menos 6 caracteres.');
+      showAuthError(t('errPass6'));
       return;
     }
     const btn = document.getElementById('authSubmitBtn');
@@ -1749,11 +2065,11 @@ async function submitAuth() {
         body: JSON.stringify({ token: resetToken, password })
       });
       document.getElementById('authEmail').style.display = 'block';
-      document.getElementById('authPassword').placeholder = 'Senha';
+      document.getElementById('authPassword').placeholder = t('passPh');
       showLogin();
-      showAuthInfo('Senha atualizada! Entre com sua nova senha. 🙏');
+      showAuthInfo(t('okPass'));
     } catch (e) {
-      showAuthError(e.message || 'Link inválido ou expirado.');
+      showAuthError(e.message || t('errLink'));
       btn.disabled = false;
     }
     return;
@@ -1763,7 +2079,7 @@ async function submitAuth() {
   if (isForgotMode) {
     const email = document.getElementById('authEmail').value.trim();
     if (!email) {
-      showAuthError('Digite seu e-mail.');
+      showAuthError(t('errEmail'));
       return;
     }
     const btn = document.getElementById('authSubmitBtn');
@@ -1774,20 +2090,20 @@ async function submitAuth() {
         body: JSON.stringify({ email })
       });
       showLogin();
-      showAuthInfo('Se o e-mail estiver cadastrado, você receberá o link de recuperação. 🙏');
+      showAuthInfo(t('okForgot'));
     } catch (e) {
-      showAuthError(e.message || 'Erro ao enviar. Tente novamente.');
+      showAuthError(e.message || t('errSend'));
       btn.disabled = false;
     }
     return;
   }
 
   if (!email || !password) {
-    showAuthError('Preencha e-mail e senha.');
+    showAuthError(t('errFill'));
     return;
   }
   if (isSignupMode && !name) {
-    showAuthError('Digite seu nome.');
+    showAuthError(t('errName'));
     return;
   }
 
@@ -1811,7 +2127,7 @@ async function submitAuth() {
       await onLoginSuccess(data.user);
     }
   } catch (e) {
-    showAuthError(e.message || 'Erro ao autenticar. Tente novamente.');
+    showAuthError(e.message || t('errAuth'));
     btn.disabled = false;
   }
 }
@@ -1839,7 +2155,7 @@ async function onLoginSuccess(user) {
     const profile = await api('/db/profile');
     if (profile.display_name) name = profile.display_name;
   } catch (e) {}
-  document.getElementById('userNameLabel').textContent = `Olá, ${name} 🙏`;
+  document.getElementById('userNameLabel').textContent = t('greeting')(name);
 
   await loadChatHistory();
 }
@@ -1876,7 +2192,7 @@ function loadOfflineHistory() {
   geminiHistory = saved.map(m => ({ role: m.role, parts: [{ text: m.content }] }));
   trimHistory();
   saved.forEach(m => addMessage(m.content, m.role === 'model' ? 'agent' : 'user'));
-  addMessage('Você está offline — mostrando as últimas conversas salvas neste aparelho. 📡', 'agent');
+  addMessage(t('offlineHist'), 'agent');
 }
 
 async function saveChatMessage(role, content) {
@@ -1908,7 +2224,9 @@ function setTheme(el, theme) {
 
 function updateBadge() {
   const theme = THEMES[activeTheme] || THEMES["Todos"];
-  const html = `<svg class="icon"><use href="#${theme.icon}"/></svg> Tema: ${theme.label}`;
+  const names = THEME_I18N[getLang()] || THEME_I18N.pt;
+  const label = names[activeTheme] || theme.label;
+  const html = `<svg class="icon"><use href="#${theme.icon}"/></svg> ${t('badgeTheme')} ${label}`;
   document.getElementById('activeMasterBadge').innerHTML = html;
 }
 
@@ -1918,6 +2236,43 @@ function getSystemPrompt() {
     .filter(([nome]) => nome !== 'Todos')
     .map(([, texto]) => `- ${texto}`)
     .join('\n');
+  const l = getLang();
+  const bv = BIBLE_VERSION[l] || BIBLE_VERSION.pt;
+
+  if (l === 'es') {
+    return `Eres un maestro de intercesión cristiana, sirviendo como voz pastoral para un(a) intercesor(a) que busca crecer en la Palabra y en la oración. Trata a quien está delante de ti con el respeto debido a quien ya fue llamado(a) a esta obra — no como alguien que apenas comienza, sino como un(a) intercesor(a) en formación continua delante de Dios. Prioridad clara: LA BIBLIA ES EL FUNDAMENTO, SIEMPRE.
+
+CONTEXTO DEL TEMA BÍBLICO SELECCIONADO:
+${themeContext}
+
+TESTIMONIOS DISPONIBLES (uso reservado, no obligatorio):
+${testemunhosDisponiveis}
+
+REGLAS OBLIGATORIAS DE ESTRUCTURA:
+1. Comienza SIEMPRE por el texto bíblico y el principio de las Escrituras. La Palabra de Dios es la única autoridad normativa.
+2. Cita SIEMPRE versículos bíblicos en la versión ${bv.name} (${bv.full}), con referencia (libro, capítulo y versículo).
+3. NO cites nombres de intercesores por defecto. Menciona solo uno de los testimonios cuando valide de forma concreta y específica la eficacia del principio bíblico enseñado — como máximo uno por respuesta. En la mayoría de las respuestas, ningún nombre es necesario.
+4. Al citar un testimonio, nunca es la fuente de la verdad — es solo ejemplo de vida transformada por la obediencia a la Palabra.
+5. Responde siempre en español.
+6. Mantén respuestas prácticas e inspiradoras, entre 200-400 palabras.`;
+  }
+  if (l === 'en') {
+    return `You are a Christian intercession teacher, serving as a pastoral voice for an intercessor who seeks to grow in the Word and in prayer. Treat the one before you with the respect due to someone already called to this work — not as a mere beginner, but as an intercessor in ongoing formation before God. Clear priority: THE BIBLE IS THE FOUNDATION, ALWAYS.
+
+SELECTED BIBLICAL THEME CONTEXT:
+${themeContext}
+
+AVAILABLE TESTIMONIES (reserved use, not mandatory):
+${testemunhosDisponiveis}
+
+MANDATORY STRUCTURE RULES:
+1. ALWAYS start from the biblical text and the principle of Scripture. God's Word is the only normative authority.
+2. ALWAYS quote Bible verses in the ${bv.name} (${bv.full}), with reference (book, chapter and verse).
+3. Do NOT cite intercessors' names by default. Mention at most one testimony only when it concretely validates the effectiveness of the biblical principle just taught. In most answers, no name is needed.
+4. When citing a testimony, it is never the source of truth — only an example of life transformed by obedience to the Word.
+5. Always respond in English.
+6. Keep answers practical and inspiring, 200-400 words.`;
+  }
 
   return `Você é um mestre de intercessão cristã, servindo como voz pastoral para um(a) intercessor(a) que busca crescer na Palavra e na oração. Trate quem está diante de você com o respeito devido a quem já foi chamado(a) para essa obra — não como alguém que está apenas começando, mas como um(a) intercessor(a) em formação contínua diante de Deus. Prioridade clara: A BÍBLIA É O FUNDAMENTO, SEMPRE.
 
@@ -1929,7 +2284,7 @@ ${testemunhosDisponiveis}
 
 REGRAS OBRIGATÓRIAS DE ESTRUTURA:
 1. Comece SEMPRE pelo texto bíblico e pelo princípio das Escrituras. A Palavra de Deus é a única autoridade normativa.
-2. SEMPRE cite versículos bíblicos usando a versão NAA (Nova Almeida Atualizada), com referência (livro, capítulo e versículo).
+2. SEMPRE cite versículos bíblicos usando a versão ${bv.name} (${bv.full}), com referência (livro, capítulo e versículo).
 3. NÃO cite nomes de intercessores por padrão. Só mencione um dos testemunhos acima quando ele realmente validar, de forma concreta e específica, a eficácia do princípio bíblico que você acabou de ensinar — e no máximo um por resposta. Na maioria das respostas, nenhum nome precisa aparecer.
 4. Quando citar um testemunho, ele nunca é a fonte da verdade — é apenas exemplo de vida transformada pela obediência à Palavra.
 5. Responda sempre em português brasileiro.
@@ -2053,12 +2408,12 @@ async function receiveStream(res) {
       saveChatMessage('model', fullText);
     } else {
       bubble.closest('.msg').remove();
-      addMessage('A resposta veio vazia. Tente novamente.', 'agent');
+      addMessage(t('emptyReply'), 'agent');
     }
   } catch (e) {
     removeTyping();
     bubble.closest('.msg').remove();
-    addMessage('Erro de conexão com a API. Verifique sua chave ou conexão.', 'agent');
+    addMessage(t('connErr'), 'agent');
   }
   btn.disabled = false;
 }
@@ -2087,12 +2442,12 @@ function initTheme() {
 function friendlyError(msg) {
   const m = String(msg || '');
   if (/high demand|overloaded|UNAVAILABLE|503|try again later/i.test(m)) {
-    return 'O serviço de IA está sobrecarregado agora. Aguarde alguns minutos e tente de novo. 🙏';
+    return t('overloaded');
   }
   if (/NOT_FOUND|not found|404/i.test(m)) {
-    return 'Modelo de IA indisponível no momento. Tente de novo em instantes. 🙏';
+    return t('modelOff');
   }
-  return m || 'Erro desconhecido.';
+  return m || t('unknownErr');
 }
 
 // Busca com retentativa automática em sobrecarga (503): 3s, 6s, 9s
@@ -2113,7 +2468,7 @@ async function sendMessage() {
 
   const withinLimit = await checkDailyLimit();
   if (!withinLimit) {
-    addMessage(`Você atingiu o limite de ${DAILY_MESSAGE_LIMIT} mensagens hoje. Volte amanhã para continuar aprendendo! 🙏`, 'agent');
+    addMessage(t('limitMsg')(DAILY_MESSAGE_LIMIT), 'agent');
     return;
   }
 
@@ -2163,13 +2518,13 @@ async function sendMessage() {
       trimHistory();
       saveChatMessage('model', reply);
     } else {
-      addMessage('A resposta foi bloqueada pelos filtros de segurança.', 'agent');
+      addMessage(t('blockedSec'), 'agent');
     }
   } catch(e) {
     removeTyping();
     addMessage(isOffline()
-      ? 'Você está offline. Reconecte-se à internet para continuar a conversa. 📡'
-      : 'Erro de conexão com a API. Verifique sua chave ou conexão.', 'agent');
+      ? t('offlineChat')
+      : t('connErr'), 'agent');
   }
   btn.disabled = false;
 }
@@ -2202,10 +2557,10 @@ async function generateQuiz() {
   const withinLimit = await checkDailyLimit();
   if (!withinLimit) {
     btn.disabled = false;
-    area.innerHTML = `<div class="loading-text">Você atingiu o limite de ${DAILY_MESSAGE_LIMIT} mensagens hoje. Volte amanhã para continuar aprendendo! 🙏</div>`;
+    area.innerHTML = `<div class="loading-text">${t('limitMsg')(DAILY_MESSAGE_LIMIT)}</div>`;
     return;
   }
-  area.innerHTML = `<div class="loading-text"><svg class="icon"><use href="#i-spark"/></svg> Preparando pergunta sobre: <em>${selectedTopic}</em>...</div>`;
+  area.innerHTML = `<div class="loading-text"><svg class="icon"><use href="#i-spark"/></svg> ${t('preparing')(selectedTopic)}</div>`;
   quizAnswered = false;
 
   try {
@@ -2219,7 +2574,7 @@ async function generateQuiz() {
       body: JSON.stringify({
         model: GEMINI_MODEL,
         body: {
-          system_instruction: { parts: [{ text: SYSTEM_QUIZ }] },
+          system_instruction: { parts: [{ text: getQuizPrompt() }] },
           contents: [{ role: 'user', parts: [{ text: `Crie uma pergunta de múltipla escolha sobre: ${selectedTopic}.` }] }],
           generationConfig: { response_mime_type: "application/json" }
         }
@@ -2253,14 +2608,14 @@ async function generateQuiz() {
         }).catch(() => {});
       }
     } else {
-      area.innerHTML = `<div class="loading-text">A pergunta foi bloqueada. Tente outro tema.</div>`;
+      area.innerHTML = `<div class="loading-text">${t('quizBlocked')}</div>`;
     }
   } catch (e) {
     // IA fora do ar? Tenta uma pergunta guardada na reserva
     if (!isOffline() && await tryReserve()) return;
     area.innerHTML = `<div class="loading-text">${isOffline()
-      ? 'Você está offline. O quiz precisa de internet para gerar perguntas. 📡'
-      : 'Não foi possível gerar a pergunta agora. Tente novamente em instantes. 🙏'}</div>`;
+      ? t('offlineNeedNet')
+      : t('quizFail')}</div>`;
   } finally {
     btn.disabled = false;
   }
@@ -2294,7 +2649,7 @@ function shuffleQuizOptions(quiz) {
 function renderQuiz(quiz) {
   const area = document.getElementById('quizArea');
   let html = `<div class="quiz-box">
-    <div class="quiz-ref">Tema · ${escapeHtml(selectedTopic)}${quiz.daReserva ? ' · pergunta guardada 📦' : ''}</div>
+    <div class="quiz-ref">${t('themeWord')} · ${escapeHtml(selectedTopic)}${quiz.daReserva ? ' · ' + t('savedBadge') : ''}</div>
     <div class="quiz-question">${escapeHtml(quiz.pergunta)}</div>
     <div class="quiz-options">`;
   quiz.opcoes.forEach((op, i) => {
@@ -2302,7 +2657,7 @@ function renderQuiz(quiz) {
   });
   html += `</div>
     <div id="quiz-feedback" style="display:none" class="quiz-feedback"></div>
-    <button class="next-btn" id="nextBtn" style="display:none" onclick="generateQuiz()">Próxima Pergunta →</button>
+    <button class="next-btn" id="nextBtn" style="display:none" onclick="generateQuiz()">${t('next')}</button>
   </div>`;
   area.innerHTML = html;
 }
@@ -2311,19 +2666,19 @@ async function loadProgress() {
   const box = document.getElementById('progressBox');
   if (!box) return;
   if (!currentUser) {
-    box.innerHTML = '<div class="loading-text">Entre para ver seu progresso. 🙏</div>';
+    box.innerHTML = `<div class="loading-text">${t('needLoginProg')}</div>`;
     return;
   }
-  box.innerHTML = '<div class="loading-text">Carregando seu progresso...</div>';
+  box.innerHTML = `<div class="loading-text">${t('loadingProg')}</div>`;
   try {
     const stats = await api('/db/quiz_stats');
     if (!stats.total) {
-      box.innerHTML = '<div class="loading-text">Você ainda não respondeu nenhum quiz. Gere uma pergunta na aba Exercícios! 📜</div>';
+      box.innerHTML = `<div class="loading-text">${t('noQuizYet')}</div>`;
       return;
     }
     const pct = Math.round((stats.correct / stats.total) * 100);
-    let html = `<div class="quiz-ref">Seu desempenho</div>
-      <div class="quiz-question">${stats.correct} de ${stats.total} corretas (${pct}%)</div>
+    let html = `<div class="quiz-ref">${t('yourPerf')}</div>
+      <div class="quiz-question">${t('ofText')({ correct: stats.correct, total: stats.total, pct })}</div>
       <div class="quiz-options">`;
     stats.byTopic.forEach(t => {
       const p = t.total ? Math.round((t.correct / t.total) * 100) : 0;
@@ -2339,7 +2694,7 @@ async function loadProgress() {
     html += '</div>';
     box.innerHTML = html;
   } catch (e) {
-    box.innerHTML = '<div class="loading-text">Não foi possível carregar. Tente novamente.</div>';
+    box.innerHTML = `<div class="loading-text">${t('loadFail')}</div>`;
   }
 }
 
@@ -2370,7 +2725,7 @@ function answerQuiz(index) {
   const seal = isCorrect
     ? '<span class="icon-seal correct"><svg class="icon"><use href="#i-check"/></svg></span>'
     : '<span class="icon-seal wrong"><svg class="icon"><use href="#i-x"/></svg></span>';
-  const label = isCorrect ? 'Correto!' : 'Incorreto.';
+  const label = isCorrect ? t('correct') : t('wrong');
   fb.innerHTML = `<div style="display:flex;align-items:center;gap:10px;">${seal}<strong>${label}</strong></div><div style="margin-top:10px;">${escapeHtml(currentQuiz.explicacao)}</div>`;
   if (currentQuiz.versiculo) {
     fb.innerHTML += `<div class="verse"><svg class="icon"><use href="#i-book"/></svg> ${escapeHtml(currentQuiz.versiculo)}</div>`;
@@ -2381,7 +2736,7 @@ function answerQuiz(index) {
 
 <canvas id="brasas-codice"></canvas>
 <div id="fogo-fundo"></div>
-<div class="build-stamp" id="buildStamp">v20241003-a</div>
+<div class="build-stamp" id="buildStamp">v20241004-i18n</div>
 <script>
 (function(){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
