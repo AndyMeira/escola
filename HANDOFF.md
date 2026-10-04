@@ -52,7 +52,7 @@ Rotas: `POST /api/gemini` (auth; `stream:true` → SSE; limite 75/dia/usuário +
 - E-mail do dono p/ alertas: derson.meira@gmail.com (também usuário real no D1).
 
 ## 8. Pendências (ordem sugerida)
-1. **Idioma ES/EN** — dicionário PT/ES/EN (~100 strings) + prompts da IA no idioma + definir versões bíblicas ES (RVR1960?) e EN (KJV?) pois NAA é só PT. Sem backend novo.
+1. **Idioma ES/EN — FEITO (04/10/2026, commit 3ccde9b)** — `STR` PT/ES/EN + `THEME_I18N` + `TOPIC_I18N`, seletor `#langSwitch` (`ei_lang`, auto-detect), prompts localizados (`getSystemPrompt`/`getQuizPrompt`), Bíblias PT=NAA / ES=RVR1960 / EN=KJV. Tópicos D1 seguem em PT (chave estável). Cards "Os Intercessores" seguem PT (nomes próprios). SW v5.
 2. **Resend produção** — verificar domínio próprio (hoje: modo teste).
 3. **Supabase** — desligar ou documentar como desativado.
 4. Streaming já ok; ranking já ok (aba Progresso).
