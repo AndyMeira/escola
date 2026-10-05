@@ -3,7 +3,7 @@
 // Secrets (dashboard > Settings > Variables): GEMINI_API_KEY, JWT_SECRET
 // Vars (texto): GEMINI_MODEL (opcional, padrão abaixo)
 
-const DEFAULT_MODEL = 'gemini-3.6-flash';
+const DEFAULT_MODEL = 'gemini-3.5-flash-lite';
 const DAILY_LIMIT = 75;
 const RATE_WINDOW_MS = 60_000;
 const RATE_MAX = 30;

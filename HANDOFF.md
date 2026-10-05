@@ -35,7 +35,7 @@ Rotas: `POST /api/gemini` (auth; `stream:true` → SSE; limite 75/dia/usuário +
 `GET /db/trail` (lições + melhor por nível), `POST /db/lesson_progress`, `POST /db/level_attempts`.
 
 ## 5. Modelo IA e blindagens
-- Modelo: `gemini-3.6-flash` (1.5/2.x foram aposentados pelo Google; 3.8 dá 503 frequente).
+- Modelo: `gemini-3.5-flash-lite` (05/10/2026; 3.6-flash esgotou a cota free — limite 20/dia — e 2.x/2.5 foram aposentados pelo Google; 3.8 dá 503 frequente). Se a cota do lite acabar, erro vira `quotaErr` traduzido (nunca inglês cru).
 - Chat com **streaming SSE**; retry automático 3s/6s/9s em 503; erros traduzidos (`friendlyError`).
 - Quiz salva cada pergunta na reserva (`quiz_cache`); se a IA cai, serve pergunta guardada (badge "📦 pergunta guardada").
 - Frontend valida quiz (`isValidQuiz`), embaralha opções (referência, não texto), teto de contexto 40 msgs (`MAX_HISTORY`).

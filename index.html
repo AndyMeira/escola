@@ -1562,7 +1562,7 @@ body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { fon
 </div>
 
 <script>
-const GEMINI_MODEL = "gemini-3.6-flash";
+const GEMINI_MODEL = "gemini-3.5-flash-lite";
 const PROXY_URL = "https://escola-intercessao-api.andymeira.workers.dev/api/gemini";
 
 // ===== API Cloudflare Workers (migração) =====
@@ -1693,6 +1693,7 @@ pt: {
   processingReply: "A escola está preparando sua resposta...",
   stillWorking: "Ainda trabalhando — a IA pode levar até 1 minuto. Aguarde. 🙏",
   slowErr: "A escola demorou a responder. Toque em tentar de novo. 🙏",
+  quotaErr: "A cota diária da IA foi atingida. Volte mais tarde para continuar — suas lições e seu progresso estão salvos. 🙏",
   genTitle: "Gerando pergunta...",
   waitNote: "Pode levar até 1 minuto. Aguarde. 🙏",
   retryBtn: "Tentar novamente", cancelBtn: "Cancelar",
@@ -1769,6 +1770,7 @@ es: {
   processingReply: "La escuela está preparando tu respuesta...",
   stillWorking: "Aún trabajando — la IA puede tardar hasta 1 minuto. Espera. 🙏",
   slowErr: "La escuela tardó en responder. Toca intentar de nuevo. 🙏",
+  quotaErr: "Se alcanzó la cuota diaria de la IA. Vuelve más tarde para continuar — tus lecciones y tu progreso están guardados. 🙏",
   genTitle: "Generando pregunta...",
   waitNote: "Puede tardar hasta 1 minuto. Espera. 🙏",
   retryBtn: "Intentar de nuevo", cancelBtn: "Cancelar",
@@ -1845,6 +1847,7 @@ en: {
   processingReply: "The school is preparing your answer...",
   stillWorking: "Still working — the AI can take up to 1 minute. Please wait. 🙏",
   slowErr: "The school took too long to answer. Tap try again. 🙏",
+  quotaErr: "The AI daily quota was reached. Come back later to continue — your lessons and progress are saved. 🙏",
   genTitle: "Generating question...",
   waitNote: "It can take up to 1 minute. Please wait. 🙏",
   retryBtn: "Try again", cancelBtn: "Cancel",
@@ -3352,6 +3355,9 @@ function initTheme() {
 
 function friendlyError(msg) {
   const m = String(msg || '');
+  if (/quota|exceeded your current|exceed.*quota|billing|rate-limit|RESOURCE_EXHAUSTED/i.test(m)) {
+    return t('quotaErr');
+  }
   if (/high demand|overloaded|UNAVAILABLE|503|try again later/i.test(m)) {
     return t('overloaded');
   }
