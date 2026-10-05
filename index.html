@@ -1708,6 +1708,7 @@ pt: {
   levelWord: "Nível", witnessLabel: "Testemunho", practiceLabel: "Prática",
   headerTitle: 'Escola de <span>Intercessão</span>',
   authTitle: 'Escola de <span style="color:var(--gold)">Intercessão</span>',
+  schoolName: "Escola de Intercessão", youLabel: "Você",
   quick: ["O que é intercessão?", "Intercessão militante", "Batalha espiritual", "Armas espirituais", "Intercessor quebrantado", "Conquista de cidades", "Impartição & o Espírito", "Oração x Intercessão", "Intercessão profética", "Jejum & intercessão"],
   quickFull: ["O que é intercessão e qual é o seu fundamento bíblico?", "O que a Bíblia ensina sobre intercessão militante e tomar as portas do inimigo em oração?", "O que a Bíblia ensina sobre batalha espiritual e discernimento na intercessão?", "Como o intercessor deve usar as armas de guerra espiritual segundo as Escrituras?", "O que a Bíblia ensina sobre o intercessor quebrantado e liberto?", "O que a Bíblia ensina sobre oração de autoridade e conquista de cidades e nações?", "Como a Bíblia conecta a impartição do Espírito Santo com a intercessão?", "Qual a diferença entre oração e intercessão segundo as Escrituras?", "Como praticar a intercessão profética?", "O que a Bíblia ensina sobre jejum ligado à intercessão?"]
 },
@@ -1785,6 +1786,7 @@ es: {
   levelWord: "Nivel", witnessLabel: "Testimonio", practiceLabel: "Práctica",
   headerTitle: 'Escuela de <span>Intercesión</span>',
   authTitle: 'Escuela de <span style="color:var(--gold)">Intercesión</span>',
+  schoolName: "Escuela de Intercesión", youLabel: "Tú",
   quick: ["¿Qué es la intercesión?", "Intercesión militante", "Batalla espiritual", "Armas espirituales", "Intercesor quebrantado", "Conquista de ciudades", "Impartición y el Espíritu", "Oración vs Intercesión", "Intercesión profética", "Ayuno e intercesión"],
   quickFull: ["¿Qué es la intercesión y cuál es su fundamento bíblico?", "¿Qué enseña la Biblia sobre la intercesión militante y tomar las puertas del enemigo en oración?", "¿Qué enseña la Biblia sobre la batalla espiritual y el discernimiento en la intercesión?", "¿Cómo debe usar el intercesor las armas de guerra espiritual según las Escrituras?", "¿Qué enseña la Biblia sobre el intercesor quebrantado y liberado?", "¿Qué enseña la Biblia sobre la oración de autoridad y la conquista de ciudades y naciones?", "¿Cómo conecta la Biblia la impartición del Espíritu Santo con la intercesión?", "¿Cuál es la diferencia entre oración e intercesión según las Escrituras?", "¿Cómo practicar la intercesión profética?", "¿Qué enseña la Biblia sobre el ayuno ligado a la intercesión?"]
 },
@@ -1862,6 +1864,7 @@ en: {
   levelWord: "Level", witnessLabel: "Testimony", practiceLabel: "Practice",
   headerTitle: 'School of <span>Intercession</span>',
   authTitle: 'School of <span style="color:var(--gold)">Intercession</span>',
+  schoolName: "School of Intercession", youLabel: "You",
   quick: ["What is intercession?", "Militant intercession", "Spiritual battle", "Spiritual weapons", "Broken intercessor", "City conquest", "Impartation & the Spirit", "Prayer vs Intercession", "Prophetic intercession", "Fasting & intercession"],
   quickFull: ["What is intercession and what is its biblical foundation?", "What does the Bible teach about militant intercession and taking the enemy's gates in prayer?", "What does the Bible teach about spiritual battle and discernment in intercession?", "How should the intercessor use the weapons of spiritual warfare according to Scripture?", "What does the Bible teach about the broken and set-free intercessor?", "What does the Bible teach about authoritative prayer and conquering cities and nations?", "How does the Bible connect the impartation of the Holy Spirit with intercession?", "What is the difference between prayer and intercession according to Scripture?", "How to practice prophetic intercession?", "What does the Bible teach about fasting linked to intercession?"]
 }
@@ -2137,12 +2140,14 @@ function getQuizPrompt() {
   if (l === 'es') return `Eres un profesor experto en intercesión cristiana generando una pregunta de opción múltiple.
 La pregunta debe centrarse en el PRINCIPIO O FUNDAMENTO BÍBLICO del tema — nunca en la biografía de algún pastor/intercesor.
 NIVEL MEDIO (un poco desafiante): exige comprensión y aplicación, no solo memoria — prefiere casos prácticos ("ante esta situación, ¿qué principio se aplica?") e interpretación del texto, no solo recordar referencias.
+Escribe TODO (pregunta, opciones, explicación) en español, aunque el tema solicitado esté en portugués.
 Las 4 alternativas deben tener longitud y detalle parecidos — ninguna visiblemente más completa o más "correcta" por el tamaño. Las 3 incorrectas deben ser plausibles y cercanas a la correcta.
 Responde SOLO en JSON válido, sin markdown ni texto antes/después.
 Ejemplo: { "pergunta": "texto", "opcoes": ["A) ...", "B) ...", "C) ...", "D) ..."], "correta": 0, "explicacao": "explicación en 2-4 frases, anclada en el texto bíblico", "versiculo": "Libro capítulo:versículo — texto en ${bv.name}" }`;
   if (l === 'en') return `You are an expert teacher of Christian intercession generating a multiple-choice question.
 The question must focus on the BIBLICAL PRINCIPLE or FOUNDATION of the theme — never on a pastor/intercessor biography.
 MEDIUM LEVEL (slightly challenging): demand understanding and application, not mere recall — prefer practical cases ("in this situation, which principle applies?") and text interpretation over remembering references.
+Write EVERYTHING (question, options, explanation) in English, even if the requested theme is in Portuguese.
 The 4 options must have similar length and detail — none visibly more complete or more "correct" by wording. The 3 wrong ones must be plausible and close to the correct one.
 Reply ONLY with valid JSON, no markdown or extra text.
 Example: { "pergunta": "question text", "opcoes": ["A) ...", "B) ...", "C) ...", "D) ..."], "correta": 0, "explicacao": "2-4 sentence explanation grounded in Scripture", "versiculo": "Book chapter:verse — text in ${bv.name}" }`;
@@ -2400,7 +2405,7 @@ async function signOut() {
   loadTrailLocal();
   const msgs = document.getElementById('messages');
   if (msgs) {
-    msgs.innerHTML = `<div class="msg agent"><div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="msg-bubble">${t('welcome')}</div></div>`;
+    msgs.innerHTML = `<div class="msg agent"><div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> ${t('schoolName')}</div><div class="msg-bubble">${t('welcome')}</div></div>`;
     msgs.dataset.welcomed = '';
   }
   document.getElementById('userBar').style.display = 'none';
@@ -2491,7 +2496,7 @@ REGLAS OBLIGATORIAS DE ESTRUCTURA:
 2. Cita SIEMPRE versículos bíblicos en la versión ${bv.name} (${bv.full}), con referencia (libro, capítulo y versículo).
 3. NO cites nombres de intercesores por defecto. Menciona solo uno de los testimonios cuando valide de forma concreta y específica la eficacia del principio bíblico enseñado — como máximo uno por respuesta. En la mayoría de las respuestas, ningún nombre es necesario.
 4. Al citar un testimonio, nunca es la fuente de la verdad — es solo ejemplo de vida transformada por la obediencia a la Palabra.
-5. Responde siempre en español.
+5. Responde SIEMPRE en español, incluso si la pregunta del usuario o la conversación anterior están en otro idioma (por ejemplo "oi"). El idioma de la interfaz es español y tu respuesta debe estar en español.
 6. Mantén respuestas prácticas e inspiradoras, entre 200-400 palabras.`;
   }
   if (l === 'en') {
@@ -2508,7 +2513,7 @@ MANDATORY STRUCTURE RULES:
 2. ALWAYS quote Bible verses in the ${bv.name} (${bv.full}), with reference (book, chapter and verse).
 3. Do NOT cite intercessors' names by default. Mention at most one testimony only when it concretely validates the effectiveness of the biblical principle just taught. In most answers, no name is needed.
 4. When citing a testimony, it is never the source of truth — only an example of life transformed by obedience to the Word.
-5. Always respond in English.
+5. ALWAYS respond in English, even if the user's question or the previous conversation is in another language (e.g. "oi"). The interface language is English and your answer must be in English.
 6. Keep answers practical and inspiring, 200-400 words.`;
   }
 
@@ -2525,7 +2530,7 @@ REGRAS OBRIGATÓRIAS DE ESTRUTURA:
 2. SEMPRE cite versículos bíblicos usando a versão ${bv.name} (${bv.full}), com referência (livro, capítulo e versículo).
 3. NÃO cite nomes de intercessores por padrão. Só mencione um dos testemunhos acima quando ele realmente validar, de forma concreta e específica, a eficácia do princípio bíblico que você acabou de ensinar — e no máximo um por resposta. Na maioria das respostas, nenhum nome precisa aparecer.
 4. Quando citar um testemunho, ele nunca é a fonte da verdade — é apenas exemplo de vida transformada pela obediência à Palavra.
-5. Responda sempre em português brasileiro.
+5. Responda SEMPRE em português brasileiro, mesmo que a pergunta venha em outro idioma. O idioma da interface é português.
 6. Mantenha respostas práticas e inspiradoras, entre 200-400 palavras.`;
 }
 
@@ -3079,7 +3084,8 @@ async function loadNextEvalQ() {
     <div style="text-align:center;"><button class="quick-btn" onclick="cancelEval()">✕ ${t('cancelBtn')}</button></div></div>`;
   try {
     let q = null;
-    try { q = await drawBankQuestion(topic, evalState.asked); } catch (e) {}
+    // Banco primeiro só em PT (idioma do banco); ES/EN sempre geram no idioma (instantâneo após o banco ES/EN existir)
+    if (getLang() === 'pt') { try { q = await drawBankQuestion(topic, evalState.asked); } catch (e) {} }
     if (!q) q = await fetchEvalQuestion(topic);
     if (!evalState || evalState.cancelled) return;
     evalState.questions.push(q);
@@ -3097,6 +3103,7 @@ async function loadNextEvalQ() {
 function queuePrefetch() {
   try {
     if (!evalState || evalState.prefetched) return;
+    if (getLang() !== 'pt') return; // prefetch só do banco (PT)
     const ni = evalState.qi + 1;
     if (ni >= EVAL_SIZE) return;
     const lv = CURRICULUM.find(l => l.id === evalState.level);
@@ -3240,8 +3247,8 @@ function addMessage(content, role) {
   const label = document.createElement('div');
   label.className = 'msg-label';
   label.innerHTML = role === 'agent'
-    ? '<svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão'
-    : '<svg class="icon"><use href="#i-star"/></svg> Você';
+    ? `<svg class="icon"><use href="#i-flame"/></svg> ${t('schoolName')}`
+    : `<svg class="icon"><use href="#i-star"/></svg> ${t('youLabel')}`;
   const bubble = document.createElement('div');
   bubble.className = 'msg-bubble';
   bubble.innerHTML = role === 'agent' ? parseMarkdown(content) : escapeHtml(content).replace(/\n/g, '<br>');
@@ -3257,7 +3264,7 @@ function addTyping() {
   const div = document.createElement('div');
   div.className = 'msg agent';
   div.id = 'typing-indicator';
-  div.innerHTML = '<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="typing-bubble"><span></span><span></span><span></span></div><div class="typing-status" id="typing-status"></div>';
+  div.innerHTML = `<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> ${t('schoolName')}</div><div class="typing-bubble"><span></span><span></span><span></span></div><div class="typing-status" id="typing-status"></div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   const st = document.getElementById('typing-status');
@@ -3279,7 +3286,7 @@ function addAgentStreaming() {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg agent';
-  div.innerHTML = '<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="msg-bubble"></div>';
+  div.innerHTML = `<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> ${t('schoolName')}</div><div class="msg-bubble"></div>`;
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
   return div.querySelector('.msg-bubble');
@@ -3518,8 +3525,8 @@ async function generateQuiz() {
   area.innerHTML = `<div class="quiz-box">${processingBox(t('genTitle'), escapeHtml(selectedTopic) + '<br>' + t('waitNote'))}</div>`;
   quizAnswered = false;
 
-  // Banco primeiro: se houver questão guardada, abre na hora (sem esperar a IA)
-  if (!isOffline()) {
+  // Banco primeiro (só em PT, idioma do banco): se houver questão guardada, abre na hora
+  if (!isOffline() && getLang() === 'pt') {
     try {
       const bq = await drawBankQuestion(selectedTopic, null);
       if (bq) {
