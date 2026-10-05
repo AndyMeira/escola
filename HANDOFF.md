@@ -60,6 +60,7 @@ Rotas: `POST /api/gemini` (auth; `stream:true` → SSE; limite 75/dia/usuário +
 3. **Supabase** — desligar ou documentar como desativado.
 4. Streaming já ok; ranking já ok (aba Progresso).
 5. **Trilha de estudos — FEITO (04/10/2026)** — aba Trilha com 5 níveis (L1 Fundamentos, L2 Quebrantamento, L3 Autoridade, L4 Jejum/Espírito, L5 Nações/Avivamento-Atalaia), 18 lições curtas PT ancoradas nas referências do projeto + testemunhos ministeriais, avaliação 5Q com 80% (4/5) para desbloquear o próximo, selos no Progresso. Chat e quiz avulso mantidos. Custo 0 (lições estáticas; avaliação reusa Gemini + quiz_cache).
+6. **Banco de questões + formação (05/10/2026, em curso)** — `quiz_cache` como banco pré-gerado (12/tema, nível médio), servir-do-banco-primeiro + prefetch na avaliação e quiz avulso; formação: progresso geral, teaser do próximo nível, diploma L5, sequência de dias. Script: `bank-gen.mjs` (fora do repo) via proxy do Worker.
 
 ## 9. Comandos úteis
 ```powershell

@@ -1696,6 +1696,14 @@ pt: {
   genTitle: "Gerando pergunta...",
   waitNote: "Pode levar até 1 minuto. Aguarde. 🙏",
   retryBtn: "Tentar novamente", cancelBtn: "Cancelar",
+  trackOverall: (d, n, p) => `${d}/${n} lições · ${p}/5 níveis`,
+  streakDays: (n) => n > 0 ? `🔥 ${n} ${n === 1 ? 'dia' : 'dias'} de estudo` : 'Comece hoje sua sequência 🔥',
+  formedBadge: "FORMADO NA ESCOLA DE INTERCESSÃO 🏆",
+  nextUp: "No próximo nível:",
+  goNext: "Continuar para o próximo nível →",
+  diplomaT: "Diploma de Formação",
+  diplomaB: (name, date) => `${name} concluiu a Trilha de Estudos da Escola de Intercessão — 5 níveis, da brecha ao avivamento. ${date}.`,
+  printBtn: "Imprimir diploma",
   quick: ["O que é intercessão?", "Intercessão militante", "Batalha espiritual", "Armas espirituais", "Intercessor quebrantado", "Conquista de cidades", "Impartição & o Espírito", "Oração x Intercessão", "Intercessão profética", "Jejum & intercessão"],
   quickFull: ["O que é intercessão e qual é o seu fundamento bíblico?", "O que a Bíblia ensina sobre intercessão militante e tomar as portas do inimigo em oração?", "O que a Bíblia ensina sobre batalha espiritual e discernimento na intercessão?", "Como o intercessor deve usar as armas de guerra espiritual segundo as Escrituras?", "O que a Bíblia ensina sobre o intercessor quebrantado e liberto?", "O que a Bíblia ensina sobre oração de autoridade e conquista de cidades e nações?", "Como a Bíblia conecta a impartição do Espírito Santo com a intercessão?", "Qual a diferença entre oração e intercessão segundo as Escrituras?", "Como praticar a intercessão profética?", "O que a Bíblia ensina sobre jejum ligado à intercessão?"]
 },
@@ -1761,6 +1769,14 @@ es: {
   genTitle: "Generando pregunta...",
   waitNote: "Puede tardar hasta 1 minuto. Espera. 🙏",
   retryBtn: "Intentar de nuevo", cancelBtn: "Cancelar",
+  trackOverall: (d, n, p) => `${d}/${n} lecciones · ${p}/5 niveles`,
+  streakDays: (n) => n > 0 ? `🔥 ${n} ${n === 1 ? 'día' : 'días'} de estudio` : 'Comienza hoy tu racha 🔥',
+  formedBadge: "GRADUADO DE LA ESCUELA DE INTERCESIÓN 🏆",
+  nextUp: "En el próximo nivel:",
+  goNext: "Continuar al próximo nivel →",
+  diplomaT: "Diploma de Formación",
+  diplomaB: (name, date) => `${name} completó la Ruta de Estudios de la Escuela de Intercesión — 5 niveles, de la brecha al avivamiento. ${date}.`,
+  printBtn: "Imprimir diploma",
   quick: ["¿Qué es la intercesión?", "Intercesión militante", "Batalla espiritual", "Armas espirituales", "Intercesor quebrantado", "Conquista de ciudades", "Impartición y el Espíritu", "Oración vs Intercesión", "Intercesión profética", "Ayuno e intercesión"],
   quickFull: ["¿Qué es la intercesión y cuál es su fundamento bíblico?", "¿Qué enseña la Biblia sobre la intercesión militante y tomar las puertas del enemigo en oración?", "¿Qué enseña la Biblia sobre la batalla espiritual y el discernimiento en la intercesión?", "¿Cómo debe usar el intercesor las armas de guerra espiritual según las Escrituras?", "¿Qué enseña la Biblia sobre el intercesor quebrantado y liberado?", "¿Qué enseña la Biblia sobre la oración de autoridad y la conquista de ciudades y naciones?", "¿Cómo conecta la Biblia la impartición del Espíritu Santo con la intercesión?", "¿Cuál es la diferencia entre oración e intercesión según las Escrituras?", "¿Cómo practicar la intercesión profética?", "¿Qué enseña la Biblia sobre el ayuno ligado a la intercesión?"]
 },
@@ -1826,6 +1842,14 @@ en: {
   genTitle: "Generating question...",
   waitNote: "It can take up to 1 minute. Please wait. 🙏",
   retryBtn: "Try again", cancelBtn: "Cancel",
+  trackOverall: (d, n, p) => `${d}/${n} lessons · ${p}/5 levels`,
+  streakDays: (n) => n > 0 ? `🔥 ${n} study ${n === 1 ? 'day' : 'days'}` : 'Start your streak today 🔥',
+  formedBadge: "GRADUATED FROM THE SCHOOL OF INTERCESSION 🏆",
+  nextUp: "Up next:",
+  goNext: "Continue to the next level →",
+  diplomaT: "Graduation Diploma",
+  diplomaB: (name, date) => `${name} completed the Study Track of the School of Intercession — 5 levels, from the breach to revival. ${date}.`,
+  printBtn: "Print diploma",
   quick: ["What is intercession?", "Militant intercession", "Spiritual battle", "Spiritual weapons", "Broken intercessor", "City conquest", "Impartation & the Spirit", "Prayer vs Intercession", "Prophetic intercession", "Fasting & intercession"],
   quickFull: ["What is intercession and what is its biblical foundation?", "What does the Bible teach about militant intercession and taking the enemy's gates in prayer?", "What does the Bible teach about spiritual battle and discernment in intercession?", "How should the intercessor use the weapons of spiritual warfare according to Scripture?", "What does the Bible teach about the broken and set-free intercessor?", "What does the Bible teach about authoritative prayer and conquering cities and nations?", "How does the Bible connect the impartation of the Holy Spirit with intercession?", "What is the difference between prayer and intercession according to Scripture?", "How to practice prophetic intercession?", "What does the Bible teach about fasting linked to intercession?"]
 }
@@ -2062,17 +2086,20 @@ function getQuizPrompt() {
   const bv = BIBLE_VERSION[l] || BIBLE_VERSION.pt;
   if (l === 'es') return `Eres un profesor experto en intercesión cristiana generando una pregunta de opción múltiple.
 La pregunta debe centrarse en el PRINCIPIO O FUNDAMENTO BÍBLICO del tema — nunca en la biografía de algún pastor/intercesor.
-Las 4 alternativas deben tener longitud y detalle parecidos — ninguna visiblemente más completa o más "correcta" por el tamaño. Las 3 incorrectas deben ser plausibles.
+NIVEL MEDIO (un poco desafiante): exige comprensión y aplicación, no solo memoria — prefiere casos prácticos ("ante esta situación, ¿qué principio se aplica?") e interpretación del texto, no solo recordar referencias.
+Las 4 alternativas deben tener longitud y detalle parecidos — ninguna visiblemente más completa o más "correcta" por el tamaño. Las 3 incorrectas deben ser plausibles y cercanas a la correcta.
 Responde SOLO en JSON válido, sin markdown ni texto antes/después.
 Ejemplo: { "pergunta": "texto", "opcoes": ["A) ...", "B) ...", "C) ...", "D) ..."], "correta": 0, "explicacao": "explicación en 2-4 frases, anclada en el texto bíblico", "versiculo": "Libro capítulo:versículo — texto en ${bv.name}" }`;
   if (l === 'en') return `You are an expert teacher of Christian intercession generating a multiple-choice question.
 The question must focus on the BIBLICAL PRINCIPLE or FOUNDATION of the theme — never on a pastor/intercessor biography.
-The 4 options must have similar length and detail — none visibly more complete or more "correct" by wording. The 3 wrong ones must be plausible.
+MEDIUM LEVEL (slightly challenging): demand understanding and application, not mere recall — prefer practical cases ("in this situation, which principle applies?") and text interpretation over remembering references.
+The 4 options must have similar length and detail — none visibly more complete or more "correct" by wording. The 3 wrong ones must be plausible and close to the correct one.
 Reply ONLY with valid JSON, no markdown or extra text.
 Example: { "pergunta": "question text", "opcoes": ["A) ...", "B) ...", "C) ...", "D) ..."], "correta": 0, "explicacao": "2-4 sentence explanation grounded in Scripture", "versiculo": "Book chapter:verse — text in ${bv.name}" }`;
   return `Você é um professor especialista em intercessão cristã gerando uma pergunta de múltipla escolha.
 A pergunta deve ter como foco principal o PRINCÍPIO OU FUNDAMENTO BÍBLICO do tema — nunca a biografia ou o nome de algum pastor/intercessor.
-As 4 alternativas devem ter comprimento e nível de detalhe parecidos entre si — nenhuma pode ser visivelmente mais completa, mais específica ou mais "certa" só pelo tamanho ou pela redação. As 3 erradas devem ser plausíveis para quem não domina o tema, não apenas absurdas óbvias.
+NÍVEL MÉDIO (um pouco desafiador): exija compreensão e aplicação, não só memorização — prefira casos práticos ("diante desta situação, qual princípio se aplica?") e interpretação do texto, não só lembrar referências.
+As 4 alternativas devem ter comprimento e nível de detalhe parecidos entre si — nenhuma pode ser visivelmente mais completa ou mais "certa" só pelo tamanho. As 3 erradas devem ser plausíveis e próximas da correta.
 Responda APENAS em JSON válido, sem qualquer tipo de marcação markdown ou texto antes/depois.
 Exemplo de estrutura:
 {
@@ -2601,13 +2628,48 @@ function levelOpen(idx) {
 function levelDoneCount(lv) {
   return lv.lessons.filter(l => trail.done[lv.id + '|' + l.id]).length;
 }
+// Sequência de dias de estudo (constância): local, por usuário
+function trailTodayStr(d) { return new Date(d).toISOString().slice(0, 10); }
+function getStreak() {
+  try {
+    const s = JSON.parse(localStorage.getItem(trailKey() + '_streak') || 'null');
+    return s ? s.count || 0 : 0;
+  } catch (e) { return 0; }
+}
+function bumpStreak() {
+  try {
+    const today = trailTodayStr(Date.now());
+    let s = null;
+    try { s = JSON.parse(localStorage.getItem(trailKey() + '_streak') || 'null'); } catch (e) {}
+    if (s && s.last === today) return s.count;
+    const yest = trailTodayStr(Date.now() - 864e5);
+    const count = (s && s.last === yest) ? (s.count || 0) + 1 : 1;
+    localStorage.setItem(trailKey() + '_streak', JSON.stringify({ last: today, count }));
+    return count;
+  } catch (e) { return 0; }
+}
+function trailTotals() {
+  let done = 0, total = 0, passed = 0;
+  CURRICULUM.forEach(lv => {
+    total += lv.lessons.length;
+    done += levelDoneCount(lv);
+    if (levelPassed(lv.id)) passed++;
+  });
+  return { done, total, passed };
+}
 function renderTrail() {
   const box = document.getElementById('trailContent');
   if (!box) return;
   if (trailView.name === 'lesson') return renderTrailLesson(box);
   if (trailView.name === 'eval') return renderEval(box);
   if (trailView.name === 'level') return renderTrailLevel(box);
-  box.innerHTML = CURRICULUM.map((lv, i) => {
+  const tt = trailTotals();
+  const formed = levelPassed('L5');
+  const pctAll = tt.total ? Math.round((tt.done / tt.total) * 100) : 0;
+  let head = `<div class="trail-level" style="cursor:default;"><div class="t-sub">${t('trackOverall')(tt.done, tt.total, tt.passed)} · ${t('streakDays')(getStreak())}</div>
+    <div class="trail-progress"><div style="width:${pctAll}%"></div></div>
+    ${formed ? `<div class="t-sub" style="margin-top:8px;">${t('formedBadge')}</div>` : ''}</div>`;
+  box.innerHTML = head + CURRICULUM.map((lv, i) => {
     const open = levelOpen(i);
     const n = levelDoneCount(lv);
     const pct = Math.round((n / lv.lessons.length) * 100);
@@ -2672,6 +2734,7 @@ function renderTrailLesson(box) {
 async function completeLesson(levelId, lessonId) {
   trail.done[levelId + '|' + lessonId] = true;
   saveTrailLocal();
+  bumpStreak();
   if (currentUser) {
     try { await api('/db/lesson_progress', { method: 'POST', body: JSON.stringify({ level: levelId, lesson: lessonId }) }); } catch (e) {}
   }
@@ -2718,7 +2781,7 @@ async function startEval(levelId) {
     document.getElementById('trailContent').innerHTML = `<div class="loading-text">${t('limitMsg')(DAILY_MESSAGE_LIMIT)}</div>`;
     return;
   }
-  evalState = { level: levelId, qi: 0, questions: [], correct: 0, locked: false, cancelled: false };
+  evalState = { level: levelId, qi: 0, questions: [], correct: 0, locked: false, cancelled: false, asked: new Set(), prefetched: null };
   trailView = { name: 'eval' };
   renderEval(document.getElementById('trailContent'));
   await loadNextEvalQ();
@@ -2728,11 +2791,23 @@ async function loadNextEvalQ() {
   if (!evalState || evalState.cancelled) return;
   const lv = CURRICULUM.find(l => l.id === evalState.level);
   const topic = lv.topics[evalState.qi % lv.topics.length];
+  // 1) questão pré-carregada (enquanto respondia a anterior) — instantânea
+  if (evalState.prefetched && evalState.prefetched.topic === topic) {
+    const q = evalState.prefetched.q;
+    evalState.prefetched = null;
+    evalState.questions.push(q);
+    evalState.locked = false;
+    renderEval(box);
+    return;
+  }
+  // 2) banco primeiro; 3) IA ao vivo só se o banco esvaziar
   const pct = Math.round((evalState.qi / EVAL_SIZE) * 100);
   box.innerHTML = `<div class="quiz-box">${processingBox(t('qOf')(evalState.qi + 1, EVAL_SIZE), escapeHtml(topic) + '<br>' + t('waitNote'), pct)}
     <div style="text-align:center;"><button class="quick-btn" onclick="cancelEval()">✕ ${t('cancelBtn')}</button></div></div>`;
   try {
-    const q = await fetchEvalQuestion(topic);
+    let q = null;
+    try { q = await drawBankQuestion(topic, evalState.asked); } catch (e) {}
+    if (!q) q = await fetchEvalQuestion(topic);
     if (!evalState || evalState.cancelled) return;
     evalState.questions.push(q);
     evalState.locked = false;
@@ -2740,11 +2815,25 @@ async function loadNextEvalQ() {
   } catch (e) {
     if (!evalState || evalState.cancelled) return;
     if (e.message === '__CANCELLED__') return;
-    const okReserve = await tryEvalReserve(lv);
-    if (!okReserve) box.innerHTML = `<div class="quiz-box"><div class="processing"><div class="processing-title">${escapeHtml(e.message || t('quizFail'))}</div></div>
+    box.innerHTML = `<div class="quiz-box"><div class="processing"><div class="processing-title">${escapeHtml(e.message || t('quizFail'))}</div></div>
       <div style="text-align:center;"><button class="generate-btn" onclick="startEval('${lv.id}')">↻ ${t('retryBtn')}</button>
       <button class="quick-btn" onclick="trailView={name:'level',level:'${lv.id}'};renderTrail()">${t('backTrail')}</button></div></div>`;
   }
+}
+// Pré-carrega em paralelo a próxima questão DO BANCO enquanto o aluno responde a atual
+function queuePrefetch() {
+  try {
+    if (!evalState || evalState.prefetched) return;
+    const ni = evalState.qi + 1;
+    if (ni >= EVAL_SIZE) return;
+    const lv = CURRICULUM.find(l => l.id === evalState.level);
+    const topic = lv.topics[ni % lv.topics.length];
+    drawBankQuestion(topic, evalState.asked).then(q => {
+      if (q && evalState && !evalState.cancelled && evalState.qi === ni - 1) {
+        evalState.prefetched = { topic, q };
+      }
+    }).catch(() => {});
+  } catch (e) {}
 }
 function cancelEval() {
   if (evalState) evalState.cancelled = true;
@@ -2753,20 +2842,6 @@ function cancelEval() {
   evalState = null;
   if (lv) { trailView = { name: 'level', level: lv }; }
   renderTrail();
-}
-async function tryEvalReserve(lv) {
-  for (const topic of lv.topics) {
-    try {
-      const r = await api('/db/quiz_cache?topic=' + encodeURIComponent(topic));
-      if (r && r.pergunta && Array.isArray(r.opcoes)) {
-        evalState.questions.push(shuffleQuizOptions({ pergunta: r.pergunta, opcoes: r.opcoes, correta: r.correta, explicacao: r.explicacao || '', versiculo: r.versiculo || '', topic }));
-        evalState.locked = false;
-        renderEval(document.getElementById('trailContent'));
-        return true;
-      }
-    } catch (e) {}
-  }
-  return false;
 }
 function renderEval(box) {
   const lv = CURRICULUM.find(l => l.id === evalState.level);
@@ -2779,6 +2854,7 @@ function renderEval(box) {
   html += `</div><div id="eval-feedback" style="display:none" class="quiz-feedback"></div>
     <button class="next-btn" id="evalNextBtn" style="display:none"></button></div>`;
   box.innerHTML = html;
+  queuePrefetch();
 }
 function answerEval(index) {
   if (evalState.locked) return;
@@ -2810,17 +2886,37 @@ function answerEval(index) {
 async function finishEval() {
   const box = document.getElementById('trailContent');
   const passed = evalState.correct >= EVAL_PASS;
-  const prev = trail.best[evalState.level];
-  if (!prev || evalState.correct > prev.score) trail.best[evalState.level] = { score: evalState.correct, passed: passed || !!(prev && prev.passed) };
+  const lvId = evalState.level;
+  const lvIdx = CURRICULUM.findIndex(l => l.id === lvId);
+  const prev = trail.best[lvId];
+  if (!prev || evalState.correct > prev.score) trail.best[lvId] = { score: evalState.correct, passed: passed || !!(prev && prev.passed) };
   saveTrailLocal();
+  if (passed) bumpStreak();
   if (currentUser) {
-    try { await api('/db/level_attempts', { method: 'POST', body: JSON.stringify({ level: evalState.level, score: evalState.correct, total: EVAL_SIZE, passed }) }); } catch (e) {}
+    try { await api('/db/level_attempts', { method: 'POST', body: JSON.stringify({ level: lvId, score: evalState.correct, total: EVAL_SIZE, passed }) }); } catch (e) {}
+  }
+  const scoreLine = t('evalScore')(evalState.correct, EVAL_SIZE);
+  let extra = '';
+  if (passed) {
+    if (lvId === 'L5') {
+      const nm = (currentUser && (currentUser.display_name || currentUser.email)) || '';
+      const dt = new Date().toLocaleDateString(document.documentElement.lang || 'pt-BR');
+      extra = `<div class="processing" style="margin-top:12px;"><div class="processing-title">🏆 ${t('diplomaT')}</div>
+        <div class="processing-sub">${escapeHtml(t('diplomaB')(nm, dt))}</div>
+        <button class="generate-btn" onclick="window.print()">🖨️ ${t('printBtn')}</button></div>`;
+    } else {
+      const nx = CURRICULUM[lvIdx + 1];
+      extra = `<div class="trail-lesson" style="cursor:default;"><div class="t-sub">${t('nextUp')}</div>
+        <h4>Nível ${lvIdx + 2} — ${escapeHtml(nx.title)}</h4><div class="t-sub">${escapeHtml(nx.sub)}</div>
+        <button class="generate-btn" style="margin-top:8px;" onclick="openLevel('${nx.id}')">${t('goNext')}</button></div>`;
+    }
   }
   box.innerHTML = `<div class="quiz-box"><div class="quiz-ref">${t('trailEval')}</div>
-    <div class="quiz-question">${t('evalScore')(evalState.correct, EVAL_SIZE)}</div>
+    <div class="quiz-question">${scoreLine}</div>
     <div class="loading-text" style="text-align:left;">${passed ? t('evalPass') : t('evalFail')}</div>
+    ${extra}
     <button class="quick-btn" onclick="trailView={name:'levels'};evalState=null;renderTrail()">${t('backTrail')}</button>
-    ${passed ? '' : `<button class="generate-btn" style="margin-top:8px;" onclick="startEval('${evalState.level}')">🔥 ${t('startEval')}</button>`}
+    ${(!passed) ? `<button class="generate-btn" style="margin-top:8px;" onclick="startEval('${lvId}')">🔥 ${t('startEval')}</button>` : ''}
   </div>`;
   evalState = null;
 }
@@ -3095,8 +3191,24 @@ async function sendMessage() {
   btn.disabled = false;
 }
 
+// Sorteia pergunta do banco (quiz_cache). Instantâneo — evita esperar a IA.
+// asked: Set de enunciados já usados na sessão (sem repetição). Tenta até 4 sorteios.
+async function drawBankQuestion(topic, asked) {
+  for (let k = 0; k < 4; k++) {
+    const r = await api('/db/quiz_cache?topic=' + encodeURIComponent(topic));
+    if (!r || !r.pergunta || !Array.isArray(r.opcoes)) return null;
+    if (asked && asked.has(r.pergunta)) continue;
+    if (asked) asked.add(r.pergunta);
+    return shuffleQuizOptions({
+      pergunta: r.pergunta, opcoes: r.opcoes.slice(), correta: r.correta,
+      explicacao: r.explicacao || '', versiculo: r.versiculo || '',
+      daReserva: true, topic
+    });
+  }
+  return null;
+}
+
 async function tryReserve() {
-  // Busca pergunta guardada para quando a IA está fora do ar
   try {
     const reserva = await api('/db/quiz_cache?topic=' + encodeURIComponent(selectedTopic));
     if (reserva && reserva.pergunta && Array.isArray(reserva.opcoes)) {
@@ -3128,6 +3240,18 @@ async function generateQuiz() {
   }
   area.innerHTML = `<div class="quiz-box">${processingBox(t('genTitle'), escapeHtml(selectedTopic) + '<br>' + t('waitNote'))}</div>`;
   quizAnswered = false;
+
+  // Banco primeiro: se houver questão guardada, abre na hora (sem esperar a IA)
+  if (!isOffline()) {
+    try {
+      const bq = await drawBankQuestion(selectedTopic, null);
+      if (bq) {
+        currentQuiz = bq;
+        renderQuiz(currentQuiz);
+        return;
+      }
+    } catch (e) {}
+  }
 
   try {
     const token = await getAccessToken();
