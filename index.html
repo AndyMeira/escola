@@ -1704,6 +1704,9 @@ pt: {
   diplomaT: "Diploma de Formação",
   diplomaB: (name, date) => `${name} concluiu a Trilha de Estudos da Escola de Intercessão — 5 níveis, da brecha ao avivamento. ${date}.`,
   printBtn: "Imprimir diploma",
+  levelWord: "Nível", witnessLabel: "Testemunho", practiceLabel: "Prática",
+  headerTitle: 'Escola de <span>Intercessão</span>',
+  authTitle: 'Escola de <span style="color:var(--gold)">Intercessão</span>',
   quick: ["O que é intercessão?", "Intercessão militante", "Batalha espiritual", "Armas espirituais", "Intercessor quebrantado", "Conquista de cidades", "Impartição & o Espírito", "Oração x Intercessão", "Intercessão profética", "Jejum & intercessão"],
   quickFull: ["O que é intercessão e qual é o seu fundamento bíblico?", "O que a Bíblia ensina sobre intercessão militante e tomar as portas do inimigo em oração?", "O que a Bíblia ensina sobre batalha espiritual e discernimento na intercessão?", "Como o intercessor deve usar as armas de guerra espiritual segundo as Escrituras?", "O que a Bíblia ensina sobre o intercessor quebrantado e liberto?", "O que a Bíblia ensina sobre oração de autoridade e conquista de cidades e nações?", "Como a Bíblia conecta a impartição do Espírito Santo com a intercessão?", "Qual a diferença entre oração e intercessão segundo as Escrituras?", "Como praticar a intercessão profética?", "O que a Bíblia ensina sobre jejum ligado à intercessão?"]
 },
@@ -1777,6 +1780,9 @@ es: {
   diplomaT: "Diploma de Formación",
   diplomaB: (name, date) => `${name} completó la Ruta de Estudios de la Escuela de Intercesión — 5 niveles, de la brecha al avivamiento. ${date}.`,
   printBtn: "Imprimir diploma",
+  levelWord: "Nivel", witnessLabel: "Testimonio", practiceLabel: "Práctica",
+  headerTitle: 'Escuela de <span>Intercesión</span>',
+  authTitle: 'Escuela de <span style="color:var(--gold)">Intercesión</span>',
   quick: ["¿Qué es la intercesión?", "Intercesión militante", "Batalla espiritual", "Armas espirituales", "Intercesor quebrantado", "Conquista de ciudades", "Impartición y el Espíritu", "Oración vs Intercesión", "Intercesión profética", "Ayuno e intercesión"],
   quickFull: ["¿Qué es la intercesión y cuál es su fundamento bíblico?", "¿Qué enseña la Biblia sobre la intercesión militante y tomar las puertas del enemigo en oración?", "¿Qué enseña la Biblia sobre la batalla espiritual y el discernimiento en la intercesión?", "¿Cómo debe usar el intercesor las armas de guerra espiritual según las Escrituras?", "¿Qué enseña la Biblia sobre el intercesor quebrantado y liberado?", "¿Qué enseña la Biblia sobre la oración de autoridad y la conquista de ciudades y naciones?", "¿Cómo conecta la Biblia la impartición del Espíritu Santo con la intercesión?", "¿Cuál es la diferencia entre oración e intercesión según las Escrituras?", "¿Cómo practicar la intercesión profética?", "¿Qué enseña la Biblia sobre el ayuno ligado a la intercesión?"]
 },
@@ -1850,6 +1856,9 @@ en: {
   diplomaT: "Graduation Diploma",
   diplomaB: (name, date) => `${name} completed the Study Track of the School of Intercession — 5 levels, from the breach to revival. ${date}.`,
   printBtn: "Print diploma",
+  levelWord: "Level", witnessLabel: "Testimony", practiceLabel: "Practice",
+  headerTitle: 'School of <span>Intercession</span>',
+  authTitle: 'School of <span style="color:var(--gold)">Intercession</span>',
   quick: ["What is intercession?", "Militant intercession", "Spiritual battle", "Spiritual weapons", "Broken intercessor", "City conquest", "Impartation & the Spirit", "Prayer vs Intercession", "Prophetic intercession", "Fasting & intercession"],
   quickFull: ["What is intercession and what is its biblical foundation?", "What does the Bible teach about militant intercession and taking the enemy's gates in prayer?", "What does the Bible teach about spiritual battle and discernment in intercession?", "How should the intercessor use the weapons of spiritual warfare according to Scripture?", "What does the Bible teach about the broken and set-free intercessor?", "What does the Bible teach about authoritative prayer and conquering cities and nations?", "How does the Bible connect the impartation of the Holy Spirit with intercession?", "What is the difference between prayer and intercession according to Scripture?", "How to practice prophetic intercession?", "What does the Bible teach about fasting linked to intercession?"]
 }
@@ -1858,6 +1867,38 @@ const THEME_I18N = {
   pt: { Todos: "Todos os temas", Fundamentos: "Fundamentos da Intercessão", Autoridade: "Autoridade Espiritual", Quebrantamento: "Quebrantamento e Consagração", Jejum: "Jejum e Oração", Nacoes: "Intercessão por Nações", Impartição: "Impartição e Avivamento" },
   es: { Todos: "Todos los temas", Fundamentos: "Fundamentos de la Intercesión", Autoridade: "Autoridad Espiritual", Quebrantamento: "Quebrantamiento y Consagración", Jejum: "Ayuno y Oración", Nacoes: "Intercesión por las Naciones", Impartição: "Impartición y Avivamiento" },
   en: { Todos: "All themes", Fundamentos: "Foundations of Intercession", Autoridade: "Spiritual Authority", Quebrantamento: "Brokenness & Consecration", Jejum: "Fasting & Prayer", Nacoes: "Intercession for Nations", Impartição: "Impartation & Revival" }
+};
+const MASTER_DESC_I18N = {
+pt: [
+  "Fundador do Global Awakening e referência no Avivamento de Toronto.",
+  "Profeta e intercessora, co-fundadora da Generals International.",
+  "Pioneira da Batalha Espiritual no Brasil. Legado: Instituto Neuza Itioka.",
+  "Fundador do Instituto Exodus; ensina intercessão como guerra espiritual.",
+  "Missionário da JOCUM com 35+ anos formando intercessores.",
+  "Líder de intercessão da Lagoinha; formou 60 mil+ alunos.",
+  "Pastor e fundador do Teen Challenge. Seu testemunho de intercessão obediente por jovens em gangues de Nova York, mesmo sem recursos ou reconhecimento, é lembrado como confirmação prática de Ezequiel 22:30 — Deus busca quem se ponha na brecha.",
+  "Pastor com forte atuação em conferências no Brasil, com ministração voltada à vida no Espírito, cura e discernimento profético. Seu testemunho ilustra a busca perseverante pela presença de Deus descrita em Atos 2 e 2 Reis 2."
+],
+es: [
+  "Fundador de Global Awakening y referente del Avivamiento de Toronto.",
+  "Profeta e intercesora, cofundadora de Generals International.",
+  "Pionera de la Batalla Espiritual en Brasil. Legado: Instituto Neuza Itioka.",
+  "Fundador del Instituto Exodus; enseña la intercesión como guerra espiritual.",
+  "Misionero de JOCUM con más de 35 años formando intercesores.",
+  "Líder de intercesión de Lagoinha; formó a más de 60 mil alumnos.",
+  "Pastor y fundador de Teen Challenge. Su testimonio de intercesión obediente por jóvenes de pandillas en Nueva York, sin recursos ni reconocimiento, se recuerda como confirmación práctica de Ezequiel 22:30 — Dios busca quien se ponga en la brecha.",
+  "Pastor con fuerte actuación en conferencias en Brasil, con ministración enfocada en la vida en el Espíritu, sanidad y discernimiento profético. Su testimonio ilustra la búsqueda perseverante de la presencia de Dios descrita en Hechos 2 y 2 Reyes 2."
+],
+en: [
+  "Founder of Global Awakening and a reference in the Toronto Revival.",
+  "Prophet and intercessor, co-founder of Generals International.",
+  "Pioneer of Spiritual Battle in Brazil. Legacy: Neuza Itioka Institute.",
+  "Founder of Instituto Exodus; teaches intercession as spiritual warfare.",
+  "YWAM missionary with 35+ years raising intercessors.",
+  "Lagoinha intercession leader; trained 60,000+ students.",
+  "Pastor and founder of Teen Challenge. His testimony of obedient intercession for gang youth in New York, without resources or recognition, is remembered as practical confirmation of Ezekiel 22:30 — God seeks those who stand in the breach.",
+  "Pastor with strong presence at conferences in Brazil, ministering on life in the Spirit, healing and prophetic discernment. His testimony illustrates the persevering pursuit of God's presence described in Acts 2 and 2 Kings 2."
+]
 };
 function setLang(l) {
   if (!SUPPORTED_LANGS.includes(l)) return;
@@ -1898,6 +1939,12 @@ function applyLang() {
   if (mh) mh.textContent = t('mastersHint');
   const th = document.getElementById('trailHint');
   if (th) th.textContent = t('trailHint');
+  const h1 = document.querySelector('header h1');
+  if (h1) h1.innerHTML = t('headerTitle');
+  const ah = document.querySelector('.auth-box h2');
+  if (ah) ah.innerHTML = t('authTitle');
+  const md = MASTER_DESC_I18N[getLang()] || MASTER_DESC_I18N.pt;
+  document.querySelectorAll('.master-card p').forEach((p, i) => { if (md[i]) p.textContent = md[i]; });
   if (document.getElementById('tab-trail').classList.contains('active') && trailView.name !== 'eval' && !evalState) renderTrail();
   const gb = document.getElementById('generateBtn');
   if (gb) gb.innerHTML = `<svg class="icon"><use href="#i-star"/></svg> ${t('generate')}`;
@@ -2348,7 +2395,11 @@ async function signOut() {
   currentUser = null;
   geminiHistory = [];
   loadTrailLocal();
-  document.getElementById('messages').innerHTML = '';
+  const msgs = document.getElementById('messages');
+  if (msgs) {
+    msgs.innerHTML = `<div class="msg agent"><div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="msg-bubble">${t('welcome')}</div></div>`;
+    msgs.dataset.welcomed = '';
+  }
   document.getElementById('userBar').style.display = 'none';
   document.getElementById('authOverlay').style.display = 'flex';
   document.getElementById('authEmail').value = '';
@@ -2591,7 +2642,222 @@ const CURRICULUM = [
   ] }
 ];
 
+// ===== TRADUÇÃO DO CONTEÚDO DA TRILHA (ES/EN; PT é a base em CURRICULUM) =====
+const CURR_I18N = {
+es: {
+"L1": { title: "Fundamentos — el llamado a la brecha", sub: "Qué es la intercesión y por qué Dios busca intercesores" },
+"L1.1": { title: "Qué es la intercesión",
+  verse: "“Ante todo, recomiendo que se hagan súplicas, oraciones, intercesiones y acciones de gracias en favor de todos los hombres.” (1Tm 2:1 — RVR1960)",
+  text: "Interceder es colocarse entre Dios y las personas: pedir en favor de otros con base en las Escrituras. Abraham intercedió por Sodoma (Gn 18) y Moisés por el pueblo — siempre apelando al carácter de Dios, nunca a méritos propios. Pablo ordena intercesiones “por todos los hombres”, incluidas las autoridades. La intercesión no es un don para pocos: es el ministerio de todo aquel llamado a la brecha. Nace de la Palabra, vive de la oración perseverante y fructifica en misericordia.",
+  wit: "David Wilkerson — obedeció al llamado de interceder por jóvenes de pandillas en Nueva York, sin recursos ni reconocimiento (cf. Ez 22:30).",
+  practice: "Ora hoy nominalmente por una persona, citando 1Tm 2:1-4 en voz alta." },
+"L1.2": { title: "Dios busca quien se ponga en la brecha",
+  verse: "“Busqué entre ellos un hombre que levantase el muro y se pusiese en la brecha delante de mí a favor de la tierra... mas no hallé ninguno.” (Ez 22:30 — RVR1960)",
+  text: "La brecha es el punto quebrado del muro por donde entra el enemigo. Dios no buscó un ejército, sino un hombre posicionado. Cuando nadie se posiciona, la tierra sufre; cuando un intercesor se levanta, el juicio puede detenerse y la misericordia liberarse. Posicionarse en la brecha implica tres actitudes: ver la necesidad (discernimiento), asumir la responsabilidad (sin culpar a otros) y permanecer hasta la respuesta. La intercesión es posición antes que petición.",
+  wit: "Pr. Marcos Coty (JOCUM) — décadas de fidelidad orando por naciones, sin buscar resultados inmediatos (cf. Jr 29:7; Neh 1).",
+  practice: "Identifica una “brecha” en tu familia o ciudad y ora 10 minutos por ella." },
+"L1.3": { title: "Brazos sostenidos hasta la victoria",
+  verse: "Mientras Moisés mantenía las manos en alto, Israel prevalecía; cuando las bajaba, Amalec prevalecía (cf. Éx 17:11 — RVR1960).",
+  text: "La primera batalla de Israel tras el Mar Rojo se ganó en el monte, no en el valle: Moisés intercedía con manos en alto mientras Josué luchaba. Cuando los brazos se cansaron, Aarón y Hur los sostuvieron hasta la puesta del sol. Tres principios: (1) las batallas espirituales se deciden en oración antes del campo; (2) nadie sostiene los brazos solo — la intercesión pide comunidad; (3) perseverancia hasta el fin (“hasta la puesta del sol”). El cansancio no es señal para parar, sino para llamar a Aarón y Hur.",
+  wit: "Pastora Ezenete Rodrigues — formó a más de 60 mil alumnos perseverando delante del trono (cf. Sal 51; Is 6).",
+  practice: "Llama a alguien para orar contigo esta semana por una causa común." },
+"L1.4": { title: "Oración e intercesión: la diferencia",
+  verse: "“súplicas, oraciones, intercesiones y acciones de gracias” (1Tm 2:1 — RVR1960: cuatro expresiones distintas).",
+  text: "Toda intercesión es oración, pero no toda oración es intercesión. En la oración presentamos nuestras necesidades (Fil 4:6); en la intercesión presentamos las de otros, como abogado ante el Juez justo. La oración busca comunión; la intercesión suma mediación — sufrir con quien sufre y clamar hasta ver la respuesta. El intercesor maduro no abandona la oración personal: de ella saca autoridad para interceder. Primero el trono (comunión), después la brecha (mediación).",
+  wit: "Neuza Itioka — el discernimiento fundamentado en las Escrituras sostiene la batalla equilibrada (cf. Ef 6).",
+  practice: "Divide tu cuaderno de oración en dos columnas: “mis causas” y “causas de otros”." },
+"L2": { title: "Quebrantamiento y consagración", sub: "El carácter del intercesor delante del trono" },
+"L2.1": { title: "El sacrificio que Dios no desprecia",
+  verse: "“Los sacrificios de Dios son el espíritu quebrantado; al corazón contrito y humillado no despreciarás tú, oh Dios.” (Sal 51:17 — RVR1960)",
+  text: "David lo escribió tras ser confrontado por su pecado: a Dios no le impresiona la actuación, sino el corazón quebrantado. Quebrantamiento no es autocompasión — es honestidad radical ante Dios, sin máscaras ni excusas. El intercesor quebrantado no ora de arriba hacia abajo (como juez de otros), sino de rodillas, sabiendo que también necesita misericordia. De esa posición nace la autoridad: quien mucho fue perdonado, intercede con compasión verdadera.",
+  wit: "Pastora Ezenete Rodrigues — enseña que el quebrantamiento delante del trono precede y sostiene la intercesión genuina (cf. Sal 51; Is 6).",
+  practice: "Ora el Salmo 51 en voz alta, confesando nominalmente lo que debe cambiar." },
+"L2.2": { title: "Ay de mí — la visión del trono",
+  verse: "“Heme aquí, envíame a mí.” (Is 6:8 — RVR1960)",
+  text: "Isaías vio al Señor sentado en el trono, oyó “santo, santo, santo” y su primera reacción fue: “ay de mí”. Ver a Dios de verdad siempre revela quiénes somos — y solo tras ser purificado por la brasa el profeta oyó el llamado y respondió “envíame”. El orden es innegociable: trono antes del campo, purificación antes del envío, quebrantamiento antes de la autoridad. Intercesión sin sala del trono es activismo; con sala del trono, es envío con poder.",
+  wit: "Dave Roberson — la búsqueda perseverante de la presencia produce vida en el Espíritu y discernimiento (cf. Hch 2; 2R 2).",
+  practice: "Pasa 15 minutos en silencio delante de Dios antes de presentar cualquier petición." },
+"L2.3": { title: "Sacrificio vivo",
+  verse: "“Presentéis vuestros cuerpos en sacrificio vivo, santo, agradable a Dios, que es vuestro culto racional.” (Ro 12:1 — RVR1960)",
+  text: "Pablo liga consagración y culto: el intercesor se ofrece entero — cuerpo, tiempo, agenda. Sacrificio vivo es morir a diario a la prisa, la comodidad y la vanidad, permaneciendo en el altar. La consagración no es un evento (un retiro, una campaña), es estilo de vida: sueño regulado para orar, ayuno programado, lengua guardada, cuentas ajustadas. Dios no unge atajos; unge altares con sacrificio continuo.",
+  wit: "Pr. Oswaldo Lôbo Jr — enseña que la intercesión como arma exige valentía y profundo fundamento bíblico (cf. 2Co 10:3-5).",
+  practice: "Elige una renuncia concreta esta semana (ayuno parcial, redes, sueño) y ofrécela como culto." },
+"L3": { title: "Autoridad y guerra espiritual", sub: "Revestirse, discernir y ejercer autoridad en oración" },
+"L3.1": { title: "La armadura de Dios",
+  verse: "“Vestíos de toda la armadura de Dios, para que podáis estar firmes contra las asechanzas del diablo.” (Ef 6:11 — RVR1960)",
+  text: "Pablo describe la lucha: “no es contra carne y sangre”. Por eso la armadura es espiritual — verdad, justicia, evangelio, fe, salvación, Palabra — y la orden es vestirse de TODA ella, sin pieza faltante. Nota: la armadura protege a quien está posicionado; el soldado fuera de formación, aunque armado, cae. El verso 18 corona todo con oración y súplica “en todo tiempo en el Espíritu”: armadura sin oración es museo; con oración, es guerra ganada.",
+  wit: "Neuza Itioka — pionera de la batalla espiritual equilibrada y bíblica en Brasil (cf. Ef 6).",
+  practice: "Ora Ef 6:13-18 pieza por pieza, vistiéndote cada una en voz alta." },
+"L3.2": { title: "Armas no carnales",
+  verse: "“Las armas de nuestra milicia no son carnales, sino poderosas en Dios para la destrucción de fortalezas.” (2Co 10:4 — RVR1960)",
+  text: "Las fortalezas son patrones de pensamiento y estructuras espirituales que resisten a Dios en una mente, familia o ciudad. Gritos, manipulación y fuerza humana no las derriban — solo armas espirituales: Palabra proclamada, oración perseverante, ayuno, alabanza, obediencia. La estrategia tiene blanco: “llevando cautivo todo pensamiento a la obediencia a Cristo”. Guerra sin blanco es ruido; con blanco y Escritura, demuele fortalezas.",
+  wit: "Pr. Oswaldo Lôbo Jr (Instituto Exodus) — intercesión como guerra: valentía con fundamento bíblico.",
+  practice: "Identifica una fortaleza (miedo, vicio, división) y proclama 2Co 10:4-5 sobre ella por 7 días." },
+"L3.3": { title: "Autoridad delegada",
+  verse: "“He aquí os doy potestad de hollar serpientes y escorpiones, y sobre toda fuerza del enemigo.” (Lc 10:19 — RVR1960)",
+  text: "La autoridad no es poder propio: es delegación. Jesús la dio, los discípulos la ejercieron, y los demonios se sujetaron “en el nombre de Jesús”. Se ejerce en tres direcciones: resistir (Stg 4:7), ordenar (Mc 16:17) y proteger (Sal 91). Pero atención al verso siguiente: el mayor gozo no es que los espíritus se sometan, sino que el nombre está escrito en los cielos. Autoridad sin santidad es presunción; con santidad, es gobierno espiritual.",
+  wit: "Cindy Jacobs — la intercesión perseverante con autoridad trae transformación sobre ciudades (cf. Lc 10:19; Mt 16:19).",
+  practice: "En oración, resiste nominalmente una opresión citando Lc 10:19 y Stg 4:7." },
+"L3.4": { title: "Atar y desatar",
+  verse: "“Todo lo que atares en la tierra será atado en los cielos, y todo lo que desatares en la tierra será desatado en los cielos.” (Mt 16:19 — RVR1960)",
+  text: "Las llaves del Reino operan por declaración alineada al cielo: atar es prohibir la acción del enemigo; desatar es liberar la voluntad de Dios. El intercesor militante “toma las puertas del enemigo en oración”: declara cerradas las puertas del pecado y abiertas las del avivamiento sobre familias, iglesias y ciudades. Las llaves exigen discernimiento — atar lo que Dios no ató es religiosidad; discernir en el Espíritu y declarar con fe es gobierno.",
+  wit: "Cindy Jacobs (Generals International) — autoridad en oración sobre ciudades y naciones.",
+  practice: "Haz hoy dos declaraciones: una atando (prohibiendo) y una desatando (liberando) según la Palabra." },
+"L4": { title: "Ayuno, fervor y Espíritu", sub: "Encender la intercesión con ayuno y perseverancia" },
+"L4.1": { title: "El ayuno que Dios escogió",
+  verse: "“¿No es más bien el ayuno que yo escogí, desatar las ligaduras de impiedad...?” (Is 58:6 — RVR1960)",
+  text: "Dios rechazó el ayuno exhibicionista y definió el verdadero: soltar opresiones, repartir el pan, acoger al necesitado. Ayuno sin justicia es dieta religiosa; con justicia, “tu luz romperá como el alba” y “Jehová te responderá”. El ayuno potencia la intercesión porque humilla la carne, aguza el espíritu y mueve a la compasión práctica. Antes de ayunar por avivamiento, ajusta cuentas con el prójimo.",
+  wit: "David Wilkerson — obediencia práctica a los pobres y perdidos como confirmación de Ez 22:30.",
+  practice: "Une tu próximo ayuno a un acto concreto de misericordia (despensa, visita, perdón)." },
+"L4.2": { title: "Cómo ayunar",
+  verse: "“Tú, cuando ayunes, unge tu cabeza y lava tu rostro, para no mostrar a los hombres que ayunas.” (Mt 6:17-18 — RVR1960)",
+  text: "Jesús presupuso el ayuno (“cuando”, no “si”) y exigió discreción: sin actuación, con el Padre que ve en secreto. Ester convocó ayuno colectivo antes de arriesgar la vida por el pueblo; Daniel buscó a Dios “en ayuno, cilicio y ceniza” confesando los pecados de la nación. Principios: el ayuno tiene propósito definido, tiene plazo, puede ser colectivo y siempre termina en obediencia. Empieza simple (una comida, medio día) y crece con constancia.",
+  wit: "Pr. Marcos Coty — fidelidad de décadas: ayuno y oración como estilo de vida, no evento.",
+  practice: "Marca un ayuno con propósito y plazo esta semana e invita a alguien." },
+"L4.3": { title: "Fervor que no se apaga",
+  verse: "“Fervientes en espíritu, sirviendo al Señor.” (Ro 12:11 — RVR1960)",
+  text: "La “intercesión en llamas” es perseverancia encendida por el Espíritu: los discípulos perseveraron en oración hasta Pentecostés, y de allí salió poder. Fervor no es emocionalismo — es constancia con fuego: misma hora, mismo lugar, mismo clamor, hasta que el cielo responda. Quien ora solo cuando siente, se apaga; quien ora por disciplina, enciende. Pide al Espíritu Santo el don del fervor y establece un altar innegociable de oración diaria.",
+  wit: "Dave Roberson — búsqueda perseverante de la presencia y el poder de Dios (cf. Hch 2; 2R 2).",
+  practice: "Define horario y lugar fijos de oración para los próximos 21 días." },
+"L5": { title: "Naciones y avivamiento — Atalaya", sub: "Interceder por ciudades y cooperar con el derramar del Espíritu" },
+"L5.1": { title: "La paz de la ciudad",
+  verse: "“Procurad la paz de la ciudad a la cual os hice transportar, y rogad por ella a Jehová, porque en su paz tendréis vosotros paz.” (Jr 29:7 — RVR1960)",
+  text: "Israel estaba exiliado en Babilonia — y Dios mandó orar POR la ciudad opresora, no contra ella. El intercesor atalaya bendice su ciudad: ora por autoridades, seguridad, escuelas, iglesias, economía. La intercesión por naciones empieza en el barrio: mapear necesidades, caminar orando, bendecir en vez de murmurar. Quien ora por la ciudad cosecha la paz que sembró.",
+  wit: "Pr. Marcos Coty — oración por naciones como obra de décadas de fidelidad (cf. Jr 29:7; Neh 1).",
+  practice: "Camina 20 minutos orando por tu barrio, calle por calle." },
+"L5.2": { title: "Nehemías: llanto que se vuelve proyecto",
+  verse: "Nehemías lloró, ayunó y oró días antes de pedir autorización al rey (cf. Neh 1:4 — RVR1960).",
+  text: "Al oír sobre los muros derribados, Nehemías no hizo campaña primero: se sentó, lloró, ayunó y oró, confesando los pecados de la nación como propios. Solo después presentó el proyecto al rey — con fechas, recursos y cartas. La intercesión estratégica genera acción estratégica: llanto sin proyecto es lamento; proyecto sin llanto es activismo. El atalaya convierte la carga espiritual en plan concreto de reconstrucción.",
+  wit: "Randy Clark (Global Awakening) — la impartición buscada en oración produce avivamiento (cf. 2Tm 1:6; Hch 2).",
+  practice: "Escribe una causa de tu ciudad y un paso práctico que tu oración generará." },
+"L5.3": { title: "Humillación y sanidad de la tierra",
+  verse: "“Si se humillare mi pueblo, sobre el cual mi nombre es invocado, y oraren, y buscaren mi rostro, y se convirtieren de sus malos caminos, entonces yo oiré desde los cielos, y perdonaré sus pecados, y sanaré su tierra.” (2Cr 7:14 — RVR1960)",
+  text: "La promesa tiene cuatro condiciones para el pueblo de Dios (no para el mundo): humillarse, orar, buscar el rostro, convertirse. La sanidad de la tierra empieza en la iglesia, no en el palacio. Avivamiento no es agenda de eventos — es pueblo humillado en oración continua hasta que Dios oiga desde los cielos. Cada condición es verificable: humillación (orgullo tratado), oración (altar constante), búsqueda (el rostro, no solo las manos), conversión (frutos).",
+  wit: "Cindy Jacobs — transformación de ciudades por la intercesión perseverante con autoridad.",
+  practice: "Reúne 2-3 personas para orar semanalmente por tu ciudad con base en 2Cr 7:14." },
+"L5.4": { title: "Impartición y avivamiento",
+  verse: "“Te aconsejo que avives el fuego del don de Dios que está en ti.” (2Tm 1:6 — RVR1960)",
+  text: "Eliseo pidió la doble porción y la recibió porque se quedó hasta el fin; Timoteo necesitó avivar el don recibido por imposición de manos. Impartición es transferencia espiritual: Dios usa vasos llenos para llenar vasos vacíos — por oración, imposición de manos y convivencia. El atalaya no guarda el fuego: lo transmite. Busca con hambre, recibe con humildad, reparte con generosidad. Avivamiento es impartición multiplicada: un altar enciende otro.",
+  wit: "Randy Clark — testimonio de que la impartición del Espíritu, buscada en oración, produce avivamiento.",
+  practice: "Ora por alguien pidiendo impartición específica (valentía, discernimiento, compasión)." }
+},
+en: {
+"L1": { title: "Foundations — the call to the breach", sub: "What intercession is and why God seeks intercessors" },
+"L1.1": { title: "What intercession is",
+  verse: "“First of all, then, I urge that supplications, prayers, intercessions, and thanksgivings be made for all people.” (1Tim 2:1 — KJV renders “all men”)",
+  text: "To intercede is to stand between God and people: asking on behalf of others grounded in Scripture. Abraham interceded for Sodom (Gen 18) and Moses for the people — always appealing to God's character, never to personal merit. Paul commands intercessions “for all people,” including authorities. Intercession is not a gift for the few: it is the ministry of all who are called to the breach. It is born of the Word, lives on persevering prayer, and bears fruit in mercy.",
+  wit: "David Wilkerson — obeyed the call to intercede for gang youth in New York, without resources or recognition (cf. Ezek 22:30).",
+  practice: "Pray today for one person by name, quoting 1Tim 2:1-4 aloud." },
+"L1.2": { title: "God seeks those who stand in the breach",
+  verse: "“And I sought for a man among them, that should make up the hedge, and stand in the gap before me for the land... but I found none.” (Ezek 22:30 — KJV)",
+  text: "The breach is the broken point of the wall where the enemy enters. God sought not an army but one positioned man. When no one takes position, the land suffers; when one intercessor rises, judgment can be stayed and mercy released. Standing in the breach involves three attitudes: seeing the need (discernment), owning the responsibility (no blame-shifting), and remaining until the answer. Intercession is position before petition.",
+  wit: "Pr. Marcos Coty (YWAM) — decades of faithfulness praying for nations, without chasing immediate results (cf. Jer 29:7; Neh 1).",
+  practice: "Identify one “breach” in your family or city and pray 10 minutes for it." },
+"L1.3": { title: "Arms held up until victory",
+  verse: "While Moses held his hands up, Israel prevailed; when he lowered them, Amalek prevailed (cf. Exod 17:11 — KJV).",
+  text: "Israel's first battle after the Red Sea was won on the mountain, not in the valley: Moses interceded with raised hands while Joshua fought. When his arms tired, Aaron and Hur held them up until sunset. Three principles: (1) spiritual battles are decided in prayer before the field; (2) no one holds arms up alone — intercession needs community; (3) perseverance to the end (“until sunset”). Weariness is not a signal to stop; it is a signal to call Aaron and Hur.",
+  wit: "Pastora Ezenete Rodrigues — trained 60,000+ students persevering before the throne (cf. Ps 51; Isa 6).",
+  practice: "Invite someone to pray with you this week for a shared cause." },
+"L1.4": { title: "Prayer and intercession: the difference",
+  verse: "“supplications, prayers, intercessions, and giving of thanks” (1Tim 2:1 — KJV: four distinct expressions).",
+  text: "All intercession is prayer, but not all prayer is intercession. In prayer we present our own needs (Phil 4:6); in intercession we present the needs of others, like an advocate before the righteous Judge. Prayer seeks fellowship; intercession adds mediation — suffering with those who suffer and crying out until the answer comes. The mature intercessor never abandons personal prayer: from it comes authority to intercede. First the throne (fellowship), then the breach (mediation).",
+  wit: "Neuza Itioka — Scripture-grounded discernment sustains balanced battle (cf. Eph 6).",
+  practice: "Split your prayer notebook into two columns: “my causes” and “others' causes”." },
+"L2": { title: "Brokenness and consecration", sub: "The intercessor's character before the throne" },
+"L2.1": { title: "The sacrifice God will not despise",
+  verse: "“The sacrifices of God are a broken spirit: a broken and a contrite heart, O God, thou wilt not despise.” (Ps 51:17 — KJV)",
+  text: "David wrote this after being confronted over his sin: God is not impressed by performance but by a broken heart. Brokenness is not self-pity — it is radical honesty before God, without masks or excuses. The broken intercessor does not pray top-down (as others' judge) but on his knees, knowing he too needs mercy. From that position authority is born: those forgiven much intercede with true compassion.",
+  wit: "Pastora Ezenete Rodrigues — teaches that brokenness before the throne precedes and sustains genuine intercession (cf. Ps 51; Isa 6).",
+  practice: "Pray Psalm 51 aloud, confessing by name what must change." },
+"L2.2": { title: "Woe is me — the vision of the throne",
+  verse: "“Here am I; send me.” (Isa 6:8 — KJV)",
+  text: "Isaiah saw the Lord seated on the throne, heard “holy, holy, holy,” and his first reaction was “woe is me.” Truly seeing God always reveals who we are — and only after being cleansed by the coal did the prophet hear the call and answer “send me.” The order is non-negotiable: throne before field, cleansing before sending, brokenness before authority. Intercession without the throne room is activism; with it, it is sending with power.",
+  wit: "Dave Roberson — persevering pursuit of the presence produces life in the Spirit and discernment (cf. Acts 2; 2Kgs 2).",
+  practice: "Spend 15 minutes in silence before God before presenting any request." },
+"L2.3": { title: "A living sacrifice",
+  verse: "“Present your bodies a living sacrifice, holy, acceptable unto God, which is your reasonable service.” (Rom 12:1 — KJV)",
+  text: "Paul links consecration to worship: the intercessor offers himself wholly — body, time, schedule. A living sacrifice means dying daily to hurry, comfort, and vanity while remaining on the altar. Consecration is not an event (a retreat, a campaign); it is a lifestyle: sleep ordered for prayer, scheduled fasting, guarded tongue, settled accounts. God does not anoint shortcuts; He anoints altars with continual sacrifice.",
+  wit: "Pr. Oswaldo Lôbo Jr — teaches that intercession as a weapon demands boldness and deep biblical grounding (cf. 2Cor 10:3-5).",
+  practice: "Choose one concrete renunciation this week (partial fast, social media, sleep) and offer it as worship." },
+"L3": { title: "Authority and spiritual warfare", sub: "Putting on, discerning, and exercising authority in prayer" },
+"L3.1": { title: "The armor of God",
+  verse: "“Put on the whole armour of God, that ye may be able to stand against the wiles of the devil.” (Eph 6:11 — KJV)",
+  text: "Paul defines the fight: “not against flesh and blood.” Hence the armor is spiritual — truth, righteousness, gospel, faith, salvation, Word — and the order is to put on ALL of it, no piece missing. Note: armor protects those in position; a soldier out of formation falls even when armed. Verse 18 crowns it all with praying “always... in the Spirit”: armor without prayer is a museum; with prayer, it is battle won.",
+  wit: "Neuza Itioka — pioneer of balanced, biblical spiritual battle in Brazil (cf. Eph 6).",
+  practice: "Pray Eph 6:13-18 piece by piece, putting each on aloud." },
+"L3.2": { title: "Weapons not carnal",
+  verse: "“For the weapons of our warfare are not carnal, but mighty through God to the pulling down of strong holds.” (2Cor 10:4 — KJV)",
+  text: "Strongholds are thought patterns and spiritual structures resisting God in a mind, family, or city. Shouting, manipulation, and human force never demolish them — only spiritual weapons: proclaimed Word, persevering prayer, fasting, praise, obedience. Strategy has an aim: “bringing into captivity every thought to the obedience of Christ.” Warfare without aim is noise; with aim and Scripture, it demolishes strongholds.",
+  wit: "Pr. Oswaldo Lôbo Jr (Instituto Exodus) — intercession as warfare: boldness with biblical grounding.",
+  practice: "Name one stronghold (fear, addiction, division) and proclaim 2Cor 10:4-5 over it for 7 days." },
+"L3.3": { title: "Delegated authority",
+  verse: "“Behold, I give unto you power to tread on serpents and scorpions, and over all the power of the enemy.” (Luke 10:19 — KJV)",
+  text: "Authority is not personal power: it is delegation. Jesus gave it, the disciples exercised it, and demons submitted “in Jesus' name.” It is exercised three ways: resisting (Jas 4:7), commanding (Mark 16:17), and protecting (Ps 91). But note the next verse: the greater joy is not that spirits submit, but that names are written in heaven. Authority without holiness is presumption; with holiness, it is spiritual government.",
+  wit: "Cindy Jacobs — persevering intercession with authority brings transformation over cities (cf. Luke 10:19; Matt 16:19).",
+  practice: "In prayer, pointedly resist one oppression, quoting Luke 10:19 and Jas 4:7." },
+"L3.4": { title: "Binding and loosing",
+  verse: "“Whatsoever thou shalt bind on earth shall be bound in heaven: and whatsoever thou shalt loose on earth shall be loosed in heaven.” (Matt 16:19 — KJV)",
+  text: "The keys of the Kingdom work by heaven-aligned declaration: binding forbids the enemy's action; loosing releases God's will. The militant intercessor “takes the enemy's gates in prayer”: declaring sin's doors shut and revival's doors open over families, churches, and cities. Keys demand discernment — binding what God never bound is religiosity; discerning in the Spirit and declaring in faith is government.",
+  wit: "Cindy Jacobs (Generals International) — authority in prayer over cities and nations.",
+  practice: "Make two declarations today: one binding (forbidding) and one loosing (releasing) according to the Word." },
+"L4": { title: "Fasting, fervor, and the Spirit", sub: "Setting intercession ablaze with fasting and perseverance" },
+"L4.1": { title: "The fast God has chosen",
+  verse: "“Is not this the fast that I have chosen? to loose the bands of wickedness...?” (Isa 58:6 — KJV)",
+  text: "God rejected show fasting and defined the true one: loosing oppression, sharing bread, sheltering the needy. Fasting without justice is a religious diet; with justice, “thy light shall break forth as the morning” and “the LORD shall answer thee.” Fasting empowers intercession by humbling the flesh, sharpening the spirit, and moving to practical compassion. Before fasting for revival, settle accounts with your neighbor.",
+  wit: "David Wilkerson — practical obedience to the poor and lost as confirmation of Ezek 22:30.",
+  practice: "Join your next fast to one concrete act of mercy (groceries, a visit, forgiveness)." },
+"L4.2": { title: "How to fast",
+  verse: "“But thou, when thou fastest, anoint thine head, and wash thy face; that thou appear not unto men to fast.” (Matt 6:17-18 — KJV)",
+  text: "Jesus assumed fasting (“when,” not “if”) and demanded discretion: no performance, with the Father who sees in secret. Esther called a collective fast before risking her life for the people; Daniel sought God “with fasting, and sackcloth, and ashes,” confessing the nation's sins. Principles: fasting has a defined purpose and term, can be collective, and always ends in obedient action. Start simple (one meal, half a day) and grow steadily.",
+  wit: "Pr. Marcos Coty — decades of faithfulness: fasting and prayer as lifestyle, not event.",
+  practice: "Schedule one fast with purpose and term this week and invite someone." },
+"L4.3": { title: "Fervor that never burns out",
+  verse: "“Fervent in spirit; serving the Lord.” (Rom 12:11 — KJV)",
+  text: "“Intercession on fire” is Spirit-kindled perseverance: the disciples persevered in prayer until Pentecost, and power came forth. Fervor is not emotionalism — it is constancy with fire: same hour, same place, same cry, until heaven answers. Those who pray only when they feel like it burn out; those who pray by discipline set fires. Ask the Holy Spirit for the gift of fervor and establish a non-negotiable daily altar of prayer.",
+  wit: "Dave Roberson — persevering pursuit of God's presence and power (cf. Acts 2; 2Kgs 2).",
+  practice: "Set a fixed time and place for prayer for the next 21 days." },
+"L5": { title: "Nations and revival — Watchman", sub: "Interceding for cities and cooperating with the Spirit's outpouring" },
+"L5.1": { title: "The city's peace",
+  verse: "“Seek the peace of the city whither I have caused you to be carried away captives, and pray unto the LORD for it: for in the peace thereof shall ye have peace.” (Jer 29:7 — KJV)",
+  text: "Israel was exiled in Babylon — and God commanded prayer FOR the oppressing city, not against it. The watchman intercessor blesses his city: praying for authorities, safety, schools, churches, the economy. Intercession for nations begins on your street: mapping needs, prayer-walking, blessing instead of grumbling. Those who pray for the city reap the peace they sow.",
+  wit: "Pr. Marcos Coty — prayer for nations as decades of faithfulness (cf. Jer 29:7; Neh 1).",
+  practice: "Walk 20 minutes praying for your neighborhood, street by street." },
+"L5.2": { title: "Nehemiah: weeping turned into a project",
+  verse: "Nehemiah wept, fasted, and prayed for days before asking the king for anything (cf. Neh 1:4 — KJV).",
+  text: "Hearing of the ruined walls, Nehemiah did not campaign first: he sat, wept, fasted, and prayed, confessing the nation's sins as his own. Only then did he present the project to the king — with dates, resources, and letters. Strategic intercession produces strategic action: weeping without a project is lament; a project without weeping is activism. The watchman turns spiritual burden into a concrete rebuilding plan.",
+  wit: "Randy Clark (Global Awakening) — impartation sought in prayer produces revival (cf. 2Tim 1:6; Acts 2).",
+  practice: "Write down one cause in your city and one practical step your prayer will generate." },
+"L5.3": { title: "Humbling and healing of the land",
+  verse: "“If my people, which are called by my name, shall humble themselves, and pray, and seek my face, and turn from their wicked ways; then will I hear from heaven, and will forgive their sin, and will heal their land.” (2Chr 7:14 — KJV)",
+  text: "The promise has four conditions for God's people (not the world): humble themselves, pray, seek His face, turn. Healing of the land begins in the church, not the palace. Revival is not an events calendar — it is a humbled people in continual prayer until God hears from heaven. Each condition is verifiable: humbling (pride dealt with), prayer (constant altar), seeking (His face, not just His hands), turning (fruit).",
+  wit: "Cindy Jacobs — transformation of cities through persevering intercession with authority.",
+  practice: "Gather 2-3 people to pray weekly for your city based on 2Chr 7:14." },
+"L5.4": { title: "Impartation and revival",
+  verse: "“Stir up the gift of God, which is in thee.” (2Tim 1:6 — KJV)",
+  text: "Elisha asked for a double portion and received it because he stayed to the end; Timothy needed to stir up the gift received by laying on of hands. Impartation is spiritual transfer: God uses full vessels to fill empty ones — through prayer, laying on of hands, and fellowship. The watchman does not hoard fire: he passes it on. Seek hungry, receive humbly, give generously. Revival is multiplied impartation: one altar lights another.",
+  wit: "Randy Clark — testimony that impartation of the Spirit, sought in prayer, produces revival.",
+  practice: "Pray for someone asking specific impartation (boldness, discernment, compassion)." }
+}
+};
+
 // ===== ESTADO E LÓGICA DA TRILHA =====
+// Lê o conteúdo da trilha no idioma atual (PT = base; ES/EN = CURR_I18N)
+function currT(id, field) {
+  const l = getLang();
+  if (l === 'pt') return null;
+  const d = CURR_I18N[l] && CURR_I18N[l][id];
+  return (d && d[field]) || null;
+}
+function lvT(lv) { return { title: currT(lv.id, 'title') || lv.title, sub: currT(lv.id, 'sub') || lv.sub }; }
+function lsT(lv, l) {
+  return {
+    title: currT(l.id, 'title') || l.title,
+    verse: currT(l.id, 'verse') || l.verse,
+    text: currT(l.id, 'text') || l.text,
+    wit: currT(l.id, 'wit') || l.wit,
+    practice: currT(l.id, 'practice') || l.practice
+  };
+}
 const EVAL_SIZE = 5, EVAL_PASS = 4;
 let trail = { done: {}, best: {} };
 let trailView = { name: "levels" };
@@ -2675,9 +2941,10 @@ function renderTrail() {
     const pct = Math.round((n / lv.lessons.length) * 100);
     const seal = levelPassed(lv.id) ? ' 🏆' : '';
     const lock = open ? '' : ' 🔒';
+    const lt = lvT(lv);
     return `<div class="trail-level${open ? '' : ' locked'}" onclick="openLevel('${lv.id}')">
-      <h3>Nível ${i + 1} — ${escapeHtml(lv.title)}${seal}${lock}</h3>
-      <div class="t-sub">${escapeHtml(lv.sub)} · ${n}/${lv.lessons.length} ${t('trailLessons')}</div>
+      <h3>${t('levelWord')} ${i + 1} — ${escapeHtml(lt.title)}${seal}${lock}</h3>
+      <div class="t-sub">${escapeHtml(lt.sub)} · ${n}/${lv.lessons.length} ${t('trailLessons')}</div>
       <div class="trail-progress"><div style="width:${pct}%"></div></div>
       ${open ? '' : `<div class="t-sub" style="margin-top:6px;">${t('lockedLevel')}</div>`}
     </div>`;
@@ -2692,17 +2959,19 @@ function openLevel(id) {
 function renderTrailLevel(box) {
   const lv = CURRICULUM.find(l => l.id === trailView.level);
   const idx = CURRICULUM.indexOf(lv);
+  const lt = lvT(lv);
   const n = levelDoneCount(lv);
   const allDone = n === lv.lessons.length;
   const passed = levelPassed(lv.id);
   let html = `<button class="quick-btn" onclick="trailView={name:'levels'};renderTrail()">${t('backTrail')}</button>
-    <div class="quiz-box"><div class="quiz-ref">Nível ${idx + 1}</div>
-    <div class="quiz-question">${escapeHtml(lv.title)}${passed ? ' 🏆' : ''}</div>
-    <div class="t-sub" style="margin-bottom:10px;">${escapeHtml(lv.sub)}</div>`;
+    <div class="quiz-box"><div class="quiz-ref">${t('levelWord')} ${idx + 1}</div>
+    <div class="quiz-question">${escapeHtml(lt.title)}${passed ? ' 🏆' : ''}</div>
+    <div class="t-sub" style="margin-bottom:10px;">${escapeHtml(lt.sub)}</div>`;
   lv.lessons.forEach(l => {
     const done = trail.done[lv.id + '|' + l.id];
+    const st = lsT(lv, l);
     html += `<div class="trail-lesson${done ? ' done' : ''}" onclick="openLesson('${lv.id}','${l.id}')">
-      <h4>${done ? '✓ ' : ''}${escapeHtml(l.id)} — ${escapeHtml(l.title)}</h4>
+      <h4>${done ? '✓ ' : ''}${escapeHtml(l.id)} — ${escapeHtml(st.title)}</h4>
       <div class="t-sub">${escapeHtml(l.ref)}</div></div>`;
   });
   html += `<div style="margin-top:12px;" class="quiz-ref">${t('trailEval')}: ${EVAL_SIZE} questões · ${t('evalScore')(EVAL_PASS, EVAL_SIZE)}</div>`;
@@ -2718,14 +2987,15 @@ function openLesson(levelId, lessonId) {
 function renderTrailLesson(box) {
   const lv = CURRICULUM.find(l => l.id === trailView.level);
   const l = lv.lessons.find(x => x.id === trailView.lesson);
+  const st = lsT(lv, l);
   const done = trail.done[lv.id + '|' + l.id];
   box.innerHTML = `<button class="quick-btn" onclick="trailView={name:'level',level:'${lv.id}'};renderTrail()">${t('backTrail')}</button>
   <div class="quiz-box"><div class="quiz-ref">${escapeHtml(l.id)} · ${escapeHtml(l.ref)}</div>
-    <div class="quiz-question">${escapeHtml(l.title)}</div>
-    <div class="trail-body"><div class="verse">${escapeHtml(l.verse)}</div>
-    <div>${escapeHtml(l.text)}</div>
-    <div class="trail-testimony">🕊️ <strong>Testemunho:</strong> ${escapeHtml(l.wit)}</div>
-    <div class="trail-practice">🙏 <strong>Prática:</strong> ${escapeHtml(l.practice)}</div></div>
+    <div class="quiz-question">${escapeHtml(st.title)}</div>
+    <div class="trail-body"><div class="verse">${escapeHtml(st.verse)}</div>
+    <div>${escapeHtml(st.text)}</div>
+    <div class="trail-testimony">🕊️ <strong>${t('witnessLabel')}:</strong> ${escapeHtml(st.wit)}</div>
+    <div class="trail-practice">🙏 <strong>${t('practiceLabel')}:</strong> ${escapeHtml(st.practice)}</div></div>
     ${done ? `<div class="loading-text" style="text-align:left;">${t('lessonDone')}</div>`
       : `<button class="generate-btn" style="margin-top:10px;" onclick="completeLesson('${lv.id}','${l.id}')">✓ ${t('markDone')}</button>`}
   </div>`;
@@ -2848,7 +3118,7 @@ function renderEval(box) {
   const q = evalState.questions[evalState.qi];
   if (!q) return;
   let html = `<div class="quiz-box">
-    <div class="quiz-ref">${t('trailEval')} · Nível ${CURRICULUM.indexOf(lv) + 1} · ${t('qOf')(evalState.qi + 1, EVAL_SIZE)}${q.daReserva ? ' · ' + t('savedBadge') : ''}</div>
+    <div class="quiz-ref">${t('trailEval')} · ${t('levelWord')} ${CURRICULUM.indexOf(lv) + 1} · ${t('qOf')(evalState.qi + 1, EVAL_SIZE)}${q.daReserva ? ' · ' + t('savedBadge') : ''}</div>
     <div class="quiz-question">${escapeHtml(q.pergunta)}</div><div class="quiz-options">`;
   q.opcoes.forEach((op, i) => { html += `<button class="option-btn" id="evalOpt${i}" onclick="answerEval(${i})">${escapeHtml(op)}</button>`; });
   html += `</div><div id="eval-feedback" style="display:none" class="quiz-feedback"></div>
@@ -2906,8 +3176,9 @@ async function finishEval() {
         <button class="generate-btn" onclick="window.print()">🖨️ ${t('printBtn')}</button></div>`;
     } else {
       const nx = CURRICULUM[lvIdx + 1];
+      const nt = lvT(nx);
       extra = `<div class="trail-lesson" style="cursor:default;"><div class="t-sub">${t('nextUp')}</div>
-        <h4>Nível ${lvIdx + 2} — ${escapeHtml(nx.title)}</h4><div class="t-sub">${escapeHtml(nx.sub)}</div>
+        <h4>${t('levelWord')} ${lvIdx + 2} — ${escapeHtml(nt.title)}</h4><div class="t-sub">${escapeHtml(nt.sub)}</div>
         <button class="generate-btn" style="margin-top:8px;" onclick="openLevel('${nx.id}')">${t('goNext')}</button></div>`;
     }
   }
