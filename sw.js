@@ -1,4 +1,4 @@
-const CACHE_NAME = 'escola-intercessao-v6';
+const CACHE_NAME = 'escola-intercessao-v7';
 const APP_SHELL = [
   '/escola/',
   '/escola/index.html',

@@ -285,6 +285,55 @@
   .typing-bubble span:nth-child(2) { animation-delay: 0.2s; }
   .typing-bubble span:nth-child(3) { animation-delay: 0.4s; }
   @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+  .typing-status {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 14.5px;
+    margin-top: 10px;
+    font-style: normal;
+  }
+  body:not(.light) .typing-status { color: #d3c096 !important; }
+  body.light .typing-status { color: var(--brown) !important; }
+
+  /* ===== ESTADO DE PROCESSAMENTO (visível, texto grande) ===== */
+  .processing {
+    text-align: center;
+    padding: 34px 22px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--parchment);
+  }
+  body:not(.light) .processing { background: rgba(30,23,16,.92); }
+  .spinner {
+    width: 44px; height: 44px;
+    margin: 0 auto 16px;
+    border-radius: 50%;
+    border: 4px solid rgba(184,134,11,.25);
+    border-top-color: var(--gold);
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .processing-title {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 17px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  body:not(.light) .processing-title { color: #fff7e6 !important; }
+  body.light .processing-title { color: var(--brown) !important; }
+  .processing-sub {
+    font-family: 'Lato', sans-serif !important;
+    font-size: 14.5px;
+    margin-bottom: 14px;
+  }
+  body:not(.light) .processing-sub { color: #d3c096 !important; }
+  body.light .processing-sub { color: #6f6250 !important; }
+  .processing .trail-progress { max-width: 320px; margin: 0 auto; }
+  .processing .indeterminate {
+    width: 40% !important;
+    animation: slide 1.2s ease-in-out infinite alternate;
+  }
+  @keyframes slide { from { margin-left: 0; } to { margin-left: 60%; } }
+  .processing .generate-btn { margin-top: 16px; }
 
   .chat-input-area {
     padding: 14px 16px;
@@ -519,7 +568,7 @@
   .loading-text {
     text-align: center;
     color: var(--muted);
-    font-size: 14px;
+    font-size: 16px;
     padding: 28px;
     font-style: italic;
     font-family: 'Playfair Display', serif;
@@ -1641,6 +1690,12 @@ pt: {
   evalScore: (s, n) => `Você acertou ${s} de ${n}.`,
   qOf: (i, n) => `Questão ${i} de ${n}`, sealsTitle: "Selos da trilha",
   needLoginTrail: "Entre para salvar seu progresso da trilha. Dá para estudar sem login, mas o avanço só é guardado neste aparelho. 🙏",
+  processingReply: "A escola está preparando sua resposta...",
+  stillWorking: "Ainda trabalhando — a IA pode levar até 1 minuto. Aguarde. 🙏",
+  slowErr: "A escola demorou a responder. Toque em tentar de novo. 🙏",
+  genTitle: "Gerando pergunta...",
+  waitNote: "Pode levar até 1 minuto. Aguarde. 🙏",
+  retryBtn: "Tentar novamente", cancelBtn: "Cancelar",
   quick: ["O que é intercessão?", "Intercessão militante", "Batalha espiritual", "Armas espirituais", "Intercessor quebrantado", "Conquista de cidades", "Impartição & o Espírito", "Oração x Intercessão", "Intercessão profética", "Jejum & intercessão"],
   quickFull: ["O que é intercessão e qual é o seu fundamento bíblico?", "O que a Bíblia ensina sobre intercessão militante e tomar as portas do inimigo em oração?", "O que a Bíblia ensina sobre batalha espiritual e discernimento na intercessão?", "Como o intercessor deve usar as armas de guerra espiritual segundo as Escrituras?", "O que a Bíblia ensina sobre o intercessor quebrantado e liberto?", "O que a Bíblia ensina sobre oração de autoridade e conquista de cidades e nações?", "Como a Bíblia conecta a impartição do Espírito Santo com a intercessão?", "Qual a diferença entre oração e intercessão segundo as Escrituras?", "Como praticar a intercessão profética?", "O que a Bíblia ensina sobre jejum ligado à intercessão?"]
 },
@@ -1700,6 +1755,12 @@ es: {
   evalScore: (s, n) => `Acertaste ${s} de ${n}.`,
   qOf: (i, n) => `Pregunta ${i} de ${n}`, sealsTitle: "Sellos de la ruta",
   needLoginTrail: "Inicia sesión para guardar tu progreso de la ruta. Puedes estudiar sin login, pero el avance solo se guarda en este dispositivo. 🙏",
+  processingReply: "La escuela está preparando tu respuesta...",
+  stillWorking: "Aún trabajando — la IA puede tardar hasta 1 minuto. Espera. 🙏",
+  slowErr: "La escuela tardó en responder. Toca intentar de nuevo. 🙏",
+  genTitle: "Generando pregunta...",
+  waitNote: "Puede tardar hasta 1 minuto. Espera. 🙏",
+  retryBtn: "Intentar de nuevo", cancelBtn: "Cancelar",
   quick: ["¿Qué es la intercesión?", "Intercesión militante", "Batalla espiritual", "Armas espirituales", "Intercesor quebrantado", "Conquista de ciudades", "Impartición y el Espíritu", "Oración vs Intercesión", "Intercesión profética", "Ayuno e intercesión"],
   quickFull: ["¿Qué es la intercesión y cuál es su fundamento bíblico?", "¿Qué enseña la Biblia sobre la intercesión militante y tomar las puertas del enemigo en oración?", "¿Qué enseña la Biblia sobre la batalla espiritual y el discernimiento en la intercesión?", "¿Cómo debe usar el intercesor las armas de guerra espiritual según las Escrituras?", "¿Qué enseña la Biblia sobre el intercesor quebrantado y liberado?", "¿Qué enseña la Biblia sobre la oración de autoridad y la conquista de ciudades y naciones?", "¿Cómo conecta la Biblia la impartición del Espíritu Santo con la intercesión?", "¿Cuál es la diferencia entre oración e intercesión según las Escrituras?", "¿Cómo practicar la intercesión profética?", "¿Qué enseña la Biblia sobre el ayuno ligado a la intercesión?"]
 },
@@ -1759,6 +1820,12 @@ en: {
   evalScore: (s, n) => `You got ${s} of ${n} right.`,
   qOf: (i, n) => `Question ${i} of ${n}`, sealsTitle: "Track seals",
   needLoginTrail: "Sign in to save your track progress. You can study without login, but progress is only kept on this device. 🙏",
+  processingReply: "The school is preparing your answer...",
+  stillWorking: "Still working — the AI can take up to 1 minute. Please wait. 🙏",
+  slowErr: "The school took too long to answer. Tap try again. 🙏",
+  genTitle: "Generating question...",
+  waitNote: "It can take up to 1 minute. Please wait. 🙏",
+  retryBtn: "Try again", cancelBtn: "Cancel",
   quick: ["What is intercession?", "Militant intercession", "Spiritual battle", "Spiritual weapons", "Broken intercessor", "City conquest", "Impartation & the Spirit", "Prayer vs Intercession", "Prophetic intercession", "Fasting & intercession"],
   quickFull: ["What is intercession and what is its biblical foundation?", "What does the Bible teach about militant intercession and taking the enemy's gates in prayer?", "What does the Bible teach about spiritual battle and discernment in intercession?", "How should the intercessor use the weapons of spiritual warfare according to Scripture?", "What does the Bible teach about the broken and set-free intercessor?", "What does the Bible teach about authoritative prayer and conquering cities and nations?", "How does the Bible connect the impartation of the Holy Spirit with intercession?", "What is the difference between prayer and intercession according to Scripture?", "How to practice prophetic intercession?", "What does the Bible teach about fasting linked to intercession?"]
 }
@@ -2651,26 +2718,41 @@ async function startEval(levelId) {
     document.getElementById('trailContent').innerHTML = `<div class="loading-text">${t('limitMsg')(DAILY_MESSAGE_LIMIT)}</div>`;
     return;
   }
-  evalState = { level: levelId, qi: 0, questions: [], correct: 0, locked: false };
+  evalState = { level: levelId, qi: 0, questions: [], correct: 0, locked: false, cancelled: false };
   trailView = { name: 'eval' };
   renderEval(document.getElementById('trailContent'));
   await loadNextEvalQ();
 }
 async function loadNextEvalQ() {
   const box = document.getElementById('trailContent');
+  if (!evalState || evalState.cancelled) return;
   const lv = CURRICULUM.find(l => l.id === evalState.level);
   const topic = lv.topics[evalState.qi % lv.topics.length];
-  box.innerHTML = `<div class="quiz-box"><div class="loading-text">${t('qOf')(evalState.qi + 1, EVAL_SIZE)} · ${t('preparing')(topic)}</div></div>`;
+  const pct = Math.round((evalState.qi / EVAL_SIZE) * 100);
+  box.innerHTML = `<div class="quiz-box">${processingBox(t('qOf')(evalState.qi + 1, EVAL_SIZE), escapeHtml(topic) + '<br>' + t('waitNote'), pct)}
+    <div style="text-align:center;"><button class="quick-btn" onclick="cancelEval()">✕ ${t('cancelBtn')}</button></div></div>`;
   try {
     const q = await fetchEvalQuestion(topic);
+    if (!evalState || evalState.cancelled) return;
     evalState.questions.push(q);
     evalState.locked = false;
     renderEval(box);
   } catch (e) {
+    if (!evalState || evalState.cancelled) return;
+    if (e.message === '__CANCELLED__') return;
     const okReserve = await tryEvalReserve(lv);
-    if (!okReserve) box.innerHTML = `<div class="quiz-box"><div class="loading-text">${escapeHtml(e.message || t('quizFail'))}</div>
-      <button class="quick-btn" onclick="trailView={name:'level',level:'${lv.id}'};renderTrail()">${t('backTrail')}</button></div>`;
+    if (!okReserve) box.innerHTML = `<div class="quiz-box"><div class="processing"><div class="processing-title">${escapeHtml(e.message || t('quizFail'))}</div></div>
+      <div style="text-align:center;"><button class="generate-btn" onclick="startEval('${lv.id}')">↻ ${t('retryBtn')}</button>
+      <button class="quick-btn" onclick="trailView={name:'level',level:'${lv.id}'};renderTrail()">${t('backTrail')}</button></div></div>`;
   }
+}
+function cancelEval() {
+  if (evalState) evalState.cancelled = true;
+  if (activeFetchCtrl) { try { activeFetchCtrl.abort(); } catch (e) {} }
+  const lv = evalState ? evalState.level : null;
+  evalState = null;
+  if (lv) { trailView = { name: 'level', level: lv }; }
+  renderTrail();
 }
 async function tryEvalReserve(lv) {
   for (const topic of lv.topics) {
@@ -2799,17 +2881,26 @@ function addMessage(content, role) {
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+let typingTimer = null;
 function addTyping() {
   const msgs = document.getElementById('messages');
   const div = document.createElement('div');
   div.className = 'msg agent';
   div.id = 'typing-indicator';
-  div.innerHTML = '<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="typing-bubble"><span></span><span></span><span></span></div>';
+  div.innerHTML = '<div class="msg-label"><svg class="icon"><use href="#i-flame"/></svg> Escola de Intercessão</div><div class="typing-bubble"><span></span><span></span><span></span></div><div class="typing-status" id="typing-status"></div>';
   msgs.appendChild(div);
   msgs.scrollTop = msgs.scrollHeight;
+  const st = document.getElementById('typing-status');
+  if (st) st.textContent = t('processingReply');
+  if (typingTimer) clearTimeout(typingTimer);
+  typingTimer = setTimeout(() => {
+    const s = document.getElementById('typing-status');
+    if (s) s.textContent = t('stillWorking');
+  }, 20000);
 }
 
 function removeTyping() {
+  if (typingTimer) { clearTimeout(typingTimer); typingTimer = null; }
   const t = document.getElementById('typing-indicator');
   if (t) t.remove();
 }
@@ -2903,14 +2994,36 @@ function friendlyError(msg) {
   return m || t('unknownErr');
 }
 
-// Busca com retentativa automática em sobrecarga (503): 3s, 6s, 9s
+// Busca com retentativa automática em sobrecarga (503): 3s, 6s, 9s + timeout de 60s
+// (sem timeout, rede lenta travava a tela numa espera infinita com texto pequeno)
+let activeFetchCtrl = null;
 async function fetchGemini(url, options, tentativa = 1) {
-  const res = await fetch(url, options);
-  if (res.status === 503 && tentativa <= 3) {
-    await new Promise(r => setTimeout(r, tentativa * 3000));
-    return fetchGemini(url, options, tentativa + 1);
+  const ctrl = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  activeFetchCtrl = ctrl;
+  const to = setTimeout(() => { if (ctrl) ctrl.abort(); }, 60000);
+  try {
+    const res = await fetch(url, { ...options, ...(ctrl ? { signal: ctrl.signal } : {}) });
+    if (res.status === 503 && tentativa <= 3) {
+      await new Promise(r => setTimeout(r, tentativa * 3000));
+      return fetchGemini(url, options, tentativa + 1);
+    }
+    return res;
+  } catch (e) {
+    if (e && e.name === 'AbortError') throw new Error(t('slowErr'));
+    throw e;
+  } finally {
+    clearTimeout(to);
+    if (activeFetchCtrl === ctrl) activeFetchCtrl = null;
   }
-  return res;
+}
+
+// Caixa padrão de "processando": spinner grande + título legível + barra animada
+function processingBox(title, sub, progressPct) {
+  const bar = (progressPct === undefined || progressPct === null)
+    ? '<div class="trail-progress"><div class="indeterminate"></div></div>'
+    : `<div class="trail-progress"><div style="width:${progressPct}%"></div></div>`;
+  return `<div class="processing"><div class="spinner"></div><div class="processing-title">${title}</div>` +
+    (sub ? `<div class="processing-sub">${sub}</div>` : '') + bar + '</div>';
 }
 
 async function sendMessage() {
@@ -3013,7 +3126,7 @@ async function generateQuiz() {
     area.innerHTML = `<div class="loading-text">${t('limitMsg')(DAILY_MESSAGE_LIMIT)}</div>`;
     return;
   }
-  area.innerHTML = `<div class="loading-text"><svg class="icon"><use href="#i-spark"/></svg> ${t('preparing')(selectedTopic)}</div>`;
+  area.innerHTML = `<div class="quiz-box">${processingBox(t('genTitle'), escapeHtml(selectedTopic) + '<br>' + t('waitNote'))}</div>`;
   quizAnswered = false;
 
   try {
@@ -3066,9 +3179,8 @@ async function generateQuiz() {
   } catch (e) {
     // IA fora do ar? Tenta uma pergunta guardada na reserva
     if (!isOffline() && await tryReserve()) return;
-    area.innerHTML = `<div class="loading-text">${isOffline()
-      ? t('offlineNeedNet')
-      : t('quizFail')}</div>`;
+    area.innerHTML = `<div class="quiz-box"><div class="processing"><div class="processing-title">${isOffline() ? t('offlineNeedNet') : escapeHtml(e.message || t('quizFail'))}</div></div>
+      <div style="text-align:center;"><button class="generate-btn" onclick="generateQuiz()">↻ ${t('retryBtn')}</button></div></div>`;
   } finally {
     btn.disabled = false;
   }
@@ -3194,7 +3306,7 @@ function answerQuiz(index) {
 
 <canvas id="brasas-codice"></canvas>
 <div id="fogo-fundo"></div>
-<div class="build-stamp" id="buildStamp">v20241004-trilha</div>
+<div class="build-stamp" id="buildStamp">v20241005-ux</div>
 <script>
 (function(){
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
