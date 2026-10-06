@@ -21,7 +21,7 @@ são citados só como testemunho. Dono: Anderson (GitHub: AndyMeira).
 - `chat_messages(id, user_id, role, content, created_at)` (ISO UTC).
 - `quiz_attempts(id, user_id, topic, question, correct INTEGER 0/1, created_at)`.
 - `password_resets(id, user_id, token_hash=sha256(token), expires_at, used, created_at)` — token 1h.
-- `quiz_cache(id, topic, pergunta, opcoes JSON, correta, explicacao, versiculo, created_at)` — reserva offline da IA.
+- `quiz_cache(id, topic, pergunta, opcoes JSON, correta, explicacao, versiculo, trusted 0/1, created_at)` — banco de questões; IA auto-arquiva trusted=1, POST manual entra em quarentena (0) até revisão.
 - `lesson_progress(id, user_id, level, lesson, created_at)` — lições concluídas da trilha (UNIQUE user_id/level/lesson).
 - `level_attempts(id, user_id, level, score, total, passed, created_at)` — tentativas de avaliação da trilha.
 - `usage_daily(day, calls)` — contador global p/ monitor de cota.
