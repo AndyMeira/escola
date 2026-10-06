@@ -153,6 +153,19 @@ function extractQuizTopic(payload) {
     return null;
   }
 }
+// Idioma da questão: instruction do prompt (o tema vai sempre em PT como chave estável)
+function extractQuizLang(payload) {
+  try {
+    const si = payload && payload.body && payload.body.system_instruction;
+    const txt = si && si.parts && si.parts[0] && si.parts[0].text;
+    const s = String(txt || '');
+    if (/Responde SOLO en JSON/.test(s)) return 'es';
+    if (/Reply ONLY with valid JSON/.test(s)) return 'en';
+    return 'pt';
+  } catch {
+    return 'pt';
+  }
+}
 async function archiveQuizQuestion(env, payload, data) {
   try {
     const topic = extractQuizTopic(payload);
@@ -167,9 +180,9 @@ async function archiveQuizQuestion(env, payload, data) {
         !Number.isInteger(q.correta) || q.correta < 0 || q.correta >= q.opcoes.length ||
         typeof q.explicacao !== 'string') return;
     await env.DB.prepare(
-      'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at, trusted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)'
+      'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at, trusted, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1, ?)'
     ).bind(crypto.randomUUID(), topic, q.pergunta, JSON.stringify(q.opcoes), q.correta,
-      q.explicacao || '', q.versiculo || '', new Date().toISOString()).run();
+      q.explicacao || '', q.versiculo || '', new Date().toISOString(), extractQuizLang(payload)).run();
   } catch {}
 }
 
@@ -446,17 +459,19 @@ export default {
           typeof b.topic !== 'string' || !b.topic) {
         return err('Quiz em formato inválido.');
       }
+      const lang = ['pt', 'es', 'en'].includes(b.lang) ? b.lang : 'pt';
       await env.DB.prepare(
-        'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at, trusted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)'
+        'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at, trusted, lang) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0, ?)'
       ).bind(crypto.randomUUID(), b.topic, b.pergunta, JSON.stringify(b.opcoes), b.correta,
-        b.explicacao || '', b.versiculo || '', new Date().toISOString()).run();
+        b.explicacao || '', b.versiculo || '', new Date().toISOString(), lang).run();
       return json({ ok: true, quarantined: true });
     }
     if (path === '/db/quiz_cache' && req.method === 'GET') {
       const topic = url.searchParams.get('topic') || '';
+      const lang = url.searchParams.get('lang') || 'pt';
       const row = await env.DB.prepare(
-        'SELECT pergunta, opcoes, correta, explicacao, versiculo FROM quiz_cache WHERE topic = ? AND trusted = 1 ORDER BY RANDOM() LIMIT 1'
-      ).bind(topic).first();
+        'SELECT pergunta, opcoes, correta, explicacao, versiculo FROM quiz_cache WHERE topic = ? AND lang = ? AND trusted = 1 ORDER BY RANDOM() LIMIT 1'
+      ).bind(topic, ['pt', 'es', 'en'].includes(lang) ? lang : 'pt').first();
       if (!row) return err('Sem perguntas guardadas para este tema.', 404);
       let opcoes;
       try {

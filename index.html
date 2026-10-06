@@ -3116,8 +3116,7 @@ async function loadNextEvalQ() {
     <div style="text-align:center;"><button class="quick-btn" onclick="cancelEval()">✕ ${t('cancelBtn')}</button></div></div>`;
   try {
     let q = null;
-    // Banco primeiro só em PT (idioma do banco); ES/EN sempre geram no idioma (instantâneo após o banco ES/EN existir)
-    if (getLang() === 'pt') { try { q = await drawBankQuestion(topic, evalState.asked); } catch (e) {} }
+    try { q = await drawBankQuestion(topic, evalState.asked); } catch (e) {}
     if (!q) q = await fetchEvalQuestion(topic);
     if (!evalState || evalState.cancelled) return;
     evalState.questions.push(q);
@@ -3135,7 +3134,6 @@ async function loadNextEvalQ() {
 function queuePrefetch() {
   try {
     if (!evalState || evalState.prefetched) return;
-    if (getLang() !== 'pt') return; // prefetch só do banco (PT)
     const ni = evalState.qi + 1;
     if (ni >= EVAL_SIZE) return;
     const lv = CURRICULUM.find(l => l.id === evalState.level);
@@ -3510,8 +3508,9 @@ async function sendMessage() {
 // Sorteia pergunta do banco (quiz_cache). Instantâneo — evita esperar a IA.
 // asked: Set de enunciados já usados na sessão (sem repetição). Tenta até 4 sorteios.
 async function drawBankQuestion(topic, asked) {
+  const lang = getLang();
   for (let k = 0; k < 4; k++) {
-    const r = await api('/db/quiz_cache?topic=' + encodeURIComponent(topic));
+    const r = await api('/db/quiz_cache?topic=' + encodeURIComponent(topic) + '&lang=' + lang);
     if (!r || !r.pergunta || !Array.isArray(r.opcoes)) return null;
     if (asked && asked.has(r.pergunta)) continue;
     if (asked) asked.add(r.pergunta);
@@ -3526,7 +3525,7 @@ async function drawBankQuestion(topic, asked) {
 
 async function tryReserve() {
   try {
-    const reserva = await api('/db/quiz_cache?topic=' + encodeURIComponent(selectedTopic));
+    const reserva = await api('/db/quiz_cache?topic=' + encodeURIComponent(selectedTopic) + '&lang=' + getLang());
     if (reserva && reserva.pergunta && Array.isArray(reserva.opcoes)) {
       currentQuiz = shuffleQuizOptions({
         pergunta: reserva.pergunta,
@@ -3557,8 +3556,8 @@ async function generateQuiz() {
   area.innerHTML = `<div class="quiz-box">${processingBox(t('genTitle'), escapeHtml(selectedTopic) + '<br>' + t('waitNote'))}</div>`;
   quizAnswered = false;
 
-  // Banco primeiro (só em PT, idioma do banco): se houver questão guardada, abre na hora
-  if (!isOffline() && getLang() === 'pt') {
+  // Banco primeiro (no idioma da interface): se houver questão guardada, abre na hora
+  if (!isOffline()) {
     try {
       const bq = await drawBankQuestion(selectedTopic, null);
       if (bq) {
