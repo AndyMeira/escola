@@ -270,6 +270,13 @@ async function handleGemini(req, env, user) {
 async function handleSignup(req, env) {
   const ip = req.headers.get('CF-Connecting-IP') || 'anon';
   if (!rateOk('signup:' + ip)) return err('Muitas tentativas. Aguarde 1 minuto.', 429);
+  // Trava antibot persistente (vale entre instâncias): máx. 5 contas por IP/dia
+  try {
+    const r = await env.DB.prepare(
+      "INSERT INTO signup_ips (ip, day, count) VALUES (?, date('now'), 1) ON CONFLICT(ip, day) DO UPDATE SET count = count + 1 RETURNING count"
+    ).bind(ip).first();
+    if (r && r.count > 5) return err('Limite de contas por hoje atingido neste endereço. Tente amanhã.', 429);
+  } catch {}
   let b;
   try {
     b = await req.json();
