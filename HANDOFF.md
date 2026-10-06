@@ -14,7 +14,7 @@ são citados só como testemunho. Dono: Anderson (GitHub: AndyMeira).
 | Frontend + PWA | GitHub `AndyMeira/escola`, branch `main` | `index.html` (single-file), `manifest.json` (`/escola/`), `sw.js` (cache v4), `icon-192/512.png`. Ao vivo: https://andymeira.github.io/escola/ |
 | Backend (auth + proxy Gemini + banco) | Cloudflare Worker `escola-intercessao-api` | Fonte versionada em `worker/` no repo (`worker.js` zero-dep, `wrangler.toml`, `README.md`). D1 `escola-db` (binding `DB`, id `bebda047-...`). Secrets: `GEMINI_API_KEY`, `JWT_SECRET`, `RESEND_API_KEY`, `RESEND_FROM`. |
 | Backup + monitor | Worker `escola-backup` | Fonte em `worker-backup/`. Cron dom 03h (backup D1→KV `escola_kv_backups`, id `925fd76d...`, mantém 8) + diário 21h (alerta cota ≥1200 e resumo semanal por e-mail). Secrets: `RESEND_API_KEY`, `OWNER_EMAIL`, `RESEND_FROM`. |
-| Banco velho (INATIVO) | Supabase `xmlspowbfzbptldtferl` | Tabelas vazias; Worker não usa. Manter ou desligar (item pendente). |
+| Banco velho (DESATIVADO no código) | Supabase `xmlspowbfzbptldtferl` | Zero referências no código (só D1 via Worker); falta pausar/excluir no dashboard (com você). |
 
 ## 3. Esquema D1 (`escola-db`)
 - `users(id, email UNIQUE, password_hash, display_name, created_at)` — hash: `salHex:hashHex` = **PBKDF2-SHA256, 100k iterações, sal 16 bytes** (verificado por engenharia reversa).
@@ -57,8 +57,8 @@ Rate-limit 30 req/min/IP em `/api/gemini`, `/auth/forgot`, `/auth/login`, `/auth
 
 ## 8. Pendências (ordem sugerida)
 1. **Idioma ES/EN — FEITO (04/10/2026, commit 3ccde9b)** — `STR` PT/ES/EN + `THEME_I18N` + `TOPIC_I18N`, seletor `#langSwitch` (`ei_lang`, auto-detect), prompts localizados (`getSystemPrompt`/`getQuizPrompt`), Bíblias PT=NAA / ES=RVR1960 / EN=KJV. Tópicos D1 seguem em PT (chave estável). Cards "Os Intercessores" seguem PT (nomes próprios). SW v5.
-2. **Resend produção** — verificar domínio próprio (hoje: modo teste).
-3. **Supabase** — desligar ou documentar como desativado.
+2. **Resend produção (COM VOCÊ — 30 min + propagação DNS)** — hoje: modo teste (só entrega no e-mail da conta Resend). Passos: (a) no resend.com, Domains → Add Domain (ex.: `escola.seudominio.com.br`); (b) criar os 3 registros TXT/SPF/DKIM no DNS do domínio e aguardar "Verified"; (c) `wrangler secret put RESEND_FROM` = `Escola de Intercessão <nao-responda@escola.seudominio.com.br>` nos 2 Workers (`worker/`, `worker-backup/`); (d) testar com um signup real → forgot → conferir entrega. Sem isso, "Esqueci a senha" e alertas não chegam a usuários reais.
+3. **Supabase (COM VOCÊ — 5 min)** — código já 100% livre dele (auditoria 06/10: zero `fetch` fora Worker/Fonts). Falta só no dashboard supabase.com: Settings → Pause/Delete no projeto `xmlspowbfzbptldtferl`.
 4. Streaming já ok; ranking já ok (aba Progresso).
 5. **Trilha de estudos — FEITO (04/10/2026)** — aba Trilha com 5 níveis (L1 Fundamentos, L2 Quebrantamento, L3 Autoridade, L4 Jejum/Espírito, L5 Nações/Avivamento-Atalaia), 18 lições curtas PT ancoradas nas referências do projeto + testemunhos ministeriais, avaliação 5Q com 80% (4/5) para desbloquear o próximo, selos no Progresso. Chat e quiz avulso mantidos. Custo 0 (lições estáticas; avaliação reusa Gemini + quiz_cache).
 6. **Banco de questões + formação (05/10/2026, em curso)** — `quiz_cache` como banco pré-gerado PT (12/tema, nível médio), servir-do-banco-primeiro + prefetch (só com UI em PT; ES/EN geram ao vivo no idioma até existir banco ES/EN), prompts com regra forte de idioma (responde no idioma da interface mesmo se a pergunta vier noutro), etiquetas traduzidas; formação: progresso geral, teaser do próximo nível, diploma L5, sequência de dias. Script: `bank-gen.mjs` (fora do repo) via proxy do Worker.
