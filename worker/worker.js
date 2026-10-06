@@ -263,6 +263,21 @@ async function handleSignup(req, env) {
   } catch {
     return err('Body JSON inválido.');
   }
+  // Turnstile (só exige quando o secret está configurado)
+  if (env.TURNSTILE_SECRET) {
+    if (!b.cf_token) return err('Verificação anti-robô ausente. Recarregue e tente de novo.', 400);
+    try {
+      const v = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ secret: env.TURNSTILE_SECRET, response: b.cf_token, remoteip: ip }),
+      });
+      const vd = await v.json();
+      if (!vd.success) return err('Verificação anti-robô falhou. Tente de novo.', 400);
+    } catch {
+      return err('Não foi possível validar o anti-robô. Tente de novo.', 500);
+    }
+  }
   const email = (b.email || '').trim();
   const password = b.password || '';
   const display_name = (b.display_name || '').trim();

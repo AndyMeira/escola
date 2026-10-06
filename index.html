@@ -1397,6 +1397,7 @@ body .user-bar, body .user-bar button, body .section-hint, body .prog-meta { fon
     <input type="text" id="authNameField" placeholder="Seu nome" style="display:none;" />
     <input type="email" id="authEmail" placeholder="E-mail" />
     <input type="password" id="authPassword" placeholder="Senha" />
+    <div id="turnstileBox" style="display:none;margin:8px 0;"></div>
     <button class="primary" id="authSubmitBtn" onclick="submitAuth()">Entrar</button>
     <div class="auth-toggle" id="authToggleText">
       Ainda não tem conta? <a onclick="toggleAuthMode()">Cadastre-se</a>
@@ -1569,6 +1570,20 @@ const PROXY_URL = "https://escola-intercessao-api.andymeira.workers.dev/api/gemi
 const API_BASE = "https://escola-intercessao-api.andymeira.workers.dev";
 function getToken() { return localStorage.getItem('ei_token'); }
 function setToken(t) { t ? localStorage.setItem('ei_token', t) : localStorage.removeItem('ei_token'); }
+
+// ---------- Anti-bot no signup (Cloudflare Turnstile, grátis) ----------
+// Configure: var TURNSTILE_SITEKEY (frontend, abaixo) + `wrangler secret put TURNSTILE_SECRET`.
+// Sem o secret, a verificação é ignorada (permite rollout por etapas).
+const TURNSTILE_SITEKEY = ""; // dono: colar a sitekey aqui quando criar no dashboard
+function turnstileToken() {
+  try {
+    if (!TURNSTILE_SITEKEY || typeof turnstile === 'undefined') return null;
+    return turnstile.getResponse() || null;
+  } catch (e) { return null; }
+}
+function resetTurnstile() {
+  try { if (typeof turnstile !== 'undefined') turnstile.reset(); } catch (e) {}
+}
 
 // ===== MODO OFFLINE =====
 function isOffline() { return typeof navigator !== 'undefined' && navigator.onLine === false; }
@@ -2178,6 +2193,18 @@ window.addEventListener('DOMContentLoaded', () => {
   renderQuickPrompts();
   applyLang();
   loadTrailLocal();
+  if (TURNSTILE_SITEKEY) {
+    const s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js';
+    s.async = true; s.defer = true;
+    s.onload = () => {
+      try {
+        turnstile.render('#turnstileBox', { sitekey: TURNSTILE_SITEKEY });
+        document.getElementById('turnstileBox').style.display = 'block';
+      } catch (e) {}
+    };
+    document.head.appendChild(s);
+  }
   const textarea = document.getElementById('userInput');
   textarea.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -2349,11 +2376,15 @@ async function submitAuth() {
 
   try {
     if (isSignupMode) {
+      const body = { email, password, display_name: name };
+      const ct = turnstileToken();
+      if (ct) body.cf_token = ct;
       const data = await api('/auth/signup', {
         method: 'POST',
-        body: JSON.stringify({ email, password, display_name: name })
+        body: JSON.stringify(body)
       });
       setToken(data.access_token);
+      resetTurnstile();
       await onLoginSuccess(data.user);
     } else {
       const data = await api('/auth/login', {
@@ -2365,6 +2396,7 @@ async function submitAuth() {
     }
   } catch (e) {
     showAuthError(e.message || t('errAuth'));
+    resetTurnstile();
     btn.disabled = false;
   }
 }
