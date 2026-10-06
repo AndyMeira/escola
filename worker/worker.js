@@ -138,6 +138,41 @@ async function sendResetEmail(env, toEmail, name, link) {
 function escapeHtmlLite(s) {
   return String(s || '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
+// ---------- Quarentena do banco de questões ----------
+// Questões geradas pela IA via /api/gemini são arquivadas aqui com trusted=1.
+// POST manual de clientes entra com trusted=0 e NÃO é servido até o dono aprovar:
+//   UPDATE quiz_cache SET trusted=1 WHERE id IN (...);  -- após revisão
+function extractQuizTopic(payload) {
+  try {
+    const contents = payload && payload.body && payload.body.contents;
+    const last = contents && contents[contents.length - 1];
+    const txt = last && last.parts && last.parts[0] && last.parts[0].text;
+    const m = String(txt || '').match(/m.ltipla escolha sobre:\s*([^.]+)\.?/);
+    return m ? m[1].trim() : null;
+  } catch {
+    return null;
+  }
+}
+async function archiveQuizQuestion(env, payload, data) {
+  try {
+    const topic = extractQuizTopic(payload);
+    if (!topic) return;
+    const part = data && data.candidates && data.candidates[0] && data.candidates[0].content &&
+      data.candidates[0].content.parts && data.candidates[0].content.parts[0].text;
+    if (!part) return;
+    const q = JSON.parse(String(part).replace(/```json/gi, '').replace(/```/g, '').trim());
+    if (!q || typeof q.pergunta !== 'string' || q.pergunta.length > 2000 ||
+        !Array.isArray(q.opcoes) || q.opcoes.length < 2 ||
+        q.opcoes.some(o => typeof o !== 'string' || o.length > 1000) ||
+        !Number.isInteger(q.correta) || q.correta < 0 || q.correta >= q.opcoes.length ||
+        typeof q.explicacao !== 'string') return;
+    await env.DB.prepare(
+      'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at, trusted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 1)'
+    ).bind(crypto.randomUUID(), topic, q.pergunta, JSON.stringify(q.opcoes), q.correta,
+      q.explicacao || '', q.versiculo || '', new Date().toISOString()).run();
+  } catch {}
+}
+
 // ---------- Rate limiting (por IP, aproximado) ----------
 const hits = new Map();
 function rateOk(key) {
@@ -209,7 +244,11 @@ async function handleGemini(req, env, user) {
       `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${env.GEMINI_API_KEY}`,
       { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload.body || {}) }
     );
-    return json(await r.json(), r.status);
+    const data = await r.json().catch(() => ({}));
+    // Arquiva automaticamente questões de quiz geradas pela IA (origem confiável).
+    // Escritos manuais via POST /db/quiz_cache entram em quarentena (trusted=0) até revisão do dono.
+    if (r.ok) { try { await archiveQuizQuestion(env, payload, data); } catch {} }
+    return json(data, r.status);
   } catch (e) {
     return err('Falha ao chamar o Gemini: ' + e.message, 500);
   }
@@ -393,15 +432,15 @@ export default {
         return err('Quiz em formato inválido.');
       }
       await env.DB.prepare(
-        'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+        'INSERT INTO quiz_cache (id, topic, pergunta, opcoes, correta, explicacao, versiculo, created_at, trusted) VALUES (?, ?, ?, ?, ?, ?, ?, ?, 0)'
       ).bind(crypto.randomUUID(), b.topic, b.pergunta, JSON.stringify(b.opcoes), b.correta,
         b.explicacao || '', b.versiculo || '', new Date().toISOString()).run();
-      return json({ ok: true });
+      return json({ ok: true, quarantined: true });
     }
     if (path === '/db/quiz_cache' && req.method === 'GET') {
       const topic = url.searchParams.get('topic') || '';
       const row = await env.DB.prepare(
-        'SELECT pergunta, opcoes, correta, explicacao, versiculo FROM quiz_cache WHERE topic = ? ORDER BY RANDOM() LIMIT 1'
+        'SELECT pergunta, opcoes, correta, explicacao, versiculo FROM quiz_cache WHERE topic = ? AND trusted = 1 ORDER BY RANDOM() LIMIT 1'
       ).bind(topic).first();
       if (!row) return err('Sem perguntas guardadas para este tema.', 404);
       let opcoes;
