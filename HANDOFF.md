@@ -33,6 +33,7 @@ Rotas: `POST /api/gemini` (auth; `stream:true` → SSE; limite 75/dia/usuário +
 `GET /db/profile`, `GET|POST /db/chat_messages`, `POST /db/quiz_attempts`,
 `GET /db/quiz_stats`, `GET|POST /db/quiz_cache`, `GET /db/usage`,
 `GET /db/trail` (lições + melhor por nível), `POST /db/lesson_progress`, `POST /db/level_attempts`.
+Rate-limit 30 req/min/IP em `/api/gemini`, `/auth/forgot`, `/auth/login`, `/auth/signup`; teto de tamanho (chat 10k, quiz 2k/1k).
 
 ## 5. Modelo IA e blindagens
 - Modelo: `gemini-3.5-flash-lite` (05/10/2026; 3.6-flash esgotou a cota free — limite 20/dia — e 2.x/2.5 foram aposentados pelo Google; 3.8 dá 503 frequente). Se a cota do lite acabar, erro vira `quotaErr` traduzido (nunca inglês cru).

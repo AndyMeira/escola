@@ -216,6 +216,8 @@ async function handleGemini(req, env, user) {
 }
 
 async function handleSignup(req, env) {
+  const ip = req.headers.get('CF-Connecting-IP') || 'anon';
+  if (!rateOk('signup:' + ip)) return err('Muitas tentativas. Aguarde 1 minuto.', 429);
   let b;
   try {
     b = await req.json();
@@ -291,6 +293,8 @@ async function handleReset(req, env) {
 }
 
 async function handleLogin(req, env) {
+  const ip = req.headers.get('CF-Connecting-IP') || 'anon';
+  if (!rateOk('login:' + ip)) return err('Muitas tentativas. Aguarde 1 minuto.', 429);
   let b;
   try {
     b = await req.json();
@@ -345,6 +349,7 @@ export default {
         return err('Body JSON inválido.');
       }
       if (!b.role || typeof b.content !== 'string') return err('role e content são obrigatórios.');
+      if (b.content.length > 10000) return err('Mensagem muito longa (máx. 10000 caracteres).');
       await env.DB.prepare(
         'INSERT INTO chat_messages (id, user_id, role, content, created_at) VALUES (?, ?, ?, ?, ?)'
       ).bind(crypto.randomUUID(), user.id, b.role, b.content, new Date().toISOString()).run();
@@ -381,7 +386,8 @@ export default {
       } catch {
         return err('Body JSON inválido.');
       }
-      if (!b || typeof b.pergunta !== 'string' || !Array.isArray(b.opcoes) || b.opcoes.length < 2 ||
+      if (!b || typeof b.pergunta !== 'string' || b.pergunta.length > 2000 || !Array.isArray(b.opcoes) || b.opcoes.length < 2 ||
+          b.opcoes.some(o => typeof o !== 'string' || o.length > 1000) ||
           !Number.isInteger(b.correta) || b.correta < 0 || b.correta >= b.opcoes.length ||
           typeof b.topic !== 'string' || !b.topic) {
         return err('Quiz em formato inválido.');
